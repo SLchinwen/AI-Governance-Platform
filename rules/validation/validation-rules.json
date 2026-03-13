@@ -1,0 +1,243 @@
+{
+  "version": "1.0.0",
+  "description": "高價值驗證規則集 - AI 協作治理平台",
+  "rules": [
+    {
+      "rule_id": "VAL-001",
+      "name": "dotnet_version_required",
+      "description": "選擇 .NET 平台時必須填寫版本",
+      "type": "required_if",
+      "severity": "error",
+      "condition": {
+        "when": { "question_id": "backend.runtime.platform", "equals": "dotnet" },
+        "then_required": ["backend.runtime.dotnet_version", "backend.framework.dotnet_type"]
+      },
+      "message": "選擇 .NET 作為後端平台時，必須指定 .NET 版本與專案框架類型"
+    },
+    {
+      "rule_id": "VAL-002",
+      "name": "jwt_config_required",
+      "description": "選擇 JWT 認證時必須填寫 JWT 設定",
+      "type": "required_if",
+      "severity": "error",
+      "condition": {
+        "when": { "question_id": "backend.auth.method", "equals": "jwt" },
+        "then_required": ["backend.auth.jwt_config"]
+      },
+      "message": "使用 JWT 認證時，必須填寫 Token 生命週期與 Refresh Token 策略"
+    },
+    {
+      "rule_id": "VAL-003",
+      "name": "cicd_none_reason",
+      "description": "無 CI/CD 必須填寫原因與補齊計畫",
+      "type": "required_if",
+      "severity": "error",
+      "condition": {
+        "when": { "question_id": "deployment.cicd.platform", "equals": "none" },
+        "then_required": ["deployment.cicd.none_reason"]
+      },
+      "message": "無 CI/CD 管線必須說明原因並提出建立計畫"
+    },
+    {
+      "rule_id": "VAL-004",
+      "name": "external_api_needs_docs",
+      "description": "有對外 API 必須有文件",
+      "type": "cross_field",
+      "severity": "warning",
+      "condition": {
+        "when": { "question_id": "project_basic.profile.type", "in": ["web_application", "api_platform"] },
+        "check": { "question_id": "api.documentation.openapi", "not_equals": "no_docs" }
+      },
+      "message": "對外系統應備有 API 文件（Swagger 或 OpenAPI spec）"
+    },
+    {
+      "rule_id": "VAL-005",
+      "name": "confidential_data_security",
+      "description": "機密資料必須有加密措施",
+      "type": "cross_field",
+      "severity": "error",
+      "condition": {
+        "when": { "question_id": "project_basic.compliance.data_sensitivity", "in": ["confidential", "restricted"] },
+        "check": { "question_id": "database.sensitive_data.handling", "contains_any": ["encryption_at_rest", "column_encryption"] }
+      },
+      "message": "處理機密或高度機密資料時，資料庫必須啟用加密措施"
+    },
+    {
+      "rule_id": "VAL-006",
+      "name": "secrets_not_hardcoded",
+      "description": "機敏資訊不得寫死在程式碼中",
+      "type": "conflict_check",
+      "severity": "error",
+      "condition": {
+        "when": { "question_id": "security.secrets.management", "equals": "hardcoded" }
+      },
+      "message": "機敏資訊寫死在程式碼中是嚴重安全風險，必須使用 Key Vault 或環境變數管理"
+    },
+    {
+      "rule_id": "VAL-007",
+      "name": "ai_review_required_for_code_gen",
+      "description": "AI 產出程式碼必須有審查流程",
+      "type": "cross_field",
+      "severity": "warning",
+      "condition": {
+        "when": { "question_id": "ai_collaboration.scope.allowed", "contains": "code_generation" },
+        "check": { "question_id": "ai_collaboration.review.process", "not_equals": "no_review" }
+      },
+      "message": "允許 AI 生成程式碼時，應建立對應的審查流程"
+    },
+    {
+      "rule_id": "VAL-008",
+      "name": "container_needs_registry",
+      "description": "使用容器化必須有映像倉庫",
+      "type": "required_if",
+      "severity": "warning",
+      "condition": {
+        "when": { "question_id": "architecture.hosting.containerized", "in": ["docker", "kubernetes", "aks"] }
+      },
+      "message": "使用容器化部署時，應規劃 Container Registry 策略"
+    },
+    {
+      "rule_id": "VAL-009",
+      "name": "testing_required_for_ai_collaboration",
+      "description": "AI 協作開發必須有測試策略",
+      "type": "cross_field",
+      "severity": "warning",
+      "condition": {
+        "when": { "question_id": "ai_collaboration.scope.allowed", "contains_any": ["code_generation", "refactoring"] },
+        "check": { "question_id": "backend.testing.strategy", "not_contains": "no_test" }
+      },
+      "message": "允許 AI 生成或重構程式碼時，必須有對應的測試策略來驗證產出品質"
+    },
+    {
+      "rule_id": "VAL-010",
+      "name": "response_format_consistency",
+      "description": "API 應有統一回應格式",
+      "type": "cross_field",
+      "severity": "warning",
+      "condition": {
+        "when": { "question_id": "api.style.type", "in": ["restful", "graphql"] },
+        "check": { "question_id": "api.response.format", "not_equals": "no_standard" }
+      },
+      "message": "REST/GraphQL API 應定義統一的回應格式，確保前後端一致性"
+    },
+    {
+      "rule_id": "VAL-011",
+      "name": "monitoring_for_production",
+      "description": "有正式環境必須有監控",
+      "type": "cross_field",
+      "severity": "warning",
+      "condition": {
+        "when": { "question_id": "deployment.environments.list", "contains": "production" },
+        "check": { "question_id": "deployment.monitoring.tools", "not_contains": "none" }
+      },
+      "message": "正式環境必須有監控機制"
+    },
+    {
+      "rule_id": "VAL-012",
+      "name": "auth_required_for_external",
+      "description": "對外系統必須有認證機制",
+      "type": "cross_field",
+      "severity": "error",
+      "condition": {
+        "when": { "question_id": "project_basic.profile.type", "in": ["web_application", "api_platform"] },
+        "check": { "question_id": "backend.auth.method", "not_equals": "none" }
+      },
+      "message": "對外的 Web 應用或 API 平台必須有認證機制"
+    },
+    {
+      "rule_id": "VAL-013",
+      "name": "compliance_needs_audit",
+      "description": "有合規要求時必須有稽核日誌",
+      "type": "cross_field",
+      "severity": "error",
+      "condition": {
+        "when": { "question_id": "security.compliance.requirements", "contains_any": ["gdpr", "pdpa_tw", "iso_27001", "soc2", "pci_dss", "hipaa"] },
+        "check": { "question_id": "database.sensitive_data.handling", "contains": "audit_log" }
+      },
+      "message": "有法規合規要求時，必須建立稽核日誌機制"
+    },
+    {
+      "rule_id": "VAL-014",
+      "name": "ai_prompt_no_secrets",
+      "description": "AI Prompt 禁止包含機敏資訊",
+      "type": "cross_field",
+      "severity": "error",
+      "condition": {
+        "always": true
+      },
+      "message": "任何傳送給 AI 的 Prompt 不得包含密碼、金鑰、個資或機密資料"
+    },
+    {
+      "rule_id": "VAL-015",
+      "name": "branching_strategy_required",
+      "description": "使用 AI 協作必須有明確的分支策略",
+      "type": "cross_field",
+      "severity": "warning",
+      "condition": {
+        "when": { "question_id": "ai_collaboration.tools.primary", "not_empty": true },
+        "check": { "question_id": "deployment.git.branching", "not_equals": "no_strategy" }
+      },
+      "message": "使用 AI 開發工具時，應有明確的 Git 分支策略管控程式碼合併"
+    },
+    {
+      "rule_id": "VAL-016",
+      "name": "ai_context_management_required",
+      "description": "使用 AI 工具時必須有 Context 管理",
+      "type": "cross_field",
+      "severity": "warning",
+      "condition": {
+        "when": { "question_id": "ai_collaboration.tools.primary", "not_empty": true },
+        "check": { "question_id": "ai_collaboration.context.strategy", "not_contains": "none" }
+      },
+      "message": "使用 AI 開發工具時，應建立 Context 管理策略以提升 AI 產出品質"
+    },
+    {
+      "rule_id": "VAL-017",
+      "name": "restricted_data_ai_boundary",
+      "description": "高度機密資料的 AI 邊界檢查",
+      "type": "cross_field",
+      "severity": "error",
+      "condition": {
+        "when": { "question_id": "project_basic.compliance.data_sensitivity", "equals": "restricted" },
+        "check": { "question_id": "security.ai.boundaries", "contains_any": ["no_prod_data", "no_pii", "approved_models_only"] }
+      },
+      "message": "處理高度機密資料時，AI 協作邊界必須包含：禁止接觸正式資料、禁止 PII、僅用核准模型"
+    },
+    {
+      "rule_id": "VAL-018",
+      "name": "frontend_framework_build_tool_match",
+      "description": "前端框架與建構工具的相容性",
+      "type": "conflict_check",
+      "severity": "warning",
+      "condition": {
+        "check_compatibility": [
+          { "question_id": "frontend.framework.choice", "question_id_2": "frontend.build.tool" }
+        ]
+      },
+      "message": "前端框架與建構工具應相容（如 Next.js 搭配 Turbopack/Webpack，不使用 CRA）"
+    },
+    {
+      "rule_id": "VAL-019",
+      "name": "db_naming_for_ai",
+      "description": "AI 產出需要明確的資料表命名規範",
+      "type": "required_if",
+      "severity": "warning",
+      "condition": {
+        "when": { "question_id": "ai_collaboration.scope.allowed", "contains": "db_schema" }
+      },
+      "message": "允許 AI 設計資料庫 Schema 時，必須先定義資料表命名規範"
+    },
+    {
+      "rule_id": "VAL-020",
+      "name": "microservices_communication",
+      "description": "微服務必須定義服務間通訊方式",
+      "type": "required_if",
+      "severity": "error",
+      "condition": {
+        "when": { "question_id": "architecture.pattern.style", "in": ["microservices", "event_driven"] },
+        "then_required": ["architecture.communication.style"]
+      },
+      "message": "微服務或事件驅動架構必須定義服務間的通訊方式"
+    }
+  ]
+}

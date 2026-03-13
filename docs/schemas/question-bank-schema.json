@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Question Bank Schema",
+  "description": "公司級 AI 協作治理平台 - 題庫定義結構",
+  "type": "object",
+  "properties": {
+    "question_id": {
+      "type": "string",
+      "description": "唯一識別碼，格式：category.subcategory.field",
+      "pattern": "^[a-z_]+\\.[a-z_]+\\.[a-z_]+$"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "project_basic",
+        "architecture",
+        "backend",
+        "frontend",
+        "database",
+        "api",
+        "security",
+        "deployment",
+        "ai_collaboration"
+      ]
+    },
+    "stage": {
+      "type": "string",
+      "enum": ["discovery", "planning", "design", "development", "review"],
+      "description": "填寫階段：探索期、規劃期、設計期、開發期、審查期"
+    },
+    "title": {
+      "type": "string",
+      "description": "題目標題"
+    },
+    "description": {
+      "type": "string",
+      "description": "題目詳細說明與填寫指引"
+    },
+    "question_type": {
+      "type": "string",
+      "enum": [
+        "single_select",
+        "multi_select",
+        "text",
+        "number",
+        "boolean",
+        "version_select",
+        "url",
+        "file_upload",
+        "rating_scale",
+        "matrix"
+      ]
+    },
+    "required": {
+      "type": "boolean"
+    },
+    "owner_role": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["pm", "architect", "backend_lead", "frontend_lead", "devops", "security_lead", "qa_lead"]
+      },
+      "description": "負責填答的角色清單"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": { "type": "string" },
+          "label": { "type": "string" },
+          "description": { "type": "string" },
+          "triggers": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "選擇此選項後會觸發顯示的題目 ID"
+          }
+        }
+      }
+    },
+    "depends_on": {
+      "type": "object",
+      "properties": {
+        "question_id": { "type": "string" },
+        "condition": { "type": "string", "enum": ["equals", "not_equals", "contains", "not_empty"] },
+        "value": {}
+      },
+      "description": "前置條件：依賴的題目與條件"
+    },
+    "validation_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule_id": { "type": "string" },
+          "type": { "type": "string", "enum": ["required_if", "conflict_check", "format_check", "range_check", "cross_field"] },
+          "message": { "type": "string" }
+        }
+      }
+    },
+    "output_mapping": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "target": { "type": "string", "enum": ["tech_stack", "ai_context", "readiness_report", "governance_summary"] },
+          "path": { "type": "string" }
+        }
+      },
+      "description": "此答案會輸出到哪些目標文件的哪個位置"
+    },
+    "quality_impact": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low"],
+      "description": "此題對 AI 協作品質的影響程度"
+    },
+    "ai_risk_note": {
+      "type": "string",
+      "description": "若未填寫，AI 協作可能產生的風險說明"
+    },
+    "version": {
+      "type": "string",
+      "description": "題目版本號"
+    }
+  },
+  "required": ["question_id", "category", "stage", "title", "question_type", "required", "owner_role", "quality_impact"]
+}

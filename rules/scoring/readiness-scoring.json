@@ -1,0 +1,75 @@
+{
+  "version": "1.0.0",
+  "description": "AI 協作就緒度計分規則",
+  "scoring_method": "weighted_average",
+  "pass_threshold": 70,
+  "warning_threshold": 50,
+  "categories": {
+    "project_basic": {
+      "weight": 15,
+      "label": "專案基本資訊",
+      "minimum_completion": 100,
+      "critical_questions": ["project_basic.profile.type", "project_basic.profile.is_new", "project_basic.compliance.data_sensitivity"]
+    },
+    "architecture": {
+      "weight": 15,
+      "label": "系統架構",
+      "minimum_completion": 80,
+      "critical_questions": ["architecture.pattern.style", "architecture.hosting.platform"]
+    },
+    "backend": {
+      "weight": 15,
+      "label": "後端技術棧",
+      "minimum_completion": 80,
+      "critical_questions": ["backend.runtime.platform", "backend.auth.method"]
+    },
+    "frontend": {
+      "weight": 10,
+      "label": "前端技術棧",
+      "minimum_completion": 70,
+      "critical_questions": ["frontend.framework.choice"]
+    },
+    "database": {
+      "weight": 10,
+      "label": "資料庫設計",
+      "minimum_completion": 80,
+      "critical_questions": ["database.primary.engine", "database.sensitive_data.handling"]
+    },
+    "api": {
+      "weight": 10,
+      "label": "API 設計",
+      "minimum_completion": 70,
+      "critical_questions": ["api.style.type", "api.response.format"]
+    },
+    "security": {
+      "weight": 10,
+      "label": "資安與合規",
+      "minimum_completion": 80,
+      "critical_questions": ["security.auth.authorization", "security.secrets.management", "security.ai.boundaries"]
+    },
+    "deployment": {
+      "weight": 5,
+      "label": "部署與維運",
+      "minimum_completion": 60,
+      "critical_questions": ["deployment.cicd.platform"]
+    },
+    "ai_collaboration": {
+      "weight": 10,
+      "label": "AI 協作規範",
+      "minimum_completion": 80,
+      "critical_questions": [
+        "ai_collaboration.tools.primary",
+        "ai_collaboration.scope.allowed",
+        "ai_collaboration.scope.prohibited",
+        "ai_collaboration.review.process"
+      ]
+    }
+  },
+  "readiness_levels": [
+    { "min": 90, "max": 100, "level": "excellent", "label": "卓越", "description": "完全就緒，可全面啟動 AI 協作開發", "color": "green" },
+    { "min": 70, "max": 89, "level": "good", "label": "良好", "description": "基本就緒，可啟動 AI 協作，建議補強弱項", "color": "blue" },
+    { "min": 50, "max": 69, "level": "fair", "label": "尚可", "description": "有條件啟動，需先補齊關鍵缺項", "color": "yellow" },
+    { "min": 30, "max": 49, "level": "poor", "label": "不足", "description": "不建議啟動 AI 協作，需先建立基本規範", "color": "orange" },
+    { "min": 0, "max": 29, "level": "critical", "label": "嚴重不足", "description": "禁止 AI 協作，需全面建立治理架構", "color": "red" }
+  ]
+}

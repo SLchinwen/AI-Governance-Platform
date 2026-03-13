@@ -1,0 +1,220 @@
+{
+  "category": "ai_collaboration",
+  "category_label": "AI 協作規範",
+  "stage": "planning",
+  "description": "定義 AI 工具的使用方式、協作規則、品質管控與產出審核流程",
+  "owner_roles": ["architect", "pm", "backend_lead", "frontend_lead", "devops"],
+  "questions": [
+    {
+      "question_id": "ai_collaboration.tools.primary",
+      "title": "主要 AI 開發工具",
+      "description": "專案中使用的主要 AI 協作開發工具",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["architect"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "cursor", "label": "Cursor IDE" },
+        { "value": "github_copilot", "label": "GitHub Copilot" },
+        { "value": "claude", "label": "Claude（Anthropic）" },
+        { "value": "chatgpt", "label": "ChatGPT / GPT-4" },
+        { "value": "azure_openai", "label": "Azure OpenAI Service" },
+        { "value": "codewhisperer", "label": "Amazon CodeWhisperer" },
+        { "value": "gemini", "label": "Google Gemini" },
+        { "value": "tabnine", "label": "Tabnine" },
+        { "value": "other", "label": "其他" }
+      ],
+      "output_mapping": [
+        { "target": "ai_context", "path": "ai_tools.primary" },
+        { "target": "governance_summary", "path": "ai_tools" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "ai_collaboration.model.preference",
+      "title": "偏好的 AI 模型",
+      "description": "專案中偏好使用的 AI 模型（用於程式碼生成）",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["architect"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "claude_sonnet", "label": "Claude Sonnet" },
+        { "value": "claude_opus", "label": "Claude Opus" },
+        { "value": "gpt4o", "label": "GPT-4o" },
+        { "value": "gpt4_turbo", "label": "GPT-4 Turbo" },
+        { "value": "o1", "label": "o1 / o1-mini" },
+        { "value": "gemini_pro", "label": "Gemini Pro" },
+        { "value": "codestral", "label": "Codestral" },
+        { "value": "deepseek", "label": "DeepSeek Coder" },
+        { "value": "company_approved", "label": "僅限公司核准清單" }
+      ],
+      "output_mapping": [
+        { "target": "ai_context", "path": "ai_tools.model" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "ai_collaboration.scope.allowed",
+      "title": "AI 可協作的範圍",
+      "description": "定義 AI 工具可以協助的工作範疇",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["architect", "pm"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "code_generation", "label": "程式碼生成" },
+        { "value": "code_review", "label": "程式碼審查" },
+        { "value": "unit_test", "label": "單元測試撰寫" },
+        { "value": "documentation", "label": "文件撰寫" },
+        { "value": "refactoring", "label": "程式碼重構" },
+        { "value": "bug_fix", "label": "Bug 修復" },
+        { "value": "architecture_design", "label": "架構設計建議" },
+        { "value": "api_design", "label": "API 設計" },
+        { "value": "db_schema", "label": "資料庫 Schema 設計" },
+        { "value": "prompt_engineering", "label": "Prompt 工程" },
+        { "value": "devops_scripts", "label": "DevOps 腳本" },
+        { "value": "data_analysis", "label": "資料分析" }
+      ],
+      "output_mapping": [
+        { "target": "ai_context", "path": "ai_scope.allowed" },
+        { "target": "governance_summary", "path": "ai_allowed_scope" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "ai_collaboration.scope.prohibited",
+      "title": "AI 禁止操作的範圍",
+      "description": "明確定義 AI 不得觸及的工作範疇",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["architect", "security_lead"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "production_deploy", "label": "直接部署到正式環境" },
+        { "value": "db_migration_prod", "label": "正式環境資料庫異動" },
+        { "value": "secret_handling", "label": "處理密碼/金鑰/憑證" },
+        { "value": "pii_processing", "label": "處理個人識別資訊（PII）" },
+        { "value": "financial_logic", "label": "金融計算邏輯（需人工驗證）" },
+        { "value": "security_config", "label": "安全性組態變更" },
+        { "value": "delete_operations", "label": "資料刪除操作" },
+        { "value": "third_party_contract", "label": "第三方服務合約/計費邏輯" }
+      ],
+      "output_mapping": [
+        { "target": "ai_context", "path": "ai_scope.prohibited" },
+        { "target": "governance_summary", "path": "ai_prohibited_scope" }
+      ],
+      "ai_risk_note": "這是 AI 安全治理的紅線清單，必須嚴格遵守",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "ai_collaboration.review.process",
+      "title": "AI 產出審查流程",
+      "description": "AI 生成內容在合併前的審查要求",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["architect", "pm"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "mandatory_review", "label": "所有 AI 產出必須經人工 Code Review" },
+        { "value": "senior_review", "label": "AI 產出需資深工程師審查" },
+        { "value": "automated_check", "label": "自動化檢查通過即可（Lint + Test）" },
+        { "value": "risk_based", "label": "依風險等級決定審查深度" },
+        { "value": "pair_programming", "label": "與 AI Pair Programming 即時審查" },
+        { "value": "no_review", "label": "無特別審查流程" }
+      ],
+      "output_mapping": [
+        { "target": "governance_summary", "path": "ai_review_process" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "ai_collaboration.context.strategy",
+      "title": "AI Context 管理策略",
+      "description": "如何為 AI 提供專案上下文資訊",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["architect"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "cursor_rules", "label": "使用 .cursor/rules 規則檔" },
+        { "value": "system_prompt", "label": "標準化 System Prompt" },
+        { "value": "project_context_file", "label": "專案 Context 文件（ai-context.md）" },
+        { "value": "code_comments", "label": "程式碼內 AI 指引註解" },
+        { "value": "prompt_library", "label": "公司 Prompt 樣板庫" },
+        { "value": "rag", "label": "RAG（檢索增強生成）" },
+        { "value": "none", "label": "無特別管理" }
+      ],
+      "output_mapping": [
+        { "target": "ai_context", "path": "context_management" },
+        { "target": "governance_summary", "path": "ai_context_strategy" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "ai_collaboration.quality.metrics",
+      "title": "AI 產出品質指標",
+      "description": "評估 AI 協作效果的衡量指標",
+      "question_type": "multi_select",
+      "required": false,
+      "owner_role": ["architect", "pm"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "acceptance_rate", "label": "AI 建議採納率" },
+        { "value": "bug_rate", "label": "AI 產出程式碼的 Bug 率" },
+        { "value": "review_pass_rate", "label": "Code Review 一次通過率" },
+        { "value": "productivity_gain", "label": "生產力提升比例" },
+        { "value": "test_coverage", "label": "AI 產出的測試覆蓋率" },
+        { "value": "security_issues", "label": "安全性問題發現數" },
+        { "value": "rework_rate", "label": "返工率" }
+      ],
+      "output_mapping": [
+        { "target": "readiness_report", "path": "ai_quality_metrics" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "ai_collaboration.prompt.standards",
+      "title": "Prompt 工程規範",
+      "description": "團隊使用 AI 時的 Prompt 撰寫規範",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["architect"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "template_required", "label": "必須使用公司 Prompt 樣板" },
+        { "value": "context_first", "label": "Prompt 必須先提供完整上下文" },
+        { "value": "constraint_explicit", "label": "必須明確列出限制條件" },
+        { "value": "output_format", "label": "必須指定期望輸出格式" },
+        { "value": "language_specified", "label": "必須指定程式語言與版本" },
+        { "value": "test_included", "label": "Prompt 必須要求包含測試" },
+        { "value": "no_secrets_in_prompt", "label": "Prompt 中禁止包含機敏資訊" },
+        { "value": "review_sharing", "label": "有效 Prompt 需團隊共享" }
+      ],
+      "output_mapping": [
+        { "target": "governance_summary", "path": "prompt_standards" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "ai_collaboration.readiness.self_assessment",
+      "title": "AI 協作就緒度自評",
+      "description": "團隊對 AI 協作準備程度的自我評估",
+      "question_type": "rating_scale",
+      "required": true,
+      "owner_role": ["architect", "pm"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "1", "label": "1 - 完全未準備", "description": "團隊無 AI 使用經驗，無任何規範" },
+        { "value": "2", "label": "2 - 初步嘗試", "description": "個別成員有使用，但無統一規範" },
+        { "value": "3", "label": "3 - 有基礎", "description": "有基本規範，部分成員熟悉 AI 工具" },
+        { "value": "4", "label": "4 - 良好準備", "description": "有完整規範、Prompt 庫，多數成員熟練" },
+        { "value": "5", "label": "5 - 高度就緒", "description": "有成熟的 AI 治理體系，團隊全員熟練" }
+      ],
+      "output_mapping": [
+        { "target": "readiness_report", "path": "ai_readiness.self_assessment" }
+      ],
+      "version": "1.0.0"
+    }
+  ]
+}

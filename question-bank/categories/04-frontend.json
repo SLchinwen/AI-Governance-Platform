@@ -1,0 +1,212 @@
+{
+  "category": "frontend",
+  "category_label": "前端技術棧",
+  "stage": "design",
+  "description": "前端框架、UI 元件庫、狀態管理與建構工具定義",
+  "owner_roles": ["frontend_lead"],
+  "questions": [
+    {
+      "question_id": "frontend.framework.choice",
+      "title": "前端框架",
+      "description": "專案前端使用的主要框架",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["frontend_lead"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "react", "label": "React" },
+        { "value": "react_next", "label": "React + Next.js" },
+        { "value": "vue3", "label": "Vue 3" },
+        { "value": "vue_nuxt", "label": "Vue 3 + Nuxt" },
+        { "value": "angular", "label": "Angular" },
+        { "value": "blazor_wasm", "label": "Blazor WebAssembly" },
+        { "value": "svelte", "label": "Svelte / SvelteKit" },
+        { "value": "vanilla", "label": "純 HTML/CSS/JS（無框架）" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "frontend.framework" },
+        { "target": "ai_context", "path": "frontend.framework" }
+      ],
+      "ai_risk_note": "前端框架決定 AI 產出的元件語法與生態系套件選擇",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "frontend.language.typescript",
+      "title": "是否使用 TypeScript",
+      "description": "前端是否使用 TypeScript 強型別",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["frontend_lead"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "strict", "label": "TypeScript（strict 模式）" },
+        { "value": "standard", "label": "TypeScript（標準模式）" },
+        { "value": "javascript", "label": "JavaScript（不使用 TS）" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "frontend.language" },
+        { "target": "ai_context", "path": "frontend.language" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "frontend.ui.component_library",
+      "title": "UI 元件庫",
+      "description": "專案使用的 UI 元件庫",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["frontend_lead"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "ant_design", "label": "Ant Design" },
+        { "value": "material_ui", "label": "Material UI (MUI)" },
+        { "value": "chakra_ui", "label": "Chakra UI" },
+        { "value": "shadcn", "label": "shadcn/ui" },
+        { "value": "element_plus", "label": "Element Plus（Vue）" },
+        { "value": "primevue", "label": "PrimeVue（Vue）" },
+        { "value": "bootstrap", "label": "Bootstrap / React-Bootstrap" },
+        { "value": "tailwind_only", "label": "Tailwind CSS（無元件庫）" },
+        { "value": "custom", "label": "自建元件庫" },
+        { "value": "none", "label": "無使用元件庫" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "frontend.ui_library" },
+        { "target": "ai_context", "path": "frontend.ui_library" }
+      ],
+      "ai_risk_note": "AI 必須知道使用的元件庫才能產出正確的 import 與元件用法",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "frontend.styling.method",
+      "title": "CSS 方案",
+      "description": "專案的樣式管理方式",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["frontend_lead"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "tailwind", "label": "Tailwind CSS" },
+        { "value": "css_modules", "label": "CSS Modules" },
+        { "value": "styled_components", "label": "Styled Components" },
+        { "value": "emotion", "label": "Emotion" },
+        { "value": "sass", "label": "SASS / SCSS" },
+        { "value": "less", "label": "Less" },
+        { "value": "css_in_js", "label": "其他 CSS-in-JS" },
+        { "value": "plain_css", "label": "原生 CSS" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "frontend.styling" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "frontend.state.management",
+      "title": "狀態管理方案",
+      "description": "前端全域狀態管理的方式",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["frontend_lead"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "redux_toolkit", "label": "Redux Toolkit" },
+        { "value": "zustand", "label": "Zustand" },
+        { "value": "jotai", "label": "Jotai" },
+        { "value": "recoil", "label": "Recoil" },
+        { "value": "pinia", "label": "Pinia（Vue）" },
+        { "value": "vuex", "label": "Vuex（Vue Legacy）" },
+        { "value": "ngrx", "label": "NgRx（Angular）" },
+        { "value": "context_api", "label": "React Context API" },
+        { "value": "tanstack_query", "label": "TanStack Query（Server State）" },
+        { "value": "none", "label": "無全域狀態管理" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "frontend.state_management" },
+        { "target": "ai_context", "path": "frontend.state_management" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "frontend.routing.solution",
+      "title": "路由方案",
+      "description": "前端路由管理方式",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["frontend_lead"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "react_router", "label": "React Router v6+" },
+        { "value": "next_app_router", "label": "Next.js App Router" },
+        { "value": "next_pages_router", "label": "Next.js Pages Router" },
+        { "value": "vue_router", "label": "Vue Router" },
+        { "value": "angular_router", "label": "Angular Router" },
+        { "value": "tanstack_router", "label": "TanStack Router" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "frontend.routing" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "frontend.build.tool",
+      "title": "建構工具",
+      "description": "前端的打包與建構工具",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["frontend_lead"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "vite", "label": "Vite" },
+        { "value": "webpack", "label": "Webpack" },
+        { "value": "turbopack", "label": "Turbopack（Next.js）" },
+        { "value": "esbuild", "label": "esbuild" },
+        { "value": "rollup", "label": "Rollup" },
+        { "value": "cra", "label": "Create React App（已停止維護）" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "frontend.build_tool" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "frontend.form.library",
+      "title": "表單處理方案",
+      "description": "前端表單驗證與管理的套件",
+      "question_type": "single_select",
+      "required": false,
+      "owner_role": ["frontend_lead"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "react_hook_form", "label": "React Hook Form" },
+        { "value": "formik", "label": "Formik" },
+        { "value": "ant_form", "label": "Ant Design Form" },
+        { "value": "vee_validate", "label": "VeeValidate（Vue）" },
+        { "value": "zod", "label": "搭配 Zod 驗證" },
+        { "value": "yup", "label": "搭配 Yup 驗證" },
+        { "value": "custom", "label": "自建表單處理" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "frontend.testing.tools",
+      "title": "前端測試工具",
+      "description": "前端測試使用的工具與方法",
+      "question_type": "multi_select",
+      "required": false,
+      "owner_role": ["frontend_lead"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "jest", "label": "Jest" },
+        { "value": "vitest", "label": "Vitest" },
+        { "value": "react_testing_library", "label": "React Testing Library" },
+        { "value": "cypress", "label": "Cypress（E2E）" },
+        { "value": "playwright", "label": "Playwright（E2E）" },
+        { "value": "storybook", "label": "Storybook（元件文件）" },
+        { "value": "none", "label": "目前無前端測試" }
+      ],
+      "output_mapping": [
+        { "target": "readiness_report", "path": "quality.frontend_testing" }
+      ],
+      "version": "1.0.0"
+    }
+  ]
+}

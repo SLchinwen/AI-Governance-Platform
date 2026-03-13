@@ -1,0 +1,159 @@
+{
+  "version": "1.0.0",
+  "description": "問卷答案 → 輸出文件的轉換映射規則",
+  "outputs": [
+    {
+      "output_type": "tech_stack",
+      "filename": "tech-stack.json",
+      "format": "json",
+      "description": "專案技術棧總覽 JSON",
+      "structure": {
+        "project": {
+          "name": "← project_basic.profile.name",
+          "type": "← project_basic.profile.type",
+          "scope": "← project_basic.profile.scope",
+          "is_new": "← project_basic.profile.is_new"
+        },
+        "architecture": {
+          "style": "← architecture.pattern.style",
+          "layers": "← architecture.pattern.layers",
+          "design_patterns": "← architecture.pattern.design_patterns"
+        },
+        "backend": {
+          "platform": "← backend.runtime.platform",
+          "version": "← backend.runtime.dotnet_version",
+          "framework": "← backend.framework.dotnet_type",
+          "orm": "← backend.orm.choice",
+          "auth": "← backend.auth.method",
+          "logging": "← backend.logging.framework"
+        },
+        "frontend": {
+          "framework": "← frontend.framework.choice",
+          "language": "← frontend.language.typescript",
+          "ui_library": "← frontend.ui.component_library",
+          "styling": "← frontend.styling.method",
+          "state_management": "← frontend.state.management",
+          "routing": "← frontend.routing.solution",
+          "build_tool": "← frontend.build.tool"
+        },
+        "database": {
+          "engine": "← database.primary.engine",
+          "design_approach": "← database.design.approach",
+          "cache": "← database.cache.strategy",
+          "naming_convention": "← database.naming.convention"
+        },
+        "api": {
+          "style": "← api.style.type",
+          "versioning": "← api.versioning.strategy",
+          "response_format": "← api.response.format"
+        },
+        "security": {
+          "authorization": "← security.auth.authorization",
+          "secrets_management": "← security.secrets.management"
+        },
+        "infrastructure": {
+          "platform": "← architecture.hosting.platform",
+          "containerization": "← architecture.hosting.containerized",
+          "cicd": "← deployment.cicd.platform",
+          "monitoring": "← deployment.monitoring.tools",
+          "environments": "← deployment.environments.list"
+        },
+        "integrations": {
+          "external": "← api.external.integrations"
+        }
+      }
+    },
+    {
+      "output_type": "ai_context",
+      "filename": "ai-context.md",
+      "format": "markdown",
+      "description": "AI 協作上下文文件，供 Cursor / Copilot 使用",
+      "template_sections": [
+        "# AI Context - {project.name}",
+        "",
+        "## 專案概述",
+        "- 類型：{project.type}",
+        "- 範圍：{project.scope}",
+        "- 狀態：{project.is_new}",
+        "",
+        "## 技術棧",
+        "### 後端",
+        "- 平台：{backend.platform} {backend.version}",
+        "- 框架：{backend.framework}",
+        "- ORM：{backend.orm}",
+        "- 認證：{security.auth_method}",
+        "",
+        "### 前端",
+        "- 框架：{frontend.framework}",
+        "- 語言：{frontend.language}",
+        "- UI 庫：{frontend.ui_library}",
+        "- 狀態管理：{frontend.state_management}",
+        "",
+        "### 資料庫",
+        "- 引擎：{database.engine}",
+        "- 命名規範：{database.naming_convention}",
+        "",
+        "### API",
+        "- 風格：{api.style}",
+        "- 版本策略：{api.versioning}",
+        "- 回應格式：{api.response_format}",
+        "- 錯誤處理：{api.error_handling}",
+        "",
+        "## 架構規範",
+        "- 架構風格：{architecture.style}",
+        "- 分層：{architecture.layers}",
+        "- 設計模式：{architecture.design_patterns}",
+        "",
+        "## AI 協作規則",
+        "### 允許範圍",
+        "{ai_scope.allowed}",
+        "",
+        "### 禁止範圍（紅線）",
+        "{ai_scope.prohibited}",
+        "",
+        "### 安全邊界",
+        "{security.ai_boundaries}",
+        "",
+        "### Context 管理策略",
+        "{context_management}",
+        "",
+        "## 合規要求",
+        "{security.compliance}"
+      ]
+    },
+    {
+      "output_type": "readiness_report",
+      "filename": "readiness-report.md",
+      "format": "markdown",
+      "description": "AI 協作就緒度評估報告",
+      "template_sections": [
+        "# AI 協作就緒度報告",
+        "## 總體評分：{overall_score}/100 ({readiness_level})",
+        "",
+        "## 分類評分",
+        "| 分類 | 完成度 | 評分 | 狀態 |",
+        "|------|--------|------|------|",
+        "{category_scores_table}",
+        "",
+        "## 阻擋項目（Blockers）",
+        "{blockers_list}",
+        "",
+        "## 警告事項",
+        "{warnings_list}",
+        "",
+        "## 品質指標",
+        "### 測試策略",
+        "{quality.testing_strategy}",
+        "",
+        "### 資料保護",
+        "{security.data_protection}",
+        "",
+        "### API 文件",
+        "{documentation.api_docs}",
+        "",
+        "## 建議行動",
+        "{recommended_actions}"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Project Answer Schema",
+  "description": "公司級 AI 協作治理平台 - 專案回答結構",
+  "type": "object",
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "description": "專案唯一識別碼"
+    },
+    "project_name": {
+      "type": "string"
+    },
+    "questionnaire_version": {
+      "type": "string",
+      "description": "綁定的題庫版本"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "in_progress", "submitted", "under_review", "approved", "published"]
+    },
+    "answers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question_id": { "type": "string" },
+          "value": {},
+          "answered_by": {
+            "type": "object",
+            "properties": {
+              "user_id": { "type": "string" },
+              "role": { "type": "string" },
+              "name": { "type": "string" }
+            }
+          },
+          "answered_at": { "type": "string", "format": "date-time" },
+          "review_status": {
+            "type": "string",
+            "enum": ["pending", "approved", "rejected", "needs_revision"]
+          },
+          "reviewer": { "type": "string" },
+          "reviewed_at": { "type": "string", "format": "date-time" },
+          "confidence": {
+            "type": "string",
+            "enum": ["confirmed", "tentative", "unknown"],
+            "description": "回答者對此答案的信心度"
+          },
+          "notes": { "type": "string" },
+          "attachments": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["question_id", "value", "answered_by", "answered_at"]
+      }
+    },
+    "readiness_score": {
+      "type": "object",
+      "properties": {
+        "overall": { "type": "number", "minimum": 0, "maximum": 100 },
+        "by_category": {
+          "type": "object",
+          "additionalProperties": { "type": "number" }
+        },
+        "blockers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "required": ["project_id", "project_name", "questionnaire_version", "status", "answers"]
+}

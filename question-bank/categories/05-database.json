@@ -1,0 +1,139 @@
+{
+  "category": "database",
+  "category_label": "資料庫設計",
+  "stage": "design",
+  "description": "資料庫類型、設計策略、效能與備份規劃",
+  "owner_roles": ["backend_lead", "architect"],
+  "questions": [
+    {
+      "question_id": "database.primary.engine",
+      "title": "主要資料庫引擎",
+      "description": "專案使用的主要關聯式資料庫",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead", "architect"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "sql_server", "label": "SQL Server" },
+        { "value": "azure_sql", "label": "Azure SQL Database" },
+        { "value": "postgresql", "label": "PostgreSQL" },
+        { "value": "mysql", "label": "MySQL / MariaDB" },
+        { "value": "oracle", "label": "Oracle Database" },
+        { "value": "sqlite", "label": "SQLite（開發/嵌入式）" },
+        { "value": "cosmos_db", "label": "Azure Cosmos DB（NoSQL）" },
+        { "value": "mongodb", "label": "MongoDB" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "database.engine" },
+        { "target": "ai_context", "path": "database.engine" }
+      ],
+      "ai_risk_note": "資料庫引擎決定 SQL 語法差異與 ORM 配置，錯誤將導致查詢不相容",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "database.design.approach",
+      "title": "資料庫設計方法",
+      "description": "資料庫 Schema 的設計與管理方式",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "code_first", "label": "Code First（從程式碼產生 Schema）" },
+        { "value": "db_first", "label": "Database First（從 DB 反向工程）" },
+        { "value": "migration", "label": "Migration 管理（版本化 Schema）" },
+        { "value": "manual_sql", "label": "手動 SQL Script 管理" },
+        { "value": "hybrid", "label": "混合方式" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "database.design_approach" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "database.cache.strategy",
+      "title": "快取策略",
+      "description": "是否使用快取以及快取方案",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead", "architect"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "redis", "label": "Redis" },
+        { "value": "azure_redis", "label": "Azure Cache for Redis" },
+        { "value": "memcached", "label": "Memcached" },
+        { "value": "in_memory", "label": "In-Memory Cache（IMemoryCache）" },
+        { "value": "distributed_cache", "label": "Distributed Cache（IDistributedCache）" },
+        { "value": "none", "label": "不使用快取" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "database.cache" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "database.naming.convention",
+      "title": "資料表命名規範",
+      "description": "資料庫物件的命名風格",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "pascal_case", "label": "PascalCase（如 UserProfile）" },
+        { "value": "snake_case", "label": "snake_case（如 user_profile）" },
+        { "value": "camel_case", "label": "camelCase（如 userProfile）" },
+        { "value": "plural", "label": "複數形式（如 Users）" },
+        { "value": "singular", "label": "單數形式（如 User）" },
+        { "value": "prefixed", "label": "帶前綴（如 tbl_User）" }
+      ],
+      "output_mapping": [
+        { "target": "ai_context", "path": "database.naming_convention" }
+      ],
+      "ai_risk_note": "命名規範不一致會讓 AI 產出的 Entity 與既有資料表不匹配",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "database.backup.strategy",
+      "title": "備份策略",
+      "description": "資料庫的備份與災難復原方案",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead", "devops"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "azure_auto", "label": "Azure 自動備份" },
+        { "value": "scheduled", "label": "排程備份（每日/每週）" },
+        { "value": "continuous", "label": "持續備份（Point-in-time）" },
+        { "value": "geo_redundant", "label": "異地備援" },
+        { "value": "manual", "label": "手動備份" },
+        { "value": "not_planned", "label": "尚未規劃" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "database.sensitive_data.handling",
+      "title": "敏感資料處理方式",
+      "description": "資料庫中敏感資料（個資、密碼等）的保護措施",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["backend_lead", "security_lead"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "encryption_at_rest", "label": "靜態加密（Encryption at Rest）" },
+        { "value": "encryption_in_transit", "label": "傳輸加密（TLS/SSL）" },
+        { "value": "column_encryption", "label": "欄位層級加密" },
+        { "value": "data_masking", "label": "資料遮罩（Data Masking）" },
+        { "value": "hashing", "label": "密碼雜湊（bcrypt / Argon2）" },
+        { "value": "audit_log", "label": "存取稽核日誌" },
+        { "value": "rbac", "label": "資料庫層級 RBAC" },
+        { "value": "none", "label": "無特別處理" }
+      ],
+      "output_mapping": [
+        { "target": "readiness_report", "path": "security.data_protection" }
+      ],
+      "ai_risk_note": "AI 必須知道哪些欄位需要加密或遮罩，否則可能在產出中洩漏敏感邏輯",
+      "version": "1.0.0"
+    }
+  ]
+}

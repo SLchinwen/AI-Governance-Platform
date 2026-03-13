@@ -1,0 +1,40 @@
+---
+description: 專案技術治理與 AI 協作知識庫 - 通用規則
+globs: ["**/*"]
+---
+
+# AI 協作通用規則
+
+## 專案定位
+本 Repo 是「專案技術治理與 AI 協作知識庫」，核心目的是：
+- 管理公司級的技術規範問卷題庫
+- 執行問卷填答流程
+- 產出標準化技術棧與 AI Context
+- 治理 AI 協作開發的規範與邊界
+
+## AI 行為準則
+
+### 必須遵守
+- 所有產出必須符合 docs/schemas/ 下的 JSON Schema 定義
+- 題目 ID 格式必須遵循 `category.subcategory.field` 命名規範
+- 選項值必須使用英文小寫加底線（如 `ef_core`、`react_router`）
+- 修改 SSOT 文件（Level 1）時必須提醒使用者需經審核
+- 產出文件必須包含版本號與產出時間
+
+### 禁止行為
+- 不得在任何檔案中寫入硬編碼的密碼、金鑰或個資
+- 不得修改已鎖定版本的專案答案
+- 不得產出與 SSOT 文件衝突的內容
+- 不得跳過驗證規則直接產出正式文件
+
+## 文件分級
+- Level 1（SSOT）：tech-stack.json, validation-rules.json, question-bank/*.json
+- Level 2（受控文件）：ai-context.md, readiness-report.md, cursor rules
+- Level 3（參考文件）：implementation-plan.md, 設計原則, 教學文件
+- Level 4（草稿）：AI 產出, 未審核文件
+
+## 語言規範
+- 所有使用者面向文件使用繁體中文
+- 所有 JSON key / ID / 選項 value 使用英文小寫加底線
+- 程式碼註解使用繁體中文
+- commit message 使用英文（Conventional Commits）

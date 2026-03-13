@@ -1,0 +1,142 @@
+{
+  "category": "security",
+  "category_label": "資安與合規",
+  "stage": "design",
+  "description": "資訊安全政策、合規要求與 AI 協作安全邊界",
+  "owner_roles": ["security_lead", "architect"],
+  "questions": [
+    {
+      "question_id": "security.auth.authorization",
+      "title": "授權機制",
+      "description": "系統的使用者權限控制方式",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["architect", "security_lead"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "rbac", "label": "角色型存取控制（RBAC）" },
+        { "value": "abac", "label": "屬性型存取控制（ABAC）" },
+        { "value": "pbac", "label": "政策型存取控制（Policy-Based）" },
+        { "value": "claims_based", "label": "Claims-Based Authorization" },
+        { "value": "resource_based", "label": "資源層級授權" },
+        { "value": "simple", "label": "簡單角色檢查" },
+        { "value": "none", "label": "無授權機制" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "security.authorization" },
+        { "target": "ai_context", "path": "security.authorization" }
+      ],
+      "ai_risk_note": "授權邏輯是最容易被 AI 忽略或實作錯誤的安全環節",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "security.encryption.transport",
+      "title": "傳輸加密",
+      "description": "資料傳輸時的加密方式",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["security_lead", "devops"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "tls_13", "label": "TLS 1.3" },
+        { "value": "tls_12", "label": "TLS 1.2" },
+        { "value": "https_only", "label": "強制 HTTPS" },
+        { "value": "mutual_tls", "label": "Mutual TLS（mTLS）" },
+        { "value": "not_configured", "label": "尚未配置" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "security.compliance.requirements",
+      "title": "合規要求",
+      "description": "專案需要遵循的法規或標準",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["pm", "security_lead"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "gdpr", "label": "GDPR（歐盟個資保護）" },
+        { "value": "pdpa_tw", "label": "個資法（台灣）" },
+        { "value": "iso_27001", "label": "ISO 27001" },
+        { "value": "soc2", "label": "SOC 2" },
+        { "value": "pci_dss", "label": "PCI DSS（支付卡）" },
+        { "value": "hipaa", "label": "HIPAA（醫療）" },
+        { "value": "owasp_top10", "label": "OWASP Top 10" },
+        { "value": "company_policy", "label": "公司內部資安政策" },
+        { "value": "none", "label": "無特殊合規要求" }
+      ],
+      "output_mapping": [
+        { "target": "readiness_report", "path": "security.compliance" },
+        { "target": "ai_context", "path": "security.compliance" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "security.vulnerability.scanning",
+      "title": "弱點掃描工具",
+      "description": "是否使用自動化安全掃描工具",
+      "question_type": "multi_select",
+      "required": false,
+      "owner_role": ["security_lead", "devops"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "sonarqube", "label": "SonarQube / SonarCloud" },
+        { "value": "snyk", "label": "Snyk" },
+        { "value": "dependabot", "label": "GitHub Dependabot" },
+        { "value": "owasp_zap", "label": "OWASP ZAP" },
+        { "value": "fortify", "label": "Fortify" },
+        { "value": "github_advanced", "label": "GitHub Advanced Security" },
+        { "value": "none", "label": "無弱點掃描" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "security.secrets.management",
+      "title": "機敏資訊管理",
+      "description": "密碼、金鑰、連線字串等機敏資訊的管理方式",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["devops", "security_lead"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "azure_key_vault", "label": "Azure Key Vault" },
+        { "value": "aws_secrets", "label": "AWS Secrets Manager" },
+        { "value": "hashicorp_vault", "label": "HashiCorp Vault" },
+        { "value": "env_variables", "label": "環境變數" },
+        { "value": "user_secrets", "label": ".NET User Secrets（開發用）" },
+        { "value": "config_file", "label": "組態檔案（需改善）" },
+        { "value": "hardcoded", "label": "寫死在程式碼中（必須改善）" }
+      ],
+      "output_mapping": [
+        { "target": "readiness_report", "path": "security.secrets_management" }
+      ],
+      "ai_risk_note": "AI 絕不能在程式碼中產出硬編碼的密碼或金鑰",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "security.ai.boundaries",
+      "title": "AI 協作安全邊界",
+      "description": "定義 AI 工具可以接觸的範圍與限制",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["architect", "security_lead"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "no_prod_data", "label": "AI 不得接觸正式環境資料" },
+        { "value": "no_secrets", "label": "AI 不得處理機敏資訊" },
+        { "value": "code_review_required", "label": "AI 產出必須經人工審查" },
+        { "value": "no_external_api", "label": "AI 不得直接呼叫外部 API" },
+        { "value": "sandbox_only", "label": "AI 僅在沙箱環境操作" },
+        { "value": "approved_models_only", "label": "僅使用公司核准的 AI 模型" },
+        { "value": "audit_trail", "label": "AI 操作需留稽核軌跡" },
+        { "value": "no_pii", "label": "AI prompt 不得包含個資" }
+      ],
+      "output_mapping": [
+        { "target": "ai_context", "path": "security.ai_boundaries" },
+        { "target": "governance_summary", "path": "ai_security_policy" }
+      ],
+      "ai_risk_note": "這是整個治理架構中最重要的安全控制項目",
+      "version": "1.0.0"
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "$schema": "../../docs/schemas/output-schema.json",
+  "output_id": "OUT-2026-001-TS",
+  "project_id": "PRJ-2026-001",
+  "output_type": "tech_stack",
+  "generated_at": "2026-03-13T15:00:00Z",
+  "generated_from_version": "1.0.0",
+  "format": "json",
+  "review_status": "approved",
+  "content": {
+    "project": {
+      "name": "客戶管理平台 v2.0",
+      "type": "web_application",
+      "scope": "medium",
+      "is_new": "extension"
+    },
+    "architecture": {
+      "style": "modular_monolith",
+      "layers": ["presentation", "application", "domain", "infrastructure", "data_access"],
+      "design_patterns": ["repository", "unit_of_work", "mediator", "dependency_injection"]
+    },
+    "backend": {
+      "platform": "dotnet",
+      "version": "net8",
+      "framework": "webapi",
+      "orm": "ef_core",
+      "auth": {
+        "method": "jwt",
+        "jwt_config": {
+          "access_token_lifetime_minutes": 30,
+          "refresh_token_enabled": true,
+          "refresh_token_lifetime_days": 7,
+          "token_storage": "httponly_cookie"
+        }
+      },
+      "logging": "serilog"
+    },
+    "frontend": {
+      "framework": "react",
+      "language": "typescript_strict",
+      "ui_library": "ant_design",
+      "styling": "css_modules",
+      "state_management": "zustand",
+      "routing": "react_router",
+      "build_tool": "vite"
+    },
+    "database": {
+      "engine": "azure_sql",
+      "design_approach": "code_first",
+      "cache": "azure_redis",
+      "naming_convention": "pascal_case"
+    },
+    "api": {
+      "style": "restful",
+      "versioning": "url_path",
+      "response_format": "envelope",
+      "error_handling": "global_exception",
+      "documentation": "swagger_auto"
+    },
+    "security": {
+      "authorization": "rbac",
+      "secrets_management": "azure_key_vault",
+      "compliance": ["pdpa_tw", "owasp_top10", "company_policy"],
+      "encryption": {
+        "at_rest": true,
+        "in_transit": true,
+        "column_level": false
+      }
+    },
+    "infrastructure": {
+      "platform": "azure",
+      "containerization": "app_service",
+      "cicd": "github_actions",
+      "monitoring": ["app_insights", "health_checks"],
+      "logging_platform": "app_insights",
+      "environments": ["local", "dev", "sit", "uat", "production"],
+      "branching_strategy": "github_flow",
+      "iac": "bicep"
+    },
+    "integrations": {
+      "external": ["email", "storage", "ai_service"]
+    },
+    "ai_collaboration": {
+      "tools": ["cursor", "claude"],
+      "model": ["claude_sonnet"],
+      "allowed_scope": ["code_generation", "code_review", "unit_test", "documentation", "refactoring", "api_design"],
+      "prohibited_scope": ["production_deploy", "db_migration_prod", "secret_handling", "pii_processing", "delete_operations"],
+      "review_process": "mandatory_review",
+      "context_strategy": ["cursor_rules", "project_context_file", "prompt_library"]
+    }
+  }
+}

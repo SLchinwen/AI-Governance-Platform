@@ -1,0 +1,38 @@
+---
+description: 題庫相關操作規則
+globs: ["question-bank/**/*.json"]
+---
+
+# 題庫操作規則
+
+## Schema 遵循
+所有題目必須符合 `docs/schemas/question-bank-schema.json` 的定義。
+
+## question_id 命名規範
+格式：`{category}.{subcategory}.{field}`
+- category：必須為 9 大分類之一
+- subcategory：功能子群組（如 runtime, auth, hosting）
+- field：具體欄位（如 platform, version, method）
+- 全部使用英文小寫加底線
+
+## 新增題目檢查清單
+1. question_id 是否唯一且遵循命名規範
+2. category 是否正確
+3. owner_role 是否合理
+4. quality_impact 是否正確評估
+5. 是否需要 depends_on 條件
+6. 是否需要 output_mapping
+7. 是否需要 ai_risk_note
+8. 選項清單是否完整
+
+## 選項設計
+- value：英文小寫加底線，機器可讀
+- label：人類可讀的標籤（繁體中文優先）
+- description：額外說明（選填）
+- triggers：觸發其他題目的 ID（選填）
+
+## 版本管理
+- 新增題目：Minor 版本 +0.1
+- 修改選項：Minor 版本 +0.1
+- 刪除題目：Major 版本 +1.0
+- 修改 question_id：Major 版本 +1.0

@@ -1,0 +1,167 @@
+{
+  "category": "project_basic",
+  "category_label": "專案基本資訊",
+  "stage": "discovery",
+  "description": "專案啟動前必須確認的基礎資訊，決定後續所有問卷的範圍與方向",
+  "owner_roles": ["pm"],
+  "questions": [
+    {
+      "question_id": "project_basic.profile.name",
+      "title": "專案名稱",
+      "description": "請輸入正式專案名稱，將用於所有產出文件與 GitHub repo 命名",
+      "question_type": "text",
+      "required": true,
+      "owner_role": ["pm"],
+      "quality_impact": "critical",
+      "output_mapping": [
+        { "target": "tech_stack", "path": "project.name" },
+        { "target": "ai_context", "path": "project.name" }
+      ],
+      "ai_risk_note": "未定義專案名稱會導致 AI 無法正確識別上下文範圍",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "project_basic.profile.type",
+      "title": "專案類型",
+      "description": "本專案屬於哪種類型？不同類型會載入不同的後續題組",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["pm"],
+      "quality_impact": "critical",
+      "options": [
+        {
+          "value": "web_application",
+          "label": "Web 應用系統",
+          "description": "包含前後端的完整 Web 應用",
+          "triggers": ["architecture", "backend", "frontend", "database", "api", "security", "deployment"]
+        },
+        {
+          "value": "api_platform",
+          "label": "API 服務平台",
+          "description": "以 API 為主的後端服務",
+          "triggers": ["architecture", "backend", "database", "api", "security", "deployment"]
+        },
+        {
+          "value": "integration",
+          "label": "系統整合專案",
+          "description": "串接多個既有系統",
+          "triggers": ["architecture", "backend", "api", "security", "deployment"]
+        },
+        {
+          "value": "internal_tool",
+          "label": "內部工具",
+          "description": "公司內部使用的工具或管理系統",
+          "triggers": ["architecture", "backend", "frontend", "database", "deployment"]
+        },
+        {
+          "value": "maintenance",
+          "label": "維運改善專案",
+          "description": "既有系統的維護、優化或升級",
+          "triggers": ["architecture", "backend", "deployment"]
+        },
+        {
+          "value": "data_pipeline",
+          "label": "資料處理管線",
+          "description": "ETL、資料分析或報表系統",
+          "triggers": ["architecture", "backend", "database", "deployment"]
+        }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "project.type" },
+        { "target": "ai_context", "path": "project.type" }
+      ],
+      "ai_risk_note": "專案類型決定 AI 生成程式碼的架構模式，錯誤的類型會導致整體架構偏差",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "project_basic.profile.scope",
+      "title": "專案範圍等級",
+      "description": "專案的規模與複雜度評估",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["pm"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "small", "label": "小型（1-3 人月）", "description": "功能單純，1-2 位開發者" },
+        { "value": "medium", "label": "中型（3-12 人月）", "description": "多個模組，3-5 位開發者" },
+        { "value": "large", "label": "大型（12+ 人月）", "description": "跨團隊協作，6+ 位開發者" },
+        { "value": "enterprise", "label": "企業級（24+ 人月）", "description": "多系統整合，跨部門" }
+      ],
+      "output_mapping": [
+        { "target": "ai_context", "path": "project.scope" },
+        { "target": "readiness_report", "path": "project.complexity" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "project_basic.profile.is_new",
+      "title": "是否為全新專案",
+      "description": "此專案是全新開發、還是基於既有系統的延伸或改版",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["pm"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "greenfield", "label": "全新專案（Greenfield）", "description": "從零開始建立" },
+        { "value": "extension", "label": "既有系統擴充", "description": "在既有系統上新增功能模組" },
+        { "value": "migration", "label": "系統遷移/改版", "description": "將既有系統遷移至新技術棧" },
+        { "value": "refactor", "label": "重構改善", "description": "重構既有系統的架構或程式碼" }
+      ],
+      "ai_risk_note": "AI 必須知道是否有既有程式碼基礎，否則可能產出與現行系統衝突的程式碼",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "project_basic.profile.timeline",
+      "title": "預計時程",
+      "description": "專案的預計起迄時間",
+      "question_type": "text",
+      "required": true,
+      "owner_role": ["pm"],
+      "quality_impact": "medium",
+      "output_mapping": [
+        { "target": "ai_context", "path": "project.timeline" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "project_basic.profile.team_size",
+      "title": "開發團隊規模",
+      "description": "預計參與此專案的開發人員數量（含 AI 協作）",
+      "question_type": "number",
+      "required": true,
+      "owner_role": ["pm"],
+      "quality_impact": "medium",
+      "validation_rules": [
+        { "rule_id": "team_min", "type": "range_check", "message": "團隊人數至少為 1" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "project_basic.profile.stakeholders",
+      "title": "主要利害關係人",
+      "description": "列出專案的關鍵決策者與主要使用者角色",
+      "question_type": "text",
+      "required": false,
+      "owner_role": ["pm"],
+      "quality_impact": "low",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "project_basic.compliance.data_sensitivity",
+      "title": "資料敏感度等級",
+      "description": "此專案處理的資料敏感程度，將影響安全性與 AI 協作的限制範圍",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["pm"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "public", "label": "公開資料", "description": "不含任何敏感資訊" },
+        { "value": "internal", "label": "內部資料", "description": "僅限公司內部使用" },
+        { "value": "confidential", "label": "機密資料", "description": "含客戶個資或商業機密" },
+        { "value": "restricted", "label": "高度機密", "description": "受法規管制（如金融、醫療）" }
+      ],
+      "ai_risk_note": "資料敏感度決定 AI 可接觸的資料範圍與是否可使用雲端 AI 服務",
+      "version": "1.0.0"
+    }
+  ]
+}

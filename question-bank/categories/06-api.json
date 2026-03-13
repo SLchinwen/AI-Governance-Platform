@@ -1,0 +1,164 @@
+{
+  "category": "api",
+  "category_label": "API 設計與規範",
+  "stage": "design",
+  "description": "API 設計風格、版本策略、文件規範與整合方式",
+  "owner_roles": ["backend_lead", "architect"],
+  "questions": [
+    {
+      "question_id": "api.style.type",
+      "title": "API 設計風格",
+      "description": "對外/對內 API 的設計方式",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead", "architect"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "restful", "label": "RESTful API" },
+        { "value": "graphql", "label": "GraphQL" },
+        { "value": "grpc", "label": "gRPC" },
+        { "value": "odata", "label": "OData" },
+        { "value": "soap", "label": "SOAP（Legacy）" },
+        { "value": "mixed", "label": "混合（REST + GraphQL）" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "api.style" },
+        { "target": "ai_context", "path": "api.style" }
+      ],
+      "ai_risk_note": "API 風格決定 AI 產出的 Controller/Resolver 結構與回應格式",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "api.versioning.strategy",
+      "title": "API 版本策略",
+      "description": "API 版本管理方式",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "url_path", "label": "URL 路徑版本（/api/v1/）" },
+        { "value": "query_string", "label": "Query String（?api-version=1.0）" },
+        { "value": "header", "label": "Header 版本（X-API-Version）" },
+        { "value": "media_type", "label": "Media Type 版本" },
+        { "value": "no_versioning", "label": "不做版本管理" }
+      ],
+      "output_mapping": [
+        { "target": "ai_context", "path": "api.versioning" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "api.documentation.openapi",
+      "title": "API 文件狀態",
+      "description": "是否有 OpenAPI / Swagger 文件",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "swagger_auto", "label": "自動產生 Swagger（Swashbuckle / NSwag）" },
+        { "value": "openapi_manual", "label": "手動維護 OpenAPI spec" },
+        { "value": "postman", "label": "Postman Collection" },
+        { "value": "markdown", "label": "Markdown 文件" },
+        { "value": "no_docs", "label": "目前無 API 文件" }
+      ],
+      "output_mapping": [
+        { "target": "readiness_report", "path": "documentation.api_docs" }
+      ],
+      "validation_rules": [
+        {
+          "rule_id": "api_docs_required",
+          "type": "required_if",
+          "message": "對外 API 必須有文件規範"
+        }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "api.response.format",
+      "title": "API 回應格式標準",
+      "description": "API 回應的統一格式規範",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "envelope", "label": "統一信封格式（{ success, data, error, message }）" },
+        { "value": "problem_details", "label": "RFC 7807 Problem Details" },
+        { "value": "json_api", "label": "JSON:API 規範" },
+        { "value": "custom", "label": "自定義格式" },
+        { "value": "no_standard", "label": "無統一格式" }
+      ],
+      "output_mapping": [
+        { "target": "ai_context", "path": "api.response_format" }
+      ],
+      "ai_risk_note": "回應格式是前後端協作的核心契約，AI 必須遵循統一格式",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "api.error.handling",
+      "title": "錯誤處理策略",
+      "description": "API 錯誤回應的標準處理方式",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "global_exception", "label": "全域例外處理 Middleware" },
+        { "value": "result_pattern", "label": "Result Pattern（回傳 Result<T>）" },
+        { "value": "exception_filter", "label": "Exception Filter" },
+        { "value": "try_catch", "label": "各別 Try-Catch" },
+        { "value": "mixed", "label": "混合方式" }
+      ],
+      "output_mapping": [
+        { "target": "ai_context", "path": "api.error_handling" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "api.rate_limiting.enabled",
+      "title": "是否啟用 Rate Limiting",
+      "description": "API 是否有流量控制機制",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead", "architect"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "yes_per_client", "label": "是，依客戶端限流" },
+        { "value": "yes_per_endpoint", "label": "是，依端點限流" },
+        { "value": "yes_global", "label": "是，全域限流" },
+        { "value": "api_gateway", "label": "由 API Gateway 處理" },
+        { "value": "no", "label": "否" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "api.external.integrations",
+      "title": "外部系統整合",
+      "description": "需要串接的外部 API 或第三方服務",
+      "question_type": "multi_select",
+      "required": false,
+      "owner_role": ["backend_lead", "architect"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "payment", "label": "金流服務（綠界/藍新/Stripe）" },
+        { "value": "email", "label": "Email 服務（SendGrid/SES）" },
+        { "value": "sms", "label": "簡訊服務" },
+        { "value": "push_notification", "label": "推播通知（FCM/APNs）" },
+        { "value": "storage", "label": "雲端儲存（Azure Blob/S3）" },
+        { "value": "cdn", "label": "CDN 服務" },
+        { "value": "map", "label": "地圖服務（Google Maps）" },
+        { "value": "social_login", "label": "社群登入" },
+        { "value": "erp", "label": "ERP 系統" },
+        { "value": "crm", "label": "CRM 系統" },
+        { "value": "ai_service", "label": "AI/ML 服務（OpenAI/Azure AI）" },
+        { "value": "none", "label": "無外部整合" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "integrations.external" }
+      ],
+      "version": "1.0.0"
+    }
+  ]
+}

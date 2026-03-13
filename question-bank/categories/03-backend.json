@@ -1,0 +1,217 @@
+{
+  "category": "backend",
+  "category_label": "後端技術棧",
+  "stage": "design",
+  "description": "後端執行環境、框架、套件與開發規範定義",
+  "owner_roles": ["backend_lead", "architect"],
+  "questions": [
+    {
+      "question_id": "backend.runtime.platform",
+      "title": "後端執行平台",
+      "description": "專案後端的主要執行平台與語言",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead", "architect"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "dotnet", "label": ".NET (C#)", "triggers": ["backend.runtime.dotnet_version", "backend.framework.dotnet_type"] },
+        { "value": "nodejs", "label": "Node.js (TypeScript/JavaScript)", "triggers": ["backend.runtime.node_version"] },
+        { "value": "java", "label": "Java / Spring Boot" },
+        { "value": "python", "label": "Python (Django/FastAPI)" },
+        { "value": "go", "label": "Go" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "backend.platform" },
+        { "target": "ai_context", "path": "backend.platform" }
+      ],
+      "ai_risk_note": "後端平台是 AI 產出所有後端程式碼的基礎，必須正確填寫",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "backend.runtime.dotnet_version",
+      "title": ".NET 版本",
+      "description": "使用的 .NET 版本",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead"],
+      "quality_impact": "critical",
+      "depends_on": {
+        "question_id": "backend.runtime.platform",
+        "condition": "equals",
+        "value": "dotnet"
+      },
+      "options": [
+        { "value": "net6", "label": ".NET 6 LTS" },
+        { "value": "net7", "label": ".NET 7" },
+        { "value": "net8", "label": ".NET 8 LTS" },
+        { "value": "net9", "label": ".NET 9" },
+        { "value": "net_framework_48", "label": ".NET Framework 4.8（Legacy）" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "backend.dotnet_version" }
+      ],
+      "ai_risk_note": "版本影響可用的 API 與語法，錯誤版本會導致 AI 產出不相容程式碼",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "backend.framework.dotnet_type",
+      "title": ".NET 專案類型",
+      "description": "使用的 .NET 專案框架",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead"],
+      "quality_impact": "high",
+      "depends_on": {
+        "question_id": "backend.runtime.platform",
+        "condition": "equals",
+        "value": "dotnet"
+      },
+      "options": [
+        { "value": "webapi", "label": "ASP.NET Core Web API" },
+        { "value": "minimal_api", "label": "Minimal API" },
+        { "value": "mvc", "label": "ASP.NET Core MVC" },
+        { "value": "blazor_server", "label": "Blazor Server" },
+        { "value": "worker_service", "label": "Worker Service（背景服務）" },
+        { "value": "grpc_service", "label": "gRPC Service" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "backend.framework" },
+        { "target": "ai_context", "path": "backend.framework" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "backend.orm.choice",
+      "title": "ORM / 資料存取方式",
+      "description": "後端存取資料庫的方式",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "ef_core", "label": "Entity Framework Core" },
+        { "value": "dapper", "label": "Dapper（輕量 Micro ORM）" },
+        { "value": "ef_core_dapper", "label": "EF Core + Dapper 混用" },
+        { "value": "ado_net", "label": "ADO.NET（Raw SQL）" },
+        { "value": "prisma", "label": "Prisma（Node.js）" },
+        { "value": "typeorm", "label": "TypeORM（Node.js）" },
+        { "value": "other", "label": "其他" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "backend.orm" },
+        { "target": "ai_context", "path": "backend.orm" }
+      ],
+      "ai_risk_note": "ORM 選擇直接影響 AI 生成的資料存取程式碼風格與模式",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "backend.auth.method",
+      "title": "認證機制",
+      "description": "系統採用的使用者認證方式",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead", "architect"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "jwt", "label": "JWT Token", "triggers": ["backend.auth.jwt_config"] },
+        { "value": "oauth2", "label": "OAuth 2.0 / OpenID Connect" },
+        { "value": "azure_ad", "label": "Azure AD / Entra ID" },
+        { "value": "identity_server", "label": "IdentityServer / Duende" },
+        { "value": "cookie", "label": "Cookie-based Session" },
+        { "value": "api_key", "label": "API Key" },
+        { "value": "windows_auth", "label": "Windows 整合驗證" },
+        { "value": "none", "label": "無認證（內部服務）" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "backend.auth.method" },
+        { "target": "ai_context", "path": "security.auth_method" }
+      ],
+      "ai_risk_note": "認證機制是最容易產生安全漏洞的環節，AI 必須明確知道使用哪種認證",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "backend.auth.jwt_config",
+      "title": "JWT 設定細節",
+      "description": "JWT 的生命週期與刷新策略",
+      "question_type": "matrix",
+      "required": true,
+      "owner_role": ["backend_lead"],
+      "quality_impact": "high",
+      "depends_on": {
+        "question_id": "backend.auth.method",
+        "condition": "equals",
+        "value": "jwt"
+      },
+      "options": [
+        { "value": "access_token_lifetime", "label": "Access Token 有效期（分鐘）" },
+        { "value": "refresh_token_enabled", "label": "是否啟用 Refresh Token" },
+        { "value": "refresh_token_lifetime", "label": "Refresh Token 有效期（天）" },
+        { "value": "token_storage", "label": "Token 儲存方式（HttpOnly Cookie / LocalStorage / Memory）" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "backend.logging.framework",
+      "title": "日誌框架",
+      "description": "後端使用的日誌記錄框架",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["backend_lead"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "serilog", "label": "Serilog" },
+        { "value": "nlog", "label": "NLog" },
+        { "value": "ms_logging", "label": "Microsoft.Extensions.Logging" },
+        { "value": "log4net", "label": "log4net" },
+        { "value": "winston", "label": "Winston（Node.js）" },
+        { "value": "pino", "label": "Pino（Node.js）" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "backend.logging" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "backend.testing.strategy",
+      "title": "測試策略",
+      "description": "後端的測試方法與工具",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["backend_lead"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "unit_test", "label": "單元測試（xUnit / NUnit / Jest）" },
+        { "value": "integration_test", "label": "整合測試" },
+        { "value": "api_test", "label": "API 測試（Postman / REST Client）" },
+        { "value": "load_test", "label": "負載測試" },
+        { "value": "e2e_test", "label": "端對端測試" },
+        { "value": "contract_test", "label": "契約測試（Pact）" },
+        { "value": "no_test", "label": "目前無測試計畫" }
+      ],
+      "output_mapping": [
+        { "target": "readiness_report", "path": "quality.testing_strategy" }
+      ],
+      "ai_risk_note": "未定義測試策略時，AI 可能不會自動產生測試程式碼",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "backend.coding.conventions",
+      "title": "程式碼規範",
+      "description": "後端程式碼的命名與風格規範",
+      "question_type": "multi_select",
+      "required": false,
+      "owner_role": ["backend_lead"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "editorconfig", "label": "使用 .editorconfig" },
+        { "value": "analyzers", "label": "使用 Roslyn Analyzers / ESLint" },
+        { "value": "naming_convention", "label": "有自定義命名規範文件" },
+        { "value": "code_review", "label": "有 Code Review 流程" },
+        { "value": "pr_template", "label": "有 PR Template" },
+        { "value": "none", "label": "目前無統一規範" }
+      ],
+      "ai_risk_note": "AI 需要明確的程式碼風格指引，否則每次產出風格可能不一致",
+      "version": "1.0.0"
+    }
+  ]
+}

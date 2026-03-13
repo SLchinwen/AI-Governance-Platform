@@ -1,0 +1,184 @@
+{
+  "category": "deployment",
+  "category_label": "部署與維運",
+  "stage": "design",
+  "description": "CI/CD 管線、部署策略、監控與維運規劃",
+  "owner_roles": ["devops"],
+  "questions": [
+    {
+      "question_id": "deployment.cicd.platform",
+      "title": "CI/CD 平台",
+      "description": "持續整合與持續部署使用的平台",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["devops"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "github_actions", "label": "GitHub Actions" },
+        { "value": "azure_devops", "label": "Azure DevOps Pipelines" },
+        { "value": "gitlab_ci", "label": "GitLab CI/CD" },
+        { "value": "jenkins", "label": "Jenkins" },
+        { "value": "circle_ci", "label": "CircleCI" },
+        { "value": "none", "label": "無 CI/CD", "triggers": ["deployment.cicd.none_reason"] }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "devops.cicd_platform" },
+        { "target": "ai_context", "path": "devops.cicd" }
+      ],
+      "ai_risk_note": "CI/CD 設定影響 AI 產出的 workflow 檔案格式與部署腳本",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "deployment.cicd.none_reason",
+      "title": "無 CI/CD 的原因與補齊計畫",
+      "description": "若目前無 CI/CD，請說明原因並提出預計建立的時程",
+      "question_type": "text",
+      "required": true,
+      "owner_role": ["devops"],
+      "quality_impact": "high",
+      "depends_on": {
+        "question_id": "deployment.cicd.platform",
+        "condition": "equals",
+        "value": "none"
+      },
+      "validation_rules": [
+        { "rule_id": "cicd_plan_required", "type": "required_if", "message": "無 CI/CD 必須填寫原因與補齊計畫" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "deployment.strategy.type",
+      "title": "部署策略",
+      "description": "正式環境的部署更新策略",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["devops"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "rolling", "label": "滾動更新（Rolling Update）" },
+        { "value": "blue_green", "label": "藍綠部署（Blue-Green）" },
+        { "value": "canary", "label": "金絲雀部署（Canary）" },
+        { "value": "recreate", "label": "重建部署（停機更新）" },
+        { "value": "feature_flag", "label": "Feature Flag 控制" },
+        { "value": "manual", "label": "手動部署" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "devops.deployment_strategy" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "deployment.environments.list",
+      "title": "環境清單",
+      "description": "專案擁有的部署環境",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["devops"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "local", "label": "本地開發環境（Local）" },
+        { "value": "dev", "label": "開發環境（Development）" },
+        { "value": "sit", "label": "系統整合測試（SIT）" },
+        { "value": "uat", "label": "使用者驗收測試（UAT）" },
+        { "value": "staging", "label": "預備環境（Staging）" },
+        { "value": "production", "label": "正式環境（Production）" },
+        { "value": "dr", "label": "災難復原環境（DR）" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "devops.environments" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "deployment.monitoring.tools",
+      "title": "監控工具",
+      "description": "系統運行監控與告警工具",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["devops"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "app_insights", "label": "Azure Application Insights" },
+        { "value": "prometheus", "label": "Prometheus + Grafana" },
+        { "value": "datadog", "label": "Datadog" },
+        { "value": "elastic_apm", "label": "Elastic APM" },
+        { "value": "new_relic", "label": "New Relic" },
+        { "value": "azure_monitor", "label": "Azure Monitor" },
+        { "value": "health_checks", "label": "Health Check Endpoints" },
+        { "value": "custom", "label": "自建監控" },
+        { "value": "none", "label": "無監控" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "devops.monitoring" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "deployment.logging.centralized",
+      "title": "集中式日誌平台",
+      "description": "日誌的集中收集與查詢平台",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["devops"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "app_insights", "label": "Azure Application Insights" },
+        { "value": "elk", "label": "ELK Stack（Elasticsearch + Logstash + Kibana）" },
+        { "value": "seq", "label": "Seq" },
+        { "value": "splunk", "label": "Splunk" },
+        { "value": "azure_log_analytics", "label": "Azure Log Analytics" },
+        { "value": "file_based", "label": "檔案式日誌" },
+        { "value": "none", "label": "無集中日誌" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "devops.logging_platform" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "deployment.git.branching",
+      "title": "Git 分支策略",
+      "description": "團隊使用的 Git 分支管理策略",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["devops", "backend_lead"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "git_flow", "label": "Git Flow（develop / release / hotfix）" },
+        { "value": "github_flow", "label": "GitHub Flow（feature branch + PR）" },
+        { "value": "trunk_based", "label": "Trunk-Based Development" },
+        { "value": "gitlab_flow", "label": "GitLab Flow" },
+        { "value": "custom", "label": "自定義分支策略" },
+        { "value": "no_strategy", "label": "無明確策略" }
+      ],
+      "output_mapping": [
+        { "target": "ai_context", "path": "devops.branching_strategy" },
+        { "target": "governance_summary", "path": "version_control" }
+      ],
+      "ai_risk_note": "分支策略影響 AI 建議的 PR 流程與程式碼合併方式",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "deployment.iac.tool",
+      "title": "基礎設施即代碼（IaC）",
+      "description": "基礎設施自動化管理工具",
+      "question_type": "single_select",
+      "required": false,
+      "owner_role": ["devops"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "terraform", "label": "Terraform" },
+        { "value": "bicep", "label": "Azure Bicep" },
+        { "value": "arm", "label": "ARM Templates" },
+        { "value": "pulumi", "label": "Pulumi" },
+        { "value": "ansible", "label": "Ansible" },
+        { "value": "manual", "label": "手動設定（Portal / CLI）" },
+        { "value": "none", "label": "無 IaC" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "devops.iac" }
+      ],
+      "version": "1.0.0"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-03-13",
+  "description": "AI 協作治理平台 - 題庫總索引",
+  "total_questions": 70,
+  "total_required": 62,
+  "categories": [
+    {
+      "id": "project_basic",
+      "label": "專案基本資訊",
+      "file": "categories/01-project-basic.json",
+      "stage": "discovery",
+      "question_count": 8,
+      "required_count": 7,
+      "primary_roles": ["pm"],
+      "description": "專案啟動前必須確認的基礎資訊"
+    },
+    {
+      "id": "architecture",
+      "label": "系統架構",
+      "file": "categories/02-architecture.json",
+      "stage": "planning",
+      "question_count": 8,
+      "required_count": 8,
+      "primary_roles": ["architect"],
+      "description": "系統的整體架構模式、分層策略與技術方向"
+    },
+    {
+      "id": "backend",
+      "label": "後端技術棧",
+      "file": "categories/03-backend.json",
+      "stage": "design",
+      "question_count": 9,
+      "required_count": 8,
+      "primary_roles": ["backend_lead"],
+      "description": "後端執行環境、框架、套件與開發規範"
+    },
+    {
+      "id": "frontend",
+      "label": "前端技術棧",
+      "file": "categories/04-frontend.json",
+      "stage": "design",
+      "question_count": 9,
+      "required_count": 7,
+      "primary_roles": ["frontend_lead"],
+      "description": "前端框架、UI 元件庫、狀態管理與建構工具"
+    },
+    {
+      "id": "database",
+      "label": "資料庫設計",
+      "file": "categories/05-database.json",
+      "stage": "design",
+      "question_count": 6,
+      "required_count": 6,
+      "primary_roles": ["backend_lead", "architect"],
+      "description": "資料庫類型、設計策略、效能與備份規劃"
+    },
+    {
+      "id": "api",
+      "label": "API 設計與規範",
+      "file": "categories/06-api.json",
+      "stage": "design",
+      "question_count": 7,
+      "required_count": 6,
+      "primary_roles": ["backend_lead", "architect"],
+      "description": "API 設計風格、版本策略、文件規範與整合方式"
+    },
+    {
+      "id": "security",
+      "label": "資安與合規",
+      "file": "categories/07-security.json",
+      "stage": "design",
+      "question_count": 6,
+      "required_count": 5,
+      "primary_roles": ["security_lead", "architect"],
+      "description": "資訊安全政策、合規要求與 AI 協作安全邊界"
+    },
+    {
+      "id": "deployment",
+      "label": "部署與維運",
+      "file": "categories/08-deployment.json",
+      "stage": "design",
+      "question_count": 8,
+      "required_count": 7,
+      "primary_roles": ["devops"],
+      "description": "CI/CD 管線、部署策略、監控與維運規劃"
+    },
+    {
+      "id": "ai_collaboration",
+      "label": "AI 協作規範",
+      "file": "categories/09-ai-collaboration.json",
+      "stage": "planning",
+      "question_count": 9,
+      "required_count": 8,
+      "primary_roles": ["architect", "pm"],
+      "description": "AI 工具使用方式、協作規則、品質管控與產出審核"
+    }
+  ],
+  "stages": [
+    { "id": "discovery", "label": "探索期", "order": 1, "categories": ["project_basic"] },
+    { "id": "planning", "label": "規劃期", "order": 2, "categories": ["architecture", "ai_collaboration"] },
+    { "id": "design", "label": "設計期", "order": 3, "categories": ["backend", "frontend", "database", "api", "security", "deployment"] },
+    { "id": "development", "label": "開發期", "order": 4, "categories": [] },
+    { "id": "review", "label": "審查期", "order": 5, "categories": [] }
+  ],
+  "roles": [
+    { "id": "pm", "label": "專案經理", "primary_categories": ["project_basic"] },
+    { "id": "architect", "label": "架構師", "primary_categories": ["architecture", "ai_collaboration"] },
+    { "id": "backend_lead", "label": "後端主管", "primary_categories": ["backend", "database", "api"] },
+    { "id": "frontend_lead", "label": "前端主管", "primary_categories": ["frontend"] },
+    { "id": "devops", "label": "維運工程師", "primary_categories": ["deployment"] },
+    { "id": "security_lead", "label": "資安主管", "primary_categories": ["security"] },
+    { "id": "qa_lead", "label": "品質保證主管", "primary_categories": [] }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Output Schema",
+  "description": "公司級 AI 協作治理平台 - 輸出成果結構",
+  "type": "object",
+  "properties": {
+    "output_id": { "type": "string" },
+    "project_id": { "type": "string" },
+    "output_type": {
+      "type": "string",
+      "enum": [
+        "tech_stack",
+        "ai_context",
+        "readiness_report",
+        "governance_summary",
+        "prompt_context",
+        "adr_draft",
+        "cursor_rules_draft"
+      ]
+    },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "generated_from_version": { "type": "string" },
+    "format": {
+      "type": "string",
+      "enum": ["json", "markdown", "yaml"]
+    },
+    "content": {},
+    "review_status": {
+      "type": "string",
+      "enum": ["auto_generated", "reviewed", "approved", "published"]
+    },
+    "published_to": {
+      "type": "string",
+      "description": "發布到的 GitHub repo path"
+    }
+  },
+  "required": ["output_id", "project_id", "output_type", "generated_at", "format", "content"]
+}

@@ -1,0 +1,28 @@
+---
+description: 驗證規則相關操作規範
+globs: ["rules/**/*.json"]
+---
+
+# 驗證規則操作規則
+
+## 規則類型
+- `required_if`：條件必填檢查
+- `cross_field`：跨欄位交叉驗證
+- `conflict_check`：答案衝突檢查
+- `format_check`：格式驗證
+- `range_check`：範圍檢查
+
+## 嚴重度定義
+- `error`：必須修正才能通過，阻擋文件產出
+- `warning`：建議修正但不阻擋，會標記在 readiness report
+
+## 規則命名
+- rule_id 格式：`VAL-{三位數字}`，如 `VAL-001`
+- name：英文小寫加底線的描述性名稱
+- message：繁體中文的使用者面向錯誤訊息
+
+## 新增規則檢查
+1. 是否有明確的業務場景
+2. severity 是否合理
+3. 是否會與既有規則衝突
+4. 錯誤訊息是否清楚說明問題與修正方向

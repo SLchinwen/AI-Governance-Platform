@@ -1,0 +1,183 @@
+{
+  "category": "architecture",
+  "category_label": "系統架構",
+  "stage": "planning",
+  "description": "定義系統的整體架構模式、分層策略與技術方向",
+  "owner_roles": ["architect"],
+  "questions": [
+    {
+      "question_id": "architecture.pattern.style",
+      "title": "架構風格",
+      "description": "本專案採用的主要架構模式",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["architect"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "monolith", "label": "單體式架構（Monolith）", "description": "單一部署單元，適合中小型專案" },
+        { "value": "modular_monolith", "label": "模組化單體（Modular Monolith）", "description": "單體內部模組化，保留未來拆分彈性" },
+        { "value": "microservices", "label": "微服務架構（Microservices）", "description": "獨立部署的多個服務" },
+        { "value": "serverless", "label": "無伺服器架構（Serverless）", "description": "基於雲端 Functions 的事件驅動架構" },
+        { "value": "event_driven", "label": "事件驅動架構（Event-Driven）", "description": "基於事件與訊息佇列的鬆耦合架構" },
+        { "value": "layered", "label": "分層式架構（N-Tier）", "description": "傳統的前端/業務邏輯/資料層分離" },
+        { "value": "clean_architecture", "label": "Clean Architecture", "description": "依賴反轉為核心的洋蔥式架構" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "architecture.style" },
+        { "target": "ai_context", "path": "architecture.style" }
+      ],
+      "ai_risk_note": "架構風格是 AI 產出程式碼結構的最重要基礎，錯誤選擇將導致所有產出不一致",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "architecture.pattern.layers",
+      "title": "分層策略",
+      "description": "專案程式碼的分層方式",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["architect"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "presentation", "label": "展示層（Presentation）" },
+        { "value": "application", "label": "應用層（Application / Use Case）" },
+        { "value": "domain", "label": "領域層（Domain / Business Logic）" },
+        { "value": "infrastructure", "label": "基礎設施層（Infrastructure）" },
+        { "value": "data_access", "label": "資料存取層（Data Access / Repository）" },
+        { "value": "cross_cutting", "label": "橫切面（Cross-Cutting Concerns）" },
+        { "value": "shared_kernel", "label": "共用核心（Shared Kernel）" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "architecture.layers" },
+        { "target": "ai_context", "path": "architecture.layers" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "architecture.pattern.design_patterns",
+      "title": "採用的設計模式",
+      "description": "專案中預計使用或要求遵循的設計模式",
+      "question_type": "multi_select",
+      "required": false,
+      "owner_role": ["architect"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "repository", "label": "Repository Pattern" },
+        { "value": "unit_of_work", "label": "Unit of Work" },
+        { "value": "cqrs", "label": "CQRS（命令查詢職責分離）" },
+        { "value": "mediator", "label": "Mediator Pattern" },
+        { "value": "factory", "label": "Factory Pattern" },
+        { "value": "strategy", "label": "Strategy Pattern" },
+        { "value": "observer", "label": "Observer / Event Pattern" },
+        { "value": "decorator", "label": "Decorator Pattern" },
+        { "value": "specification", "label": "Specification Pattern" },
+        { "value": "dependency_injection", "label": "DI / IoC" }
+      ],
+      "output_mapping": [
+        { "target": "ai_context", "path": "architecture.design_patterns" }
+      ],
+      "ai_risk_note": "未指定設計模式時，AI 會用自己偏好的模式，可能與團隊風格不一致",
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "architecture.communication.style",
+      "title": "服務間通訊方式",
+      "description": "系統內部各元件或服務之間的通訊機制",
+      "question_type": "multi_select",
+      "required": true,
+      "owner_role": ["architect"],
+      "quality_impact": "high",
+      "depends_on": {
+        "question_id": "architecture.pattern.style",
+        "condition": "not_equals",
+        "value": "monolith"
+      },
+      "options": [
+        { "value": "rest_api", "label": "REST API（同步）" },
+        { "value": "grpc", "label": "gRPC（同步高效能）" },
+        { "value": "message_queue", "label": "Message Queue（非同步）", "description": "如 RabbitMQ、Azure Service Bus" },
+        { "value": "event_bus", "label": "Event Bus（事件廣播）" },
+        { "value": "graphql", "label": "GraphQL" },
+        { "value": "signalr", "label": "SignalR / WebSocket（即時）" },
+        { "value": "direct_call", "label": "直接方法呼叫（In-Process）" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "architecture.hosting.platform",
+      "title": "主要部署平台",
+      "description": "系統的主要運行環境",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["architect", "devops"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "azure", "label": "Microsoft Azure" },
+        { "value": "aws", "label": "Amazon Web Services" },
+        { "value": "gcp", "label": "Google Cloud Platform" },
+        { "value": "on_premise", "label": "地端機房（On-Premise）" },
+        { "value": "hybrid", "label": "混合雲（Hybrid）" },
+        { "value": "multi_cloud", "label": "多雲（Multi-Cloud）" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "infrastructure.platform" },
+        { "target": "ai_context", "path": "infrastructure.platform" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "architecture.hosting.containerized",
+      "title": "是否使用容器化",
+      "description": "系統是否採用 Docker / Container 部署",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["architect", "devops"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "docker", "label": "Docker Container" },
+        { "value": "kubernetes", "label": "Kubernetes（K8s）" },
+        { "value": "aks", "label": "Azure Kubernetes Service" },
+        { "value": "app_service", "label": "Azure App Service（PaaS）" },
+        { "value": "vm", "label": "傳統 VM 部署" },
+        { "value": "not_decided", "label": "尚未決定" }
+      ],
+      "output_mapping": [
+        { "target": "tech_stack", "path": "infrastructure.containerization" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "architecture.nfr.scalability",
+      "title": "擴展性需求",
+      "description": "系統預期的負載與擴展需求",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["architect"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "single_instance", "label": "單一實例，無擴展需求" },
+        { "value": "vertical", "label": "垂直擴展（加大規格）" },
+        { "value": "horizontal", "label": "水平擴展（多實例）" },
+        { "value": "auto_scale", "label": "自動擴展（Auto Scale）" },
+        { "value": "global", "label": "全球多區域部署" }
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "question_id": "architecture.nfr.availability",
+      "title": "可用性 SLA 目標",
+      "description": "系統的可用性服務等級要求",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["architect"],
+      "quality_impact": "medium",
+      "options": [
+        { "value": "99", "label": "99%（年停機 ~87 小時）" },
+        { "value": "99.5", "label": "99.5%（年停機 ~44 小時）" },
+        { "value": "99.9", "label": "99.9%（年停機 ~8.7 小時）" },
+        { "value": "99.99", "label": "99.99%（年停機 ~52 分鐘）" },
+        { "value": "best_effort", "label": "盡力而為（無明確 SLA）" }
+      ],
+      "version": "1.0.0"
+    }
+  ]
+}
