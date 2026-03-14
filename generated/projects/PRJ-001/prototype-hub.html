@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRJ-001 Prototype Hub</title>
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --card: #ffffff;
+        --line: #d9e0ea;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --brand: #0f62fe;
+        --ok: #166534;
+        --warn: #92400e;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", "Noto Sans TC", Arial, sans-serif;
+      }
+      .wrap {
+        max-width: 1180px;
+        margin: 20px auto;
+        padding: 0 14px 40px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      h1 { margin: 0 0 8px; font-size: 26px; }
+      h2 { margin: 0 0 8px; font-size: 18px; }
+      h3 { margin: 0 0 6px; font-size: 15px; }
+      .meta, .hint {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .grid { display: grid; gap: 12px; }
+      .two-col { grid-template-columns: 1.4fr 1fr; }
+      .three-col { grid-template-columns: repeat(3, 1fr); }
+      .stage-grid { grid-template-columns: repeat(2, 1fr); }
+      .flow-grid { grid-template-columns: repeat(6, 1fr); }
+      .stage-card {
+        border: 1px solid #dbe3f0;
+        border-radius: 12px;
+        background: #fff;
+        padding: 12px;
+      }
+      .stage-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .badge {
+        display: inline-block;
+        font-size: 12px;
+        border-radius: 999px;
+        padding: 2px 8px;
+      }
+      .badge.info { background: #edf4ff; color: #0f62fe; }
+      .badge.ok { background: #e7f7ec; color: var(--ok); }
+      .badge.warn { background: #fff4e6; color: var(--warn); }
+      .badge.current { background: #dbeafe; color: #1d4ed8; }
+      .flow-step {
+        border: 1px solid #dbe3f0;
+        border-radius: 12px;
+        background: #f8fbff;
+        padding: 12px;
+        position: relative;
+      }
+      .flow-step strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+      .flow-step:not(:last-child)::after {
+        content: "→";
+        position: absolute;
+        right: -11px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-weight: 700;
+      }
+      .stage-status {
+        margin-top: 10px;
+        padding: 8px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background: #f8fafc;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .check-list {
+        margin: 8px 0 0;
+        padding-left: 18px;
+      }
+      .check-list li {
+        margin: 6px 0;
+        line-height: 1.6;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      a.button {
+        display: inline-block;
+        text-decoration: none;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-weight: 600;
+      }
+      a.primary {
+        background: var(--brand);
+        color: #fff;
+      }
+      a.secondary {
+        background: #e9efff;
+        color: #13346e;
+      }
+      code, .mono {
+        font-family: Consolas, "Courier New", monospace;
+      }
+      @media (max-width: 960px) {
+        .two-col, .three-col, .stage-grid, .flow-grid {
+          grid-template-columns: 1fr;
+        }
+        .flow-step:not(:last-child)::after {
+          content: "↓";
+          right: auto;
+          left: 50%;
+          top: auto;
+          bottom: -18px;
+          transform: translateX(-50%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <section class="card">
+        <h1>PRJ-001 Prototype Hub</h1>
+        <div class="meta">
+          這一頁是 `S1-S6` prototype 的總入口，方便依照階段順序操作、匯入前階段 JSON、再匯出下一階段資料。<br />
+          建議從 `S1` 開始，逐階匯出 `project-context.json` 或該階段 handoff 檔，再帶進下一階段。
+        </div>
+        <div class="actions">
+          <a class="button primary" href="s1-questionnaire-prototype.html">從 S1 開始</a>
+          <a class="button secondary" href="s6-output-prototype.html">查看最終輸出</a>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>建議操作順序</h2>
+        <ul class="check-list">
+          <li>`S1 Discovery`：建立專案基本資料，匯出 `project-context.json` 或 `S2 decision list`。</li>
+          <li>`S2 Planning`：定義架構方向與 AI 邊界，回存更新版 `project-context.json`。</li>
+          <li>`S3 Design`：由各技術角色補齊可實作的工程規格，匯出 `S4 validation checklist`。</li>
+          <li>`S4 Validation`：自動檢查 + 人工處理，匯出 `S5 review packet`。</li>
+          <li>`S5 Review`：架構師與 PM 簽核，鎖定版本，匯出 `S6 output handoff`。</li>
+          <li>`S6 Output`：生成正式輸出檔，供 repo 與 AI 工具使用。</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>流程總覽</h2>
+        <div class="hint">如果你不確定現在做到哪裡，可以先看這一排。每一格都對應一個 prototype。</div>
+        <div class="grid flow-grid">
+          <div class="flow-step">
+            <strong>S1</strong>
+            <div class="hint">Discovery</div>
+            <span class="badge ok">已建立</span>
+          </div>
+          <div class="flow-step">
+            <strong>S2</strong>
+            <div class="hint">Planning</div>
+            <span class="badge ok">已建立</span>
+          </div>
+          <div class="flow-step">
+            <strong>S3</strong>
+            <div class="hint">Design</div>
+            <span class="badge current">目前多在此整理</span>
+          </div>
+          <div class="flow-step">
+            <strong>S4</strong>
+            <div class="hint">Validation</div>
+            <span class="badge ok">已建立</span>
+          </div>
+          <div class="flow-step">
+            <strong>S5</strong>
+            <div class="hint">Review</div>
+            <span class="badge ok">已建立</span>
+          </div>
+          <div class="flow-step">
+            <strong>S6</strong>
+            <div class="hint">Output</div>
+            <span class="badge ok">已建立</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="grid two-col">
+        <section class="card">
+          <h2>共用資料流</h2>
+          <ul class="check-list">
+            <li>主要共用檔案：<span class="mono">project-context.json</span></li>
+            <li>S1 可先使用：<span class="mono">s1-required-data.json</span> 做預填</li>
+            <li>S2 之後建議都優先回存最新版 <span class="mono">project-context.json</span></li>
+            <li>S4、S5、S6 也支援直接匯入前一階段專用 handoff JSON</li>
+          </ul>
+        </section>
+
+        <section class="card">
+          <h2>目前已建立原型</h2>
+          <div class="grid three-col">
+            <div class="stage-card">
+              <strong>S1-S2-S3</strong>
+              <div class="hint">前期探索、規劃、設計</div>
+              <span class="badge ok">已建立</span>
+            </div>
+            <div class="stage-card">
+              <strong>S4-S5-S6</strong>
+              <div class="hint">驗證、審核、產出</div>
+              <span class="badge ok">已建立</span>
+            </div>
+            <div class="stage-card">
+              <strong>首頁導覽</strong>
+              <div class="hint">本頁集中進入</div>
+              <span class="badge ok">已建立</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="card">
+        <h2>各階段入口</h2>
+        <div class="grid stage-grid">
+          <article class="stage-card">
+            <div class="stage-head">
+              <h3>S1 Discovery</h3>
+              <span class="badge info">PM</span>
+            </div>
+            <div class="hint">確認專案基本資料、範圍、敏感度、前置文件與 AI 邊界基線。</div>
+            <ul class="check-list">
+              <li>主要輸入：專案背景、需求摘要、公司方法資料</li>
+              <li>主要輸出：S1 answers / `project-context.json` / S2 decision list</li>
+            </ul>
+            <div class="stage-status">
+              <strong>目前狀態：</strong>已建立，可作為整個流程起點。<br />
+              <strong>建議下一步：</strong>完成 S1 後，直接帶 `project-context.json` 進 S2。
+            </div>
+            <div class="actions">
+              <a class="button primary" href="s1-questionnaire-prototype.html">前往 S1</a>
+            </div>
+          </article>
+
+          <article class="stage-card">
+            <div class="stage-head">
+              <h3>S2 Planning</h3>
+              <span class="badge info">Architect</span>
+            </div>
+            <div class="hint">定義架構方向、平台選型、AI 協作邊界與關鍵決策。</div>
+            <ul class="check-list">
+              <li>主要輸入：S1 匯出的 `project-context.json`</li>
+              <li>主要輸出：S2 context / S3 decision list / 更新版 `project-context.json`</li>
+            </ul>
+            <div class="stage-status">
+              <strong>目前狀態：</strong>已建立，可先做架構方向與 AI 邊界決定。<br />
+              <strong>建議下一步：</strong>確認核心題後，把輸出帶進 S3 做分角色設計。
+            </div>
+            <div class="actions">
+              <a class="button primary" href="s2-architecture-prototype.html">前往 S2</a>
+            </div>
+          </article>
+
+          <article class="stage-card">
+            <div class="stage-head">
+              <h3>S3 Design</h3>
+              <span class="badge info">Tech Leads</span>
+            </div>
+            <div class="hint">補齊 backend / frontend / database / api / security / deployment 的實作規格。</div>
+            <ul class="check-list">
+              <li>主要輸入：S2 context / `project-context.json`</li>
+              <li>主要輸出：S3 context / S4 validation checklist / 更新版 `project-context.json`</li>
+            </ul>
+            <div class="stage-status">
+              <strong>目前狀態：</strong>已建立，適合各技術角色開始細化規格。<br />
+              <strong>建議下一步：</strong>補齊六大分類後，進入 S4 做驗證與問題收斂。
+            </div>
+            <div class="actions">
+              <a class="button primary" href="s3-design-prototype.html">前往 S3</a>
+            </div>
+          </article>
+
+          <article class="stage-card">
+            <div class="stage-head">
+              <h3>S4 Validation</h3>
+              <span class="badge info">System + Architect</span>
+            </div>
+            <div class="hint">自動規則檢查、Blocker / Warning 分流、人工處理與 Gate 3 判定。</div>
+            <ul class="check-list">
+              <li>主要輸入：S3 context / `project-context.json`</li>
+              <li>主要輸出：validation report / S5 review packet / 更新版 `project-context.json`</li>
+            </ul>
+            <div class="stage-status">
+              <strong>目前狀態：</strong>已建立，可用來做 Gate 3 前的自動檢查與人工處理。<br />
+              <strong>建議下一步：</strong>把 blocker 清空、warning 收斂後，帶進 S5 審核。
+            </div>
+            <div class="actions">
+              <a class="button primary" href="s4-validation-prototype.html">前往 S4</a>
+            </div>
+          </article>
+
+          <article class="stage-card">
+            <div class="stage-head">
+              <h3>S5 Review</h3>
+              <span class="badge info">Architect + PM</span>
+            </div>
+            <div class="hint">正式審核、退回修正、簽核與版本鎖定。</div>
+            <ul class="check-list">
+              <li>主要輸入：S4 validation report / S5 review packet / `project-context.json`</li>
+              <li>主要輸出：approved review packet / S6 handoff / 更新版 `project-context.json`</li>
+            </ul>
+            <div class="stage-status">
+              <strong>目前狀態：</strong>已建立，可作為正式簽核與版本鎖定台。<br />
+              <strong>建議下一步：</strong>Architect 與 PM 都完成決定後，直接進 S6 產出正式文件。
+            </div>
+            <div class="actions">
+              <a class="button primary" href="s5-review-prototype.html">前往 S5</a>
+            </div>
+          </article>
+
+          <article class="stage-card">
+            <div class="stage-head">
+              <h3>S6 Output</h3>
+              <span class="badge info">System</span>
+            </div>
+            <div class="hint">生成可放入 repo 與 AI 工具使用的正式輸出文件。</div>
+            <ul class="check-list">
+              <li>主要輸入：S5 approved review packet / S6 handoff / `project-context.json`</li>
+              <li>主要輸出：`tech-stack.json`、`ai-context.md`、`readiness-report.md`、`adr-draft.md`、`cursor-rules-draft.mdc`</li>
+            </ul>
+            <div class="stage-status">
+              <strong>目前狀態：</strong>已建立，可直接生成正式輸出資產。<br />
+              <strong>建議下一步：</strong>產出後即可準備進入發布流程或建立 PR。
+            </div>
+            <div class="actions">
+              <a class="button primary" href="s6-output-prototype.html">前往 S6</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>可直接使用的輔助檔</h2>
+        <ul class="check-list">
+          <li><a href="s1-required-data.json"><code>s1-required-data.json</code></a>：S1 預填示範資料</li>
+          <li><a href="s1-advanced-options-proposal.json"><code>s1-advanced-options-proposal.json</code></a>：S1 進階選項提案資料</li>
+        </ul>
+      </section>
+    </div>
+  </body>
+</html>

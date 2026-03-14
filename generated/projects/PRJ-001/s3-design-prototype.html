@@ -1,0 +1,1988 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRJ-001 S3 Design Prototype</title>
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --card: #fff;
+        --line: #d9e0ea;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --brand: #0f62fe;
+        --ok: #166534;
+        --warn: #92400e;
+        --info: #1d4ed8;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", "Noto Sans TC", Arial, sans-serif;
+      }
+      .wrap {
+        max-width: 1220px;
+        margin: 20px auto;
+        padding: 0 14px 40px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      h1 { margin: 0 0 8px; font-size: 24px; }
+      h2 { margin: 0 0 8px; font-size: 18px; }
+      h3 { margin: 0 0 8px; font-size: 15px; }
+      .meta, .hint {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .grid { display: grid; gap: 10px; }
+      .two-col { grid-template-columns: 1fr 1fr; }
+      .three-col { grid-template-columns: repeat(3, 1fr); }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      button {
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 12px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .primary { background: var(--brand); color: #fff; }
+      .secondary { background: #e9efff; color: #13346e; }
+      .status { margin-top: 8px; font-size: 14px; }
+      .ok { color: var(--ok); }
+      .warn { color: var(--warn); }
+      .info-text { color: var(--info); }
+      .badge {
+        display: inline-block;
+        margin-left: 6px;
+        font-size: 12px;
+        border-radius: 999px;
+        padding: 2px 8px;
+      }
+      .badge.ok { background: #e7f7ec; color: #166534; }
+      .badge.warn { background: #fff4e6; color: #92400e; }
+      .badge.info { background: #edf4ff; color: #0f62fe; }
+      .summary-box {
+        border: 1px solid #dbe3f0;
+        border-radius: 10px;
+        padding: 10px;
+        background: #f8fbff;
+      }
+      .summary-box strong { display: block; margin-bottom: 4px; }
+      details.category {
+        border: 1px solid #dbe3f0;
+        border-radius: 12px;
+        background: #fff;
+        overflow: hidden;
+      }
+      details.category + details.category { margin-top: 10px; }
+      details.category summary {
+        list-style: none;
+        cursor: pointer;
+        padding: 12px 14px;
+        background: #f8fbff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      details.category summary::-webkit-details-marker { display: none; }
+      .summary-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .summary-right { color: var(--muted); font-size: 13px; }
+      .category-body { padding: 12px 14px 14px; }
+      .question {
+        border: 1px solid #e6ebf3;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      .question:last-child { margin-bottom: 0; }
+      .question-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+      .question-title {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      label { display: block; font-size: 14px; margin-bottom: 6px; }
+      .required { color: #b91c1c; font-size: 12px; }
+      .critical-tag { color: #991b1b; font-size: 12px; }
+      .role-tag { color: #1d4ed8; font-size: 12px; }
+      .help-btn {
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        border: 1px solid #bcd0fb;
+        background: #eef4ff;
+        color: #0f62fe;
+        font-weight: 700;
+        padding: 0;
+      }
+      input[type="text"], textarea, select {
+        width: 100%;
+        border: 1px solid #c8d2e2;
+        border-radius: 8px;
+        padding: 9px;
+        font-size: 14px;
+      }
+      textarea { min-height: 82px; resize: vertical; }
+      .options { display: grid; gap: 6px; margin-top: 6px; }
+      .option {
+        border: 1px solid #dbe3f0;
+        border-radius: 8px;
+        padding: 8px;
+      }
+      .option label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        cursor: pointer;
+      }
+      .mapping {
+        margin-top: 4px;
+        font-size: 12px;
+        color: #334155;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 6px;
+      }
+      .matrix-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .matrix-item {
+        border: 1px solid #dbe3f0;
+        border-radius: 8px;
+        padding: 8px;
+        background: #fbfdff;
+      }
+      .check-list, .summary-list {
+        margin: 8px 0 0;
+        padding-left: 18px;
+      }
+      .check-list li, .summary-list li {
+        margin: 6px 0;
+        line-height: 1.6;
+      }
+      table { width: 100%; border-collapse: collapse; }
+      th, td {
+        border: 1px solid #d8dfeb;
+        padding: 8px;
+        text-align: left;
+        font-size: 13px;
+        vertical-align: top;
+      }
+      th { background: #f4f7ff; }
+      pre {
+        margin: 8px 0 0;
+        background: #0b1220;
+        color: #eaf1ff;
+        border-radius: 8px;
+        padding: 10px;
+        overflow: auto;
+      }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .modal-backdrop.open { display: flex; }
+      .modal {
+        width: min(760px, 100%);
+        max-height: 85vh;
+        overflow: auto;
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #dbe3f0;
+        padding: 16px;
+      }
+      .modal-header {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .modal-title {
+        margin: 0;
+        font-size: 20px;
+      }
+      .close-btn {
+        background: #eef2f7;
+        color: #334155;
+      }
+      .help-section-title {
+        margin: 14px 0 6px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .help-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      @media (max-width: 960px) {
+        .two-col, .three-col, .matrix-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <section class="card">
+        <h1>S3 Design 智慧問券 Prototype</h1>
+        <div class="meta">
+          目標：把 S2 的架構方向，收斂成可實作的工程規格。<br />
+          方式：依技術角色分六大分類填答，同時保留 `?` 白話說明、跨分類建議、完成度檢查與 S4 驗證清單輸出。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>匯入上階段 JSON</h2>
+        <label for="importJsonFile">選擇 `S2 Context` / `project-context.json` / 前階段 JSON</label>
+        <input id="importJsonFile" type="file" accept=".json,application/json" />
+        <div class="actions">
+          <button class="secondary" type="button" id="importBtn">匯入並預填</button>
+          <button class="secondary" type="button" id="validateBtn">驗證 S3</button>
+          <button class="primary" type="button" id="suggestBtn">刷新建議與摘要</button>
+          <button class="secondary" type="button" id="exportContextBtn">匯出 S3 Context JSON</button>
+          <button class="secondary" type="button" id="exportS4Btn">匯出 S4 驗證清單 JSON</button>
+          <button class="secondary" type="button" id="exportMergedContextBtn">回存 project-context.json</button>
+        </div>
+        <div id="importStatus" class="status"></div>
+        <ul id="validationList" class="check-list"></ul>
+      </section>
+
+      <section class="card">
+        <h2>完成度總覽</h2>
+        <div id="completionGrid" class="grid three-col"></div>
+      </section>
+
+      <section class="card">
+        <h2>目前推薦摘要</h2>
+        <div class="hint">系統會把你目前的選項組合，轉成較白話的設計判讀，方便 PM、架構師與技術角色一起確認。</div>
+        <ul id="recommendationSummaryList" class="summary-list"></ul>
+      </section>
+
+      <section class="card">
+        <h2>跨分類連動建議</h2>
+        <div class="hint">這裡會提醒可能衝突、尚未補齊或值得再討論的項目。</div>
+        <ul id="suggestionList" class="check-list"></ul>
+      </section>
+
+      <section class="card">
+        <h2>S3 設計題組</h2>
+        <div id="categoryContainer"></div>
+      </section>
+
+      <section class="card">
+        <h2>各角色確認</h2>
+        <div class="hint">每個分類至少由對應角色確認一次，避免 PM 或單一角色代填全部決策。</div>
+        <table>
+          <thead>
+            <tr>
+              <th>分類</th>
+              <th>建議主責角色</th>
+              <th>已確認</th>
+              <th>備註</th>
+            </tr>
+          </thead>
+          <tbody id="confirmTableBody"></tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>輸出預覽</h2>
+        <h3>S3 Context</h3>
+        <pre id="contextPreview">{}</pre>
+        <h3>S4 驗證清單</h3>
+        <pre id="s4Preview">[]</pre>
+      </section>
+    </div>
+
+    <div id="helpModalBackdrop" class="modal-backdrop" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+        <div class="modal-header">
+          <div>
+            <h2 id="helpModalTitle" class="modal-title">選項說明</h2>
+            <div id="helpModalSummary" class="meta"></div>
+          </div>
+          <button type="button" id="closeHelpBtn" class="close-btn">關閉</button>
+        </div>
+        <div class="help-section-title">差異說明</div>
+        <div id="helpModalDiffs" class="help-box"></div>
+        <div class="help-section-title">快速比較</div>
+        <div id="helpModalCompare" class="help-box"></div>
+        <div class="help-section-title">適用情境</div>
+        <div id="helpModalUseCase" class="help-box"></div>
+        <div class="help-section-title">簡單範例</div>
+        <div id="helpModalExample" class="help-box"></div>
+      </div>
+    </div>
+
+    <script>
+      const questionHelp = {
+        "backend.runtime.platform": {
+          title: "後端執行平台怎麼選？",
+          summary: "這題決定後端主語言與主要生態系，會直接影響專案骨架、套件、部署與 AI 產碼風格。",
+          diffs: [
+            ".NET：適合你們現有工程背景與 Azure 環境，治理一致性高。",
+            "Node.js：全端同語言迭代快，但要確認後端治理與維運成熟度。",
+            "Java：企業治理成熟，通常較重但穩。",
+            "Python：適合資料處理與快速 API，但大型企業治理需額外規範。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            [".NET", "與現有團隊與 Azure 相容高", "需明確版本與專案類型"],
+            ["Node.js", "前後端同語言、開發快", "需補套件治理與效能規範"],
+            ["Java", "企業框架成熟", "樣板較重"],
+            ["Python", "快速開發、資料處理友善", "需補型別與結構規範"]
+          ],
+          useCase: "如果後端主力工程師與部署環境都偏 Azure/.NET，通常先選 .NET 會最穩。",
+          example: "例如治理問券系統第一版，要快速穩定落地，就很適合 `.NET 8 + ASP.NET Core Web API`。"
+        },
+        "backend.orm.choice": {
+          title: "ORM / 資料存取方式差在哪？",
+          summary: "這題在決定資料存取層的程式風格，會影響 AI 生成 repository、查詢與 migration 的方式。",
+          diffs: [
+            "EF Core：最完整，適合標準 CRUD 與 migration 管理。",
+            "Dapper：較輕量，適合效能與客製 SQL。",
+            "EF Core + Dapper：讀寫混合治理較常見，但規範要先講清楚。",
+            "ADO.NET：完全手寫 SQL，控制高但成本也高。"
+          ],
+          compare: [
+            ["選項", "適合情境", "代價"],
+            ["EF Core", "標準企業 CRUD", "抽象較高"],
+            ["Dapper", "效能與 SQL 可控", "需更多手工維護"],
+            ["混用", "讀寫需求差異大", "團隊規範要清楚"],
+            ["ADO.NET", "極度客製或 legacy", "開發維護成本高"]
+          ],
+          useCase: "如果第一版想讓 AI 穩定生成資料層，通常優先用 EF Core 或 EF Core + Dapper。",
+          example: "例如主流程 CRUD 用 EF Core，複雜報表查詢用 Dapper。"
+        },
+        "frontend.framework.choice": {
+          title: "前端框架怎麼選？",
+          summary: "這題決定前端元件、路由、表單與狀態管理的整體生態系。",
+          diffs: [
+            "React：範例多、AI 生成穩定，適合元件化與互動頁面。",
+            "Next.js：在 React 基礎上補 SSR、路由與全端能力。",
+            "Vue 3：較直觀，若團隊熟悉會很快。",
+            "Vanilla：最輕，但大型系統維護成本高。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["React", "元件生態成熟", "需一起定狀態管理與表單方案"],
+            ["React + Next.js", "路由與 SSR 整合好", "需理解 Next 架構"],
+            ["Vue 3", "上手直觀", "要確認團隊長期維護經驗"],
+            ["Vanilla", "最簡單起步", "大型表單很快會變難維護"]
+          ],
+          useCase: "若你的系統以多頁表單、設定頁、流程頁為主，React 或 Next.js 通常最穩。",
+          example: "例如 S1/S2/S3 問券頁、驗證頁、輸出頁都很適合 React 元件化。"
+        },
+        "frontend.ui.component_library": {
+          title: "UI 元件庫是在決定什麼？",
+          summary: "這題決定畫面元件的現成程度、視覺一致性與 AI 產碼可重用性。",
+          diffs: [
+            "MUI：企業感強、元件完整。",
+            "Ant Design：表單與後台型介面很成熟。",
+            "shadcn/ui：彈性高，較適合設計系統化。",
+            "Tailwind only：自由度高，但要自己組很多元件。"
+          ],
+          compare: [
+            ["選項", "適合情境", "注意事項"],
+            ["Ant Design", "後台管理系統", "視覺風格較固定"],
+            ["MUI", "企業 Web 系統", "需接受 MUI 設計語言"],
+            ["shadcn/ui", "想兼顧速度與客製", "需較多元件組裝能力"],
+            ["Tailwind only", "想完全自控畫面", "元件治理成本較高"]
+          ],
+          useCase: "如果目標是快速把治理系統落地，Ant Design 或 MUI 會比純 Tailwind 更省力。",
+          example: "例如多表單、多表格、多權限頁的內部管理系統。"
+        },
+        "database.primary.engine": {
+          title: "主要資料庫引擎怎麼選？",
+          summary: "這題會影響 SQL 語法、ORM 相容性、備份方式與雲端服務整合。",
+          diffs: [
+            "Azure SQL：最貼近現有 Azure 環境。",
+            "SQL Server：若地端或既有系統大量使用會較穩。",
+            "PostgreSQL：彈性高、開源常見。",
+            "Cosmos DB / MongoDB：偏 NoSQL，需要先確認資料模型是否適合。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["Azure SQL", "雲端整合最直接", "較綁 Azure"],
+            ["SQL Server", "企業常見", "地端維運需規劃"],
+            ["PostgreSQL", "開源彈性高", "需補既有維運標準"],
+            ["NoSQL", "彈性高", "不適合硬套關聯式需求"]
+          ],
+          useCase: "若公司現有資料庫與監控流程在 Azure 上，優先 Azure SQL 最省治理成本。",
+          example: "例如問券答案、驗證紀錄、版本歷程都放 Azure SQL。"
+        },
+        "database.design.approach": {
+          title: "資料庫設計方法是什麼？",
+          summary: "這題決定 schema 變更要從程式碼帶動，還是從資料庫先定稿。",
+          diffs: [
+            "Code First：開發速度快，適合新案。",
+            "DB First：適合已存在資料庫或 legacy 系統。",
+            "Migration 管理：重點在版本化與可追蹤。",
+            "Manual SQL：最可控，但手工維護最多。"
+          ],
+          compare: [
+            ["選項", "適合情境", "注意事項"],
+            ["Code First", "新專案", "要有 migration 治理"],
+            ["DB First", "既有資料庫", "程式結構較受限"],
+            ["Migration", "需追蹤變更", "流程要落實"],
+            ["Manual SQL", "嚴格 DBA 控制", "效率較低"]
+          ],
+          useCase: "如果是新系統且要搭配 AI 生成，`Code First + Migration` 常最順。",
+          example: "例如先定 entity，再由 migration 產生 schema 版本。"
+        },
+        "api.style.type": {
+          title: "API 設計風格差在哪？",
+          summary: "這題決定整個系統的介面型態，會影響控制器、文件與前後端契約。",
+          diffs: [
+            "RESTful：最直覺，治理與文件化最成熟。",
+            "GraphQL：查詢彈性高，但授權與治理較複雜。",
+            "gRPC：內部服務高效能通訊常見。",
+            "Mixed：有彈性，但需要更明確邊界。"
+          ],
+          compare: [
+            ["選項", "適合情境", "注意事項"],
+            ["RESTful", "大多數 Web/API 系統", "欄位彈性較低"],
+            ["GraphQL", "查詢變化大", "權限與 caching 較複雜"],
+            ["gRPC", "內部服務效能導向", "學習與除錯成本較高"],
+            ["Mixed", "不同場景混用", "需定清楚使用邊界"]
+          ],
+          useCase: "如果目標是穩定交付與方便 AI 協作，第一版多數情況建議 RESTful。",
+          example: "例如問券填答、驗證、匯出，用 REST API 最容易標準化。"
+        },
+        "api.documentation.openapi": {
+          title: "API 文件狀態為什麼重要？",
+          summary: "這題在決定 API 契約是否能被前端、測試與 AI 穩定引用。",
+          diffs: [
+            "Swagger 自動產生：最容易和程式同步。",
+            "手動 OpenAPI：可控度高，但要維護。",
+            "Postman / Markdown：可以用，但結構化程度較弱。",
+            "無文件：後續前端、測試與 AI 協作風險最高。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["Swagger 自動", "和實作同步", "需維持註解與 schema 品質"],
+            ["OpenAPI 手動", "契約可先行", "要防止規格與實作脫節"],
+            ["Postman", "容易測試", "不一定是正式契約"],
+            ["無文件", "短期省事", "後期溝通成本最高"]
+          ],
+          useCase: "若 API 要給前端、測試、AI 共用，至少要有 Swagger 或 OpenAPI。",
+          example: "例如前端直接根據 Swagger 確認欄位與錯誤格式。"
+        },
+        "security.auth.authorization": {
+          title: "授權機制怎麼選？",
+          summary: "這題決定登入後能看什麼、做什麼，是實作權限矩陣的核心。",
+          diffs: [
+            "RBAC：按角色控權，最容易起步。",
+            "ABAC：根據使用者屬性與情境控權，彈性高但複雜。",
+            "Policy-Based / Claims-Based：適合較細緻規則。",
+            "Simple：短期可用，但長期容易失控。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["RBAC", "清楚易理解", "細粒度有限"],
+            ["ABAC", "彈性高", "設計與測試較重"],
+            ["Policy / Claims", "規則表達力強", "需良好規範"],
+            ["Simple", "快速", "後期常需重做"]
+          ],
+          useCase: "若問券系統以 PM、架構師、後端、前端、DevOps 等角色區分，RBAC 很合適。",
+          example: "例如 PM 只可編輯 S1，Architect 可審核 S2/S3。"
+        },
+        "security.secrets.management": {
+          title: "機敏資訊管理是在決定什麼？",
+          summary: "這題決定密碼、金鑰、連線字串要放哪裡，避免 AI 或程式把敏感值寫死。",
+          diffs: [
+            "Azure Key Vault：最適合 Azure 環境。",
+            "環境變數：可用，但仍需妥善控管來源。",
+            "User Secrets：僅限本機開發。",
+            "Config 檔 / Hardcoded：屬高風險，應避免。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["Azure Key Vault", "安全治理最好", "需先串接與授權設定"],
+            ["環境變數", "常見且簡單", "仍需避免外洩"],
+            ["User Secrets", "適合本機開發", "不能當正式環境方案"],
+            ["寫死或組態檔", "短期方便", "必須改善"]
+          ],
+          useCase: "只要系統部署在 Azure，通常應優先 Azure Key Vault。",
+          example: "例如 DB connection string、JWT signing key、API key 都放 Key Vault。"
+        },
+        "deployment.cicd.platform": {
+          title: "CI/CD 平台怎麼選？",
+          summary: "這題會影響專案的自動化檢查、測試、部署與 AI 生成 workflow 的格式。",
+          diffs: [
+            "GitHub Actions：如果程式碼就在 GitHub，整合最直接。",
+            "Azure DevOps：企業內控與 Azure 生態整合強。",
+            "Jenkins：彈性高，但維運負擔較大。",
+            "無 CI/CD：可先做，但必須有補齊計畫。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["GitHub Actions", "上手快、repo 內治理方便", "需規範 secrets 與 workflow"],
+            ["Azure DevOps", "企業控管成熟", "設定較重"],
+            ["Jenkins", "高度客製", "維運成本高"],
+            ["None", "短期可過渡", "必須補齊時程"]
+          ],
+          useCase: "如果專案已放 GitHub，第一版多數會先選 GitHub Actions。",
+          example: "例如 PR 自動跑 lint、test、build，再進 staging。"
+        },
+        "deployment.strategy.type": {
+          title: "部署策略差在哪？",
+          summary: "這題決定正式上線時怎麼更新，影響停機風險與回滾難度。",
+          diffs: [
+            "Rolling：最常見，逐步更新。",
+            "Blue-Green：切換清楚，回滾快，但資源成本較高。",
+            "Canary：風險最低，但治理較複雜。",
+            "Manual / Recreate：簡單，但風險與停機較高。"
+          ],
+          compare: [
+            ["選項", "適合情境", "注意事項"],
+            ["Rolling", "一般服務持續更新", "需注意相容性"],
+            ["Blue-Green", "重視回滾速度", "需要雙套環境"],
+            ["Canary", "高風險功能上線", "監控要足夠"],
+            ["Manual", "初期或低頻部署", "較不穩定"]
+          ],
+          useCase: "若系統還在早期且使用 Azure App Service，先用 Rolling 或 Blue-Green 通常較務實。",
+          example: "例如先把新版本部署到 staging，再切正式流量。"
+        }
+      };
+
+      const categoryConfigs = [
+        {
+          id: "backend",
+          label: "後端技術棧",
+          owner: "Backend Lead + Architect",
+          description: "定義後端語言、框架、資料存取、認證與測試方式。",
+          questions: [
+            {
+              id: "backend.runtime.platform",
+              title: "後端執行平台",
+              type: "single",
+              required: true,
+              critical: true,
+              roles: "Backend Lead / Architect",
+              options: [
+                { value: "dotnet", label: ".NET (C#)", mapping: "最貼近你們現有團隊與 Azure" },
+                { value: "nodejs", label: "Node.js", mapping: "全端同語言，迭代快" },
+                { value: "java", label: "Java / Spring Boot", mapping: "企業治理成熟" },
+                { value: "python", label: "Python", mapping: "資料處理與 API 開發快" },
+                { value: "go", label: "Go", mapping: "高效能服務導向" }
+              ]
+            },
+            {
+              id: "backend.runtime.dotnet_version",
+              title: ".NET 版本",
+              type: "single",
+              required: true,
+              critical: true,
+              roles: "Backend Lead",
+              when: (v) => v["backend.runtime.platform"] === "dotnet",
+              options: [
+                { value: "net6", label: ".NET 6 LTS" },
+                { value: "net8", label: ".NET 8 LTS" },
+                { value: "net9", label: ".NET 9" },
+                { value: "net_framework_48", label: ".NET Framework 4.8" }
+              ]
+            },
+            {
+              id: "backend.framework.dotnet_type",
+              title: ".NET 專案類型",
+              type: "single",
+              required: true,
+              roles: "Backend Lead",
+              when: (v) => v["backend.runtime.platform"] === "dotnet",
+              options: [
+                { value: "webapi", label: "ASP.NET Core Web API" },
+                { value: "minimal_api", label: "Minimal API" },
+                { value: "mvc", label: "ASP.NET Core MVC" },
+                { value: "worker_service", label: "Worker Service" },
+                { value: "grpc_service", label: "gRPC Service" }
+              ]
+            },
+            {
+              id: "backend.orm.choice",
+              title: "ORM / 資料存取方式",
+              type: "single",
+              required: true,
+              roles: "Backend Lead",
+              options: [
+                { value: "ef_core", label: "Entity Framework Core" },
+                { value: "dapper", label: "Dapper" },
+                { value: "ef_core_dapper", label: "EF Core + Dapper 混用" },
+                { value: "ado_net", label: "ADO.NET" },
+                { value: "prisma", label: "Prisma" },
+                { value: "typeorm", label: "TypeORM" }
+              ]
+            },
+            {
+              id: "backend.auth.method",
+              title: "認證機制",
+              type: "single",
+              required: true,
+              critical: true,
+              roles: "Backend Lead / Architect",
+              options: [
+                { value: "jwt", label: "JWT Token" },
+                { value: "oauth2", label: "OAuth 2.0 / OIDC" },
+                { value: "azure_ad", label: "Azure AD / Entra ID" },
+                { value: "identity_server", label: "IdentityServer / Duende" },
+                { value: "cookie", label: "Cookie-based Session" },
+                { value: "api_key", label: "API Key" },
+                { value: "none", label: "無認證（內部服務）" }
+              ]
+            },
+            {
+              id: "backend.auth.jwt_config",
+              title: "JWT 設定細節",
+              type: "matrix",
+              required: true,
+              roles: "Backend Lead",
+              when: (v) => v["backend.auth.method"] === "jwt",
+              fields: [
+                { key: "access_token_lifetime", label: "Access Token 有效期（分鐘）" },
+                { key: "refresh_token_enabled", label: "是否啟用 Refresh Token" },
+                { key: "refresh_token_lifetime", label: "Refresh Token 有效期（天）" },
+                { key: "token_storage", label: "Token 儲存方式" }
+              ]
+            },
+            {
+              id: "backend.logging.framework",
+              title: "日誌框架",
+              type: "single",
+              required: true,
+              roles: "Backend Lead",
+              options: [
+                { value: "serilog", label: "Serilog" },
+                { value: "ms_logging", label: "Microsoft.Extensions.Logging" },
+                { value: "nlog", label: "NLog" },
+                { value: "winston", label: "Winston" },
+                { value: "pino", label: "Pino" }
+              ]
+            },
+            {
+              id: "backend.testing.strategy",
+              title: "測試策略",
+              type: "multi",
+              required: true,
+              roles: "Backend Lead",
+              options: [
+                { value: "unit_test", label: "單元測試" },
+                { value: "integration_test", label: "整合測試" },
+                { value: "api_test", label: "API 測試" },
+                { value: "contract_test", label: "契約測試" },
+                { value: "load_test", label: "負載測試" },
+                { value: "no_test", label: "目前無測試計畫" }
+              ]
+            },
+            {
+              id: "backend.coding.conventions",
+              title: "程式碼規範",
+              type: "multi",
+              required: false,
+              roles: "Backend Lead",
+              options: [
+                { value: "editorconfig", label: "使用 .editorconfig" },
+                { value: "analyzers", label: "使用 Analyzers / ESLint" },
+                { value: "naming_convention", label: "有命名規範文件" },
+                { value: "code_review", label: "有 Code Review 流程" },
+                { value: "pr_template", label: "有 PR Template" }
+              ]
+            }
+          ]
+        },
+        {
+          id: "frontend",
+          label: "前端技術棧",
+          owner: "Frontend Lead",
+          description: "定義前端框架、樣式、狀態管理、路由與表單工具。",
+          questions: [
+            {
+              id: "frontend.framework.choice",
+              title: "前端框架",
+              type: "single",
+              required: true,
+              critical: true,
+              roles: "Frontend Lead",
+              options: [
+                { value: "react", label: "React", mapping: "多數內部系統與 AI 產碼最穩" },
+                { value: "react_next", label: "React + Next.js", mapping: "要 SSR/路由整合時適合" },
+                { value: "vue3", label: "Vue 3", mapping: "較直觀，需看團隊熟悉度" },
+                { value: "vue_nuxt", label: "Vue 3 + Nuxt", mapping: "Vue + SSR 場景" },
+                { value: "vanilla", label: "純 HTML/CSS/JS", mapping: "小型頁面可用，不建議大型系統" }
+              ]
+            },
+            {
+              id: "frontend.language.typescript",
+              title: "TypeScript 使用方式",
+              type: "single",
+              required: true,
+              roles: "Frontend Lead",
+              options: [
+                { value: "strict", label: "TypeScript（strict）" },
+                { value: "standard", label: "TypeScript（標準）" },
+                { value: "javascript", label: "JavaScript" }
+              ]
+            },
+            {
+              id: "frontend.ui.component_library",
+              title: "UI 元件庫",
+              type: "single",
+              required: true,
+              roles: "Frontend Lead",
+              options: [
+                { value: "ant_design", label: "Ant Design" },
+                { value: "material_ui", label: "Material UI" },
+                { value: "shadcn", label: "shadcn/ui" },
+                { value: "bootstrap", label: "Bootstrap" },
+                { value: "tailwind_only", label: "Tailwind CSS（無元件庫）" },
+                { value: "custom", label: "自建元件庫" }
+              ]
+            },
+            {
+              id: "frontend.styling.method",
+              title: "CSS 方案",
+              type: "single",
+              required: true,
+              roles: "Frontend Lead",
+              options: [
+                { value: "tailwind", label: "Tailwind CSS" },
+                { value: "css_modules", label: "CSS Modules" },
+                { value: "styled_components", label: "Styled Components" },
+                { value: "sass", label: "SASS / SCSS" },
+                { value: "plain_css", label: "原生 CSS" }
+              ]
+            },
+            {
+              id: "frontend.state.management",
+              title: "狀態管理方案",
+              type: "single",
+              required: true,
+              roles: "Frontend Lead",
+              options: [
+                { value: "redux_toolkit", label: "Redux Toolkit" },
+                { value: "zustand", label: "Zustand" },
+                { value: "context_api", label: "React Context API" },
+                { value: "tanstack_query", label: "TanStack Query" },
+                { value: "pinia", label: "Pinia" },
+                { value: "none", label: "無全域狀態管理" }
+              ]
+            },
+            {
+              id: "frontend.routing.solution",
+              title: "路由方案",
+              type: "single",
+              required: true,
+              roles: "Frontend Lead",
+              options: [
+                { value: "react_router", label: "React Router v6+" },
+                { value: "next_app_router", label: "Next.js App Router" },
+                { value: "vue_router", label: "Vue Router" },
+                { value: "tanstack_router", label: "TanStack Router" }
+              ]
+            },
+            {
+              id: "frontend.build.tool",
+              title: "建構工具",
+              type: "single",
+              required: true,
+              roles: "Frontend Lead",
+              options: [
+                { value: "vite", label: "Vite" },
+                { value: "webpack", label: "Webpack" },
+                { value: "turbopack", label: "Turbopack" },
+                { value: "esbuild", label: "esbuild" }
+              ]
+            },
+            {
+              id: "frontend.form.library",
+              title: "表單處理方案",
+              type: "single",
+              required: false,
+              roles: "Frontend Lead",
+              options: [
+                { value: "react_hook_form", label: "React Hook Form" },
+                { value: "formik", label: "Formik" },
+                { value: "ant_form", label: "Ant Design Form" },
+                { value: "vee_validate", label: "VeeValidate" },
+                { value: "custom", label: "自建表單處理" }
+              ]
+            },
+            {
+              id: "frontend.testing.tools",
+              title: "前端測試工具",
+              type: "multi",
+              required: false,
+              roles: "Frontend Lead",
+              options: [
+                { value: "vitest", label: "Vitest" },
+                { value: "jest", label: "Jest" },
+                { value: "react_testing_library", label: "React Testing Library" },
+                { value: "playwright", label: "Playwright" },
+                { value: "cypress", label: "Cypress" },
+                { value: "storybook", label: "Storybook" }
+              ]
+            }
+          ]
+        },
+        {
+          id: "database",
+          label: "資料庫設計",
+          owner: "Backend Lead + Architect",
+          description: "定義資料庫引擎、schema 管理、快取、備份與敏感資料保護。",
+          questions: [
+            {
+              id: "database.primary.engine",
+              title: "主要資料庫引擎",
+              type: "single",
+              required: true,
+              critical: true,
+              roles: "Backend Lead / Architect",
+              options: [
+                { value: "azure_sql", label: "Azure SQL Database" },
+                { value: "sql_server", label: "SQL Server" },
+                { value: "postgresql", label: "PostgreSQL" },
+                { value: "mysql", label: "MySQL / MariaDB" },
+                { value: "cosmos_db", label: "Azure Cosmos DB" },
+                { value: "mongodb", label: "MongoDB" }
+              ]
+            },
+            {
+              id: "database.design.approach",
+              title: "資料庫設計方法",
+              type: "single",
+              required: true,
+              roles: "Backend Lead",
+              options: [
+                { value: "code_first", label: "Code First" },
+                { value: "db_first", label: "Database First" },
+                { value: "migration", label: "Migration 管理" },
+                { value: "manual_sql", label: "手動 SQL Script" },
+                { value: "hybrid", label: "混合方式" }
+              ]
+            },
+            {
+              id: "database.cache.strategy",
+              title: "快取策略",
+              type: "single",
+              required: true,
+              roles: "Backend Lead / Architect",
+              options: [
+                { value: "azure_redis", label: "Azure Cache for Redis" },
+                { value: "redis", label: "Redis" },
+                { value: "in_memory", label: "In-Memory Cache" },
+                { value: "distributed_cache", label: "Distributed Cache" },
+                { value: "none", label: "不使用快取" }
+              ]
+            },
+            {
+              id: "database.naming.convention",
+              title: "資料表命名規範",
+              type: "single",
+              required: true,
+              roles: "Backend Lead",
+              options: [
+                { value: "pascal_case", label: "PascalCase" },
+                { value: "snake_case", label: "snake_case" },
+                { value: "camel_case", label: "camelCase" },
+                { value: "plural", label: "複數形式" },
+                { value: "singular", label: "單數形式" }
+              ]
+            },
+            {
+              id: "database.backup.strategy",
+              title: "備份策略",
+              type: "single",
+              required: true,
+              roles: "Backend Lead / DevOps",
+              options: [
+                { value: "azure_auto", label: "Azure 自動備份" },
+                { value: "scheduled", label: "排程備份" },
+                { value: "continuous", label: "持續備份" },
+                { value: "geo_redundant", label: "異地備援" },
+                { value: "manual", label: "手動備份" },
+                { value: "not_planned", label: "尚未規劃" }
+              ]
+            },
+            {
+              id: "database.sensitive_data.handling",
+              title: "敏感資料處理方式",
+              type: "multi",
+              required: true,
+              critical: true,
+              roles: "Backend Lead / Security Lead",
+              options: [
+                { value: "encryption_at_rest", label: "靜態加密" },
+                { value: "encryption_in_transit", label: "傳輸加密" },
+                { value: "column_encryption", label: "欄位層級加密" },
+                { value: "data_masking", label: "資料遮罩" },
+                { value: "hashing", label: "密碼雜湊" },
+                { value: "audit_log", label: "存取稽核日誌" },
+                { value: "rbac", label: "資料庫層級 RBAC" }
+              ]
+            }
+          ]
+        },
+        {
+          id: "api",
+          label: "API 設計與規範",
+          owner: "Backend Lead + Architect",
+          description: "定義 API 風格、版本、文件、回應格式與外部整合。",
+          questions: [
+            {
+              id: "api.style.type",
+              title: "API 設計風格",
+              type: "single",
+              required: true,
+              critical: true,
+              roles: "Backend Lead / Architect",
+              options: [
+                { value: "restful", label: "RESTful API" },
+                { value: "graphql", label: "GraphQL" },
+                { value: "grpc", label: "gRPC" },
+                { value: "mixed", label: "混合（REST + GraphQL）" }
+              ]
+            },
+            {
+              id: "api.versioning.strategy",
+              title: "API 版本策略",
+              type: "single",
+              required: true,
+              roles: "Backend Lead",
+              options: [
+                { value: "url_path", label: "URL 路徑版本" },
+                { value: "query_string", label: "Query String 版本" },
+                { value: "header", label: "Header 版本" },
+                { value: "media_type", label: "Media Type 版本" },
+                { value: "no_versioning", label: "不做版本管理" }
+              ]
+            },
+            {
+              id: "api.documentation.openapi",
+              title: "API 文件狀態",
+              type: "single",
+              required: true,
+              roles: "Backend Lead",
+              options: [
+                { value: "swagger_auto", label: "自動產生 Swagger" },
+                { value: "openapi_manual", label: "手動維護 OpenAPI spec" },
+                { value: "postman", label: "Postman Collection" },
+                { value: "markdown", label: "Markdown 文件" },
+                { value: "no_docs", label: "目前無 API 文件" }
+              ]
+            },
+            {
+              id: "api.response.format",
+              title: "API 回應格式標準",
+              type: "single",
+              required: true,
+              roles: "Backend Lead",
+              options: [
+                { value: "envelope", label: "統一信封格式" },
+                { value: "problem_details", label: "RFC 7807 Problem Details" },
+                { value: "json_api", label: "JSON:API 規範" },
+                { value: "custom", label: "自定義格式" },
+                { value: "no_standard", label: "無統一格式" }
+              ]
+            },
+            {
+              id: "api.error.handling",
+              title: "錯誤處理策略",
+              type: "single",
+              required: true,
+              roles: "Backend Lead",
+              options: [
+                { value: "global_exception", label: "全域例外處理 Middleware" },
+                { value: "result_pattern", label: "Result Pattern" },
+                { value: "exception_filter", label: "Exception Filter" },
+                { value: "try_catch", label: "各別 Try-Catch" },
+                { value: "mixed", label: "混合方式" }
+              ]
+            },
+            {
+              id: "api.rate_limiting.enabled",
+              title: "Rate Limiting",
+              type: "single",
+              required: true,
+              roles: "Backend Lead / Architect",
+              options: [
+                { value: "yes_per_client", label: "依客戶端限流" },
+                { value: "yes_per_endpoint", label: "依端點限流" },
+                { value: "yes_global", label: "全域限流" },
+                { value: "api_gateway", label: "由 API Gateway 處理" },
+                { value: "no", label: "否" }
+              ]
+            },
+            {
+              id: "api.external.integrations",
+              title: "外部系統整合",
+              type: "multi",
+              required: false,
+              roles: "Backend Lead / Architect",
+              options: [
+                { value: "email", label: "Email 服務" },
+                { value: "storage", label: "雲端儲存" },
+                { value: "erp", label: "ERP 系統" },
+                { value: "crm", label: "CRM 系統" },
+                { value: "ai_service", label: "AI / ML 服務" },
+                { value: "payment", label: "金流服務" },
+                { value: "none", label: "無外部整合" }
+              ]
+            }
+          ]
+        },
+        {
+          id: "security",
+          label: "資安與合規",
+          owner: "Security Lead + Architect",
+          description: "定義授權、加密、合規、弱掃、機敏資訊與 AI 安全紅線。",
+          questions: [
+            {
+              id: "security.auth.authorization",
+              title: "授權機制",
+              type: "single",
+              required: true,
+              critical: true,
+              roles: "Security Lead / Architect",
+              options: [
+                { value: "rbac", label: "RBAC" },
+                { value: "abac", label: "ABAC" },
+                { value: "pbac", label: "Policy-Based" },
+                { value: "claims_based", label: "Claims-Based" },
+                { value: "simple", label: "簡單角色檢查" }
+              ]
+            },
+            {
+              id: "security.encryption.transport",
+              title: "傳輸加密",
+              type: "single",
+              required: true,
+              critical: true,
+              roles: "Security Lead / DevOps",
+              options: [
+                { value: "tls_13", label: "TLS 1.3" },
+                { value: "tls_12", label: "TLS 1.2" },
+                { value: "https_only", label: "強制 HTTPS" },
+                { value: "mutual_tls", label: "Mutual TLS" },
+                { value: "not_configured", label: "尚未配置" }
+              ]
+            },
+            {
+              id: "security.compliance.requirements",
+              title: "合規要求",
+              type: "multi",
+              required: true,
+              critical: true,
+              roles: "PM / Security Lead",
+              options: [
+                { value: "iso_27001", label: "ISO 27001" },
+                { value: "pdpa_tw", label: "個資法（台灣）" },
+                { value: "owasp_top10", label: "OWASP Top 10" },
+                { value: "company_policy", label: "公司內部資安政策" },
+                { value: "gdpr", label: "GDPR" },
+                { value: "none", label: "無特殊合規要求" }
+              ]
+            },
+            {
+              id: "security.vulnerability.scanning",
+              title: "弱點掃描工具",
+              type: "multi",
+              required: false,
+              roles: "Security Lead / DevOps",
+              options: [
+                { value: "dependabot", label: "GitHub Dependabot" },
+                { value: "owasp_zap", label: "OWASP ZAP" },
+                { value: "sonarqube", label: "SonarQube" },
+                { value: "snyk", label: "Snyk" },
+                { value: "github_advanced", label: "GitHub Advanced Security" }
+              ]
+            },
+            {
+              id: "security.secrets.management",
+              title: "機敏資訊管理",
+              type: "single",
+              required: true,
+              critical: true,
+              roles: "DevOps / Security Lead",
+              options: [
+                { value: "azure_key_vault", label: "Azure Key Vault" },
+                { value: "hashicorp_vault", label: "HashiCorp Vault" },
+                { value: "env_variables", label: "環境變數" },
+                { value: "user_secrets", label: ".NET User Secrets" },
+                { value: "config_file", label: "組態檔案（需改善）" },
+                { value: "hardcoded", label: "寫死在程式碼中（禁止）" }
+              ]
+            },
+            {
+              id: "security.ai.boundaries",
+              title: "AI 協作安全邊界",
+              type: "multi",
+              required: true,
+              critical: true,
+              roles: "Security Lead / Architect",
+              options: [
+                { value: "no_prod_data", label: "AI 不得接觸正式環境資料" },
+                { value: "no_secrets", label: "AI 不得處理機敏資訊" },
+                { value: "code_review_required", label: "AI 產出必須人工審查" },
+                { value: "sandbox_only", label: "AI 僅在沙箱環境操作" },
+                { value: "approved_models_only", label: "僅使用公司核准模型" },
+                { value: "audit_trail", label: "AI 操作需留稽核軌跡" },
+                { value: "no_pii", label: "Prompt 不得包含個資" }
+              ]
+            }
+          ]
+        },
+        {
+          id: "deployment",
+          label: "部署與維運",
+          owner: "DevOps",
+          description: "定義 CI/CD、環境、監控、部署策略、分支與 IaC。",
+          questions: [
+            {
+              id: "deployment.cicd.platform",
+              title: "CI/CD 平台",
+              type: "single",
+              required: true,
+              critical: true,
+              roles: "DevOps",
+              options: [
+                { value: "github_actions", label: "GitHub Actions" },
+                { value: "azure_devops", label: "Azure DevOps Pipelines" },
+                { value: "jenkins", label: "Jenkins" },
+                { value: "gitlab_ci", label: "GitLab CI/CD" },
+                { value: "none", label: "無 CI/CD" }
+              ]
+            },
+            {
+              id: "deployment.cicd.none_reason",
+              title: "無 CI/CD 的原因與補齊計畫",
+              type: "text",
+              required: true,
+              roles: "DevOps",
+              when: (v) => v["deployment.cicd.platform"] === "none"
+            },
+            {
+              id: "deployment.strategy.type",
+              title: "部署策略",
+              type: "single",
+              required: true,
+              roles: "DevOps",
+              options: [
+                { value: "rolling", label: "滾動更新" },
+                { value: "blue_green", label: "藍綠部署" },
+                { value: "canary", label: "金絲雀部署" },
+                { value: "recreate", label: "重建部署" },
+                { value: "manual", label: "手動部署" }
+              ]
+            },
+            {
+              id: "deployment.environments.list",
+              title: "環境清單",
+              type: "multi",
+              required: true,
+              roles: "DevOps",
+              options: [
+                { value: "local", label: "Local" },
+                { value: "dev", label: "Development" },
+                { value: "sit", label: "SIT" },
+                { value: "uat", label: "UAT" },
+                { value: "staging", label: "Staging" },
+                { value: "production", label: "Production" },
+                { value: "dr", label: "DR" }
+              ]
+            },
+            {
+              id: "deployment.monitoring.tools",
+              title: "監控工具",
+              type: "multi",
+              required: true,
+              roles: "DevOps",
+              options: [
+                { value: "app_insights", label: "Azure Application Insights" },
+                { value: "azure_monitor", label: "Azure Monitor" },
+                { value: "prometheus", label: "Prometheus + Grafana" },
+                { value: "health_checks", label: "Health Check Endpoints" },
+                { value: "none", label: "無監控" }
+              ]
+            },
+            {
+              id: "deployment.logging.centralized",
+              title: "集中式日誌平台",
+              type: "single",
+              required: true,
+              roles: "DevOps",
+              options: [
+                { value: "app_insights", label: "Azure Application Insights" },
+                { value: "azure_log_analytics", label: "Azure Log Analytics" },
+                { value: "seq", label: "Seq" },
+                { value: "elk", label: "ELK Stack" },
+                { value: "none", label: "無集中日誌" }
+              ]
+            },
+            {
+              id: "deployment.git.branching",
+              title: "Git 分支策略",
+              type: "single",
+              required: true,
+              roles: "DevOps / Backend Lead",
+              options: [
+                { value: "github_flow", label: "GitHub Flow" },
+                { value: "git_flow", label: "Git Flow" },
+                { value: "trunk_based", label: "Trunk-Based Development" },
+                { value: "custom", label: "自定義策略" },
+                { value: "no_strategy", label: "無明確策略" }
+              ]
+            },
+            {
+              id: "deployment.iac.tool",
+              title: "基礎設施即代碼（IaC）",
+              type: "single",
+              required: false,
+              roles: "DevOps",
+              options: [
+                { value: "bicep", label: "Azure Bicep" },
+                { value: "terraform", label: "Terraform" },
+                { value: "arm", label: "ARM Templates" },
+                { value: "pulumi", label: "Pulumi" },
+                { value: "manual", label: "手動設定" },
+                { value: "none", label: "無 IaC" }
+              ]
+            }
+          ]
+        }
+      ];
+
+      const suggestedPrefill = {
+        "backend.runtime.platform": "dotnet",
+        "backend.runtime.dotnet_version": "net8",
+        "backend.framework.dotnet_type": "webapi",
+        "backend.orm.choice": "ef_core",
+        "backend.auth.method": "jwt",
+        "backend.logging.framework": "serilog",
+        "backend.testing.strategy": ["unit_test", "integration_test", "api_test"],
+        "backend.coding.conventions": ["editorconfig", "analyzers", "code_review", "pr_template"],
+        "frontend.framework.choice": "react",
+        "frontend.language.typescript": "strict",
+        "frontend.ui.component_library": "ant_design",
+        "frontend.styling.method": "tailwind",
+        "frontend.state.management": "zustand",
+        "frontend.routing.solution": "react_router",
+        "frontend.build.tool": "vite",
+        "frontend.form.library": "react_hook_form",
+        "frontend.testing.tools": ["vitest", "react_testing_library", "playwright"],
+        "database.primary.engine": "azure_sql",
+        "database.design.approach": "migration",
+        "database.cache.strategy": "azure_redis",
+        "database.naming.convention": "snake_case",
+        "database.backup.strategy": "azure_auto",
+        "database.sensitive_data.handling": ["encryption_at_rest", "encryption_in_transit", "data_masking", "audit_log"],
+        "api.style.type": "restful",
+        "api.versioning.strategy": "url_path",
+        "api.documentation.openapi": "swagger_auto",
+        "api.response.format": "envelope",
+        "api.error.handling": "global_exception",
+        "api.rate_limiting.enabled": "api_gateway",
+        "security.auth.authorization": "rbac",
+        "security.encryption.transport": "tls_13",
+        "security.compliance.requirements": ["iso_27001", "company_policy", "owasp_top10"],
+        "security.vulnerability.scanning": ["dependabot", "owasp_zap"],
+        "security.secrets.management": "azure_key_vault",
+        "security.ai.boundaries": ["no_prod_data", "no_secrets", "code_review_required", "approved_models_only", "audit_trail"],
+        "deployment.cicd.platform": "github_actions",
+        "deployment.strategy.type": "rolling",
+        "deployment.environments.list": ["local", "dev", "uat", "production"],
+        "deployment.monitoring.tools": ["app_insights", "health_checks"],
+        "deployment.logging.centralized": "app_insights",
+        "deployment.git.branching": "github_flow",
+        "deployment.iac.tool": "bicep"
+      };
+
+      const formByQuestion = new Map();
+      const categoryContainerEl = document.getElementById("categoryContainer");
+      const completionGridEl = document.getElementById("completionGrid");
+      const importFileEl = document.getElementById("importJsonFile");
+      const importStatusEl = document.getElementById("importStatus");
+      const validationListEl = document.getElementById("validationList");
+      const suggestionListEl = document.getElementById("suggestionList");
+      const recommendationSummaryListEl = document.getElementById("recommendationSummaryList");
+      const confirmTableBodyEl = document.getElementById("confirmTableBody");
+      const contextPreviewEl = document.getElementById("contextPreview");
+      const s4PreviewEl = document.getElementById("s4Preview");
+      const helpModalBackdropEl = document.getElementById("helpModalBackdrop");
+      const helpModalTitleEl = document.getElementById("helpModalTitle");
+      const helpModalSummaryEl = document.getElementById("helpModalSummary");
+      const helpModalDiffsEl = document.getElementById("helpModalDiffs");
+      const helpModalCompareEl = document.getElementById("helpModalCompare");
+      const helpModalUseCaseEl = document.getElementById("helpModalUseCase");
+      const helpModalExampleEl = document.getElementById("helpModalExample");
+
+      const confirmationItems = categoryConfigs.map((category) => ({
+        id: `confirm_${category.id}`,
+        categoryId: category.id,
+        label: category.label,
+        owner: category.owner
+      }));
+
+      let importedContext = { project_id: "PRJ-001", stage: "S2", prefill: {}, raw: null };
+      let s4Checklist = [];
+
+      function getAllQuestions() {
+        return categoryConfigs.flatMap((category) => category.questions.map((question) => ({ ...question, categoryId: category.id, categoryLabel: category.label })));
+      }
+
+      function renderQuestion(question, values) {
+        const visible = !question.when || question.when(values, importedContext);
+        if (!visible) return "";
+        const hasHelp = Boolean(questionHelp[question.id]);
+        const helpButton = hasHelp
+          ? `<button type="button" class="help-btn" data-help-id="${question.id}" aria-label="查看 ${question.title} 說明">?</button>`
+          : "";
+        const head = `
+          <div class="question-head">
+            <div class="question-title">
+              <strong>${question.title}</strong>
+              ${question.required ? '<span class="required">必填</span>' : ""}
+              ${question.critical ? '<span class="critical-tag">critical</span>' : ""}
+              <span class="role-tag">${question.roles || ""}</span>
+            </div>
+            ${helpButton}
+          </div>
+        `;
+
+        if (question.type === "single") {
+          return `
+            <section class="question" data-question-id="${question.id}">
+              ${head}
+              <div class="options">
+                ${question.options.map((option) => `
+                  <div class="option">
+                    <label>
+                      <input type="radio" name="${question.id}" value="${option.value}" />
+                      <span>${option.label}</span>
+                    </label>
+                    ${option.mapping ? `<div class="mapping">建議：${option.mapping}</div>` : ""}
+                  </div>
+                `).join("")}
+              </div>
+            </section>
+          `;
+        }
+
+        if (question.type === "multi") {
+          return `
+            <section class="question" data-question-id="${question.id}">
+              ${head}
+              <div class="options">
+                ${question.options.map((option) => `
+                  <div class="option">
+                    <label>
+                      <input type="checkbox" name="${question.id}" value="${option.value}" />
+                      <span>${option.label}</span>
+                    </label>
+                  </div>
+                `).join("")}
+              </div>
+            </section>
+          `;
+        }
+
+        if (question.type === "matrix") {
+          return `
+            <section class="question" data-question-id="${question.id}">
+              ${head}
+              <div class="hint">請補齊這組設定，讓後端安全與前端 token 使用方式能對得起來。</div>
+              <div class="matrix-grid">
+                ${question.fields.map((field) => `
+                  <div class="matrix-item">
+                    <label for="${question.id}__${field.key}">${field.label}</label>
+                    <input type="text" id="${question.id}__${field.key}" name="${question.id}__${field.key}" placeholder="請輸入或描述" />
+                  </div>
+                `).join("")}
+              </div>
+            </section>
+          `;
+        }
+
+        return `
+          <section class="question" data-question-id="${question.id}">
+            ${head}
+            <textarea name="${question.id}" placeholder="請輸入補充說明、原因或計畫"></textarea>
+          </section>
+        `;
+      }
+
+      function collectValues() {
+        const values = {};
+        getAllQuestions().forEach((question) => {
+          const visible = !question.when || question.when(values, importedContext);
+          if (!visible) return;
+          if (question.type === "single") {
+            const checked = document.querySelector(`input[name="${question.id}"]:checked`);
+            values[question.id] = checked ? checked.value : "";
+          } else if (question.type === "multi") {
+            const checked = document.querySelectorAll(`input[name="${question.id}"]:checked`);
+            values[question.id] = Array.from(checked).map((item) => item.value);
+          } else if (question.type === "matrix") {
+            const row = {};
+            question.fields.forEach((field) => {
+              const input = document.querySelector(`[name="${question.id}__${field.key}"]`);
+              row[field.key] = input ? input.value.trim() : "";
+            });
+            values[question.id] = row;
+          } else {
+            const input = document.querySelector(`[name="${question.id}"]`);
+            values[question.id] = input ? input.value.trim() : "";
+          }
+        });
+        return values;
+      }
+
+      function isAnswered(question, values) {
+        const value = values[question.id];
+        if (question.type === "single" || question.type === "text") return String(value || "").trim() !== "";
+        if (question.type === "multi") return Array.isArray(value) && value.length > 0;
+        if (question.type === "matrix") return question.fields.every((field) => String((value || {})[field.key] || "").trim() !== "");
+        return false;
+      }
+
+      function categoryMetrics(category, values) {
+        const visibleQuestions = category.questions.filter((question) => !question.when || question.when(values, importedContext));
+        const requiredQuestions = visibleQuestions.filter((question) => question.required);
+        const answeredRequired = requiredQuestions.filter((question) => isAnswered(question, values));
+        const criticalQuestions = visibleQuestions.filter((question) => question.critical);
+        const missingCritical = criticalQuestions.filter((question) => !isAnswered(question, values));
+        const percent = requiredQuestions.length
+          ? Math.round((answeredRequired.length / requiredQuestions.length) * 100)
+          : 100;
+        return {
+          visibleQuestions,
+          requiredQuestions,
+          answeredRequired,
+          missingCritical,
+          percent
+        };
+      }
+
+      function renderCategories() {
+        const values = collectValues();
+        categoryContainerEl.innerHTML = categoryConfigs.map((category, index) => {
+          const metrics = categoryMetrics(category, values);
+          const pass = metrics.percent >= 80 && metrics.missingCritical.length === 0;
+          return `
+            <details class="category" ${index < 2 ? "open" : ""}>
+              <summary>
+                <div class="summary-left">
+                  <strong>${category.label}</strong>
+                  <span class="badge ${pass ? "ok" : "warn"}">${metrics.percent}% 完成</span>
+                  <span class="badge info">${category.owner}</span>
+                </div>
+                <div class="summary-right">${category.description}</div>
+              </summary>
+              <div class="category-body">
+                ${category.questions.map((question) => renderQuestion(question, values)).join("")}
+              </div>
+            </details>
+          `;
+        }).join("");
+      }
+
+      function setValue(questionId, value) {
+        if (value == null) return;
+        if (Array.isArray(value)) {
+          value.forEach((item) => {
+            const input = document.querySelector(`input[type="checkbox"][name="${questionId}"][value="${item}"]`);
+            if (input) input.checked = true;
+          });
+          return;
+        }
+        if (typeof value === "object" && value !== null) {
+          Object.entries(value).forEach(([key, item]) => {
+            const input = document.querySelector(`[name="${questionId}__${key}"]`);
+            if (input) input.value = item;
+          });
+          return;
+        }
+        const radio = document.querySelector(`input[type="radio"][name="${questionId}"][value="${value}"]`);
+        if (radio) {
+          radio.checked = true;
+          return;
+        }
+        const text = document.querySelector(`[name="${questionId}"]`);
+        if (text) text.value = value;
+      }
+
+      function applyPrefill(prefill) {
+        renderCategories();
+        Object.entries(prefill).forEach(([key, value]) => setValue(key, value));
+        renderCategories();
+        Object.entries(prefill).forEach(([key, value]) => setValue(key, value));
+        refreshAll();
+      }
+
+      function normalizeImportedData(raw) {
+        const normalized = { project_id: "", stage: "", prefill: {}, raw };
+        normalized.project_id = raw.project_id || (raw.meta && raw.meta.project_id) || (raw.project && raw.project.id) || "PRJ-001";
+        normalized.stage = raw.stage || raw.current_stage || (raw.meta && raw.meta.stage) || "";
+        if (raw.questionnaire_prefill) normalized.prefill = { ...raw.questionnaire_prefill };
+        if (raw.prefill) normalized.prefill = { ...normalized.prefill, ...raw.prefill };
+        if (raw.answers && !Array.isArray(raw.answers)) normalized.prefill = { ...normalized.prefill, ...raw.answers };
+        if (Array.isArray(raw.answers)) {
+          raw.answers.forEach((answer) => {
+            if (answer && answer.question_id) normalized.prefill[answer.question_id] = answer.value;
+          });
+        }
+        if (raw.stages && raw.stages.s1 && raw.stages.s1.answers) {
+          normalized.prefill = { ...normalized.prefill, ...raw.stages.s1.answers };
+        }
+        if (raw.stages && raw.stages.s2 && raw.stages.s2.answers) {
+          normalized.prefill = { ...normalized.prefill, ...raw.stages.s2.answers };
+        }
+        return normalized;
+      }
+
+      function buildCompletionCards(values) {
+        completionGridEl.innerHTML = "";
+        categoryConfigs.forEach((category) => {
+          const metrics = categoryMetrics(category, values);
+          const box = document.createElement("div");
+          box.className = "summary-box";
+          box.innerHTML = `
+            <strong>${category.label}</strong>
+            <div>完成度：<span class="${metrics.percent >= 80 ? "ok" : "warn"}">${metrics.percent}%</span></div>
+            <div class="hint">必填 ${metrics.answeredRequired.length}/${metrics.requiredQuestions.length} 題</div>
+            <div class="hint">${metrics.missingCritical.length ? `critical 待補：${metrics.missingCritical.map((item) => item.title).join("、")}` : "critical 題已補齊"}</div>
+          `;
+          completionGridEl.appendChild(box);
+        });
+      }
+
+      function buildSuggestions(values) {
+        const list = [];
+        const push = (message) => list.push(message);
+
+        if (values["backend.runtime.platform"] === "dotnet" && values["backend.runtime.dotnet_version"] !== "net8") {
+          push("若此專案要貼近目前團隊與 Azure 環境，建議優先評估 `.NET 8 LTS`，除非有明確 legacy 相容理由。");
+        }
+        if (values["frontend.framework.choice"] === "react" && !["react_router", "next_app_router"].includes(values["frontend.routing.solution"])) {
+          push("目前選的是 React，但路由方案不是常見搭配，請確認是否為刻意設計。");
+        }
+        if (values["frontend.framework.choice"] === "react" && values["frontend.form.library"] === "") {
+          push("前端使用 React 時，建議補上表單處理方案，避免多頁表單後續實作分散。");
+        }
+        if (values["database.primary.engine"] === "azure_sql" && values["deployment.logging.centralized"] === "none") {
+          push("資料與部署都偏 Azure，但目前無集中式日誌，建議至少補 Azure Application Insights 或 Log Analytics。");
+        }
+        if (values["api.style.type"] === "restful" && values["api.documentation.openapi"] === "no_docs") {
+          push("REST API 若沒有 Swagger/OpenAPI，前後端與 AI 協作成本會明顯上升。");
+        }
+        if (values["backend.auth.method"] === "jwt") {
+          const jwtConfig = values["backend.auth.jwt_config"] || {};
+          if (!jwtConfig.access_token_lifetime || !jwtConfig.token_storage) {
+            push("已選 JWT，但 `JWT 設定細節` 尚未補齊，前後端 token 使用方式會不一致。");
+          }
+        }
+        if (values["security.secrets.management"] === "hardcoded") {
+          push("機敏資訊管理不可使用寫死在程式碼中，這是 S4 必須先修正的 blocker。");
+        }
+        if (Array.isArray(values["security.ai.boundaries"]) && !values["security.ai.boundaries"].includes("approved_models_only")) {
+          push("若專案涉及機密方法與知識，建議把 `僅使用公司核准模型` 納入 AI 安全邊界。");
+        }
+        if (values["deployment.cicd.platform"] === "none" && !String(values["deployment.cicd.none_reason"] || "").trim()) {
+          push("目前無 CI/CD，需明確填寫原因與補齊計畫，否則 S4 很難通過。");
+        }
+        if (Array.isArray(values["deployment.environments.list"]) && !values["deployment.environments.list"].includes("production")) {
+          push("環境清單未包含正式環境，請確認是刻意不部署，或只是尚未補齊。");
+        }
+        if (Array.isArray(values["backend.testing.strategy"]) && values["backend.testing.strategy"].includes("no_test")) {
+          push("後端測試策略目前標示無測試計畫，這會直接降低 AI 產碼可驗證性。");
+        }
+        return list;
+      }
+
+      function buildRecommendationSummary(values) {
+        const summaries = [];
+        const push = (title, reason) => summaries.push({ title, reason });
+
+        if (values["backend.runtime.platform"] === "dotnet" && values["backend.framework.dotnet_type"] === "webapi") {
+          push("目前推薦：`.NET 8 + ASP.NET Core Web API`", "這個組合最貼近你們現有團隊能力，也最容易與 Azure、Swagger、Key Vault、App Insights 串起來。");
+        }
+        if (values["frontend.framework.choice"] === "react" && values["frontend.build.tool"] === "vite") {
+          push("目前推薦：React + Vite 前端", "對多頁表單、管理介面與 AI 生成元件來說，這是開發速度與結構清晰度都不錯的組合。");
+        }
+        if (values["frontend.ui.component_library"] === "ant_design") {
+          push("目前推薦：以 Ant Design 落地管理後台 UI", "因為問券系統屬於表格、表單、權限頁偏多的內部治理系統，Ant Design 的成熟度高。");
+        }
+        if (values["database.primary.engine"] === "azure_sql" && values["database.design.approach"] === "migration") {
+          push("目前推薦：Azure SQL + 版本化 Migration", "這樣可以讓 schema 變更有版本紀錄，也方便 AI 產出 migration 與部署腳本。");
+        }
+        if (values["api.style.type"] === "restful" && values["api.response.format"] === "envelope") {
+          push("目前推薦：REST API + 統一 response envelope", "這能讓前端、測試與 AI 都用一致契約工作，降低格式分歧。");
+        }
+        if (values["security.auth.authorization"] === "rbac") {
+          push("目前推薦：RBAC 權限模型", "對目前多角色問券流程來說，RBAC 夠清楚，也較容易轉成權限矩陣與驗收案例。");
+        }
+        if (values["security.secrets.management"] === "azure_key_vault") {
+          push("目前推薦：Azure Key Vault 管理機敏資訊", "這和 Azure 部署最一致，也能避免 AI 或開發者把敏感值寫進 repo。");
+        }
+        if (values["deployment.cicd.platform"] === "github_actions") {
+          push("目前推薦：GitHub Actions 作為第一版 CI/CD", "若 repo 已在 GitHub，這會是最直覺的自動化落地方式，也方便後續 AI 生成 workflow。");
+        }
+        if (values["deployment.strategy.type"] === "rolling") {
+          push("目前推薦：滾動更新", "第一版治理系統通常不需要太重的部署策略，Rolling 兼顧簡單與穩定。");
+        }
+
+        return summaries;
+      }
+
+      function renderSuggestions(values) {
+        const suggestions = buildSuggestions(values);
+        suggestionListEl.innerHTML = "";
+        if (!suggestions.length) {
+          const item = document.createElement("li");
+          item.textContent = "目前沒有明顯衝突，可進一步請各角色做最後確認。";
+          suggestionListEl.appendChild(item);
+          return;
+        }
+        suggestions.forEach((suggestion) => {
+          const item = document.createElement("li");
+          item.textContent = suggestion;
+          suggestionListEl.appendChild(item);
+        });
+      }
+
+      function renderRecommendationSummary(values) {
+        const summaries = buildRecommendationSummary(values);
+        recommendationSummaryListEl.innerHTML = "";
+        if (!summaries.length) {
+          const item = document.createElement("li");
+          item.textContent = "尚未形成穩定推薦摘要，請先補齊更多核心設計題。";
+          recommendationSummaryListEl.appendChild(item);
+          return;
+        }
+        summaries.forEach((summary) => {
+          const item = document.createElement("li");
+          item.innerHTML = `<strong>${summary.title}</strong> <span class="badge info">系統判讀</span><br />${summary.reason}`;
+          recommendationSummaryListEl.appendChild(item);
+        });
+      }
+
+      function buildS4Checklist(values) {
+        const checklist = [];
+        categoryConfigs.forEach((category) => {
+          const metrics = categoryMetrics(category, values);
+          checklist.push({
+            category: category.id,
+            title: `${category.label} 完成度檢查`,
+            owner: category.owner,
+            pass: metrics.percent >= 80,
+            reason: metrics.percent >= 80 ? "分類完成度達標" : `必填完成度僅 ${metrics.percent}%`
+          });
+          if (metrics.missingCritical.length) {
+            checklist.push({
+              category: category.id,
+              title: `${category.label} critical 題補件`,
+              owner: category.owner,
+              pass: false,
+              reason: `待補：${metrics.missingCritical.map((item) => item.title).join("、")}`
+            });
+          }
+        });
+
+        checklist.push({
+          category: "cross_check",
+          title: "API 文件與設計風格一致",
+          owner: "Backend Lead",
+          pass: !(values["api.style.type"] === "restful" && values["api.documentation.openapi"] === "no_docs"),
+          reason: values["api.style.type"] === "restful" && values["api.documentation.openapi"] === "no_docs"
+            ? "REST API 不能沒有正式文件"
+            : "API 契約文件狀態可接受"
+        });
+
+        checklist.push({
+          category: "cross_check",
+          title: "機敏資訊管理符合安全基線",
+          owner: "Security Lead + DevOps",
+          pass: !["hardcoded", "config_file"].includes(values["security.secrets.management"]),
+          reason: ["hardcoded", "config_file"].includes(values["security.secrets.management"])
+            ? "機敏資訊管理方案需改善"
+            : "機敏資訊管理方案符合最低安全基線"
+        });
+
+        checklist.push({
+          category: "cross_check",
+          title: "AI 安全邊界已覆蓋必要限制",
+          owner: "Security Lead + Architect",
+          pass: Array.isArray(values["security.ai.boundaries"])
+            && values["security.ai.boundaries"].includes("no_prod_data")
+            && values["security.ai.boundaries"].includes("code_review_required"),
+          reason: Array.isArray(values["security.ai.boundaries"])
+            && values["security.ai.boundaries"].includes("no_prod_data")
+            && values["security.ai.boundaries"].includes("code_review_required")
+            ? "AI 安全邊界已包含關鍵控制"
+            : "請至少補上 `no_prod_data` 與 `code_review_required`"
+        });
+
+        return checklist;
+      }
+
+      function renderConfirmTable() {
+        confirmTableBodyEl.innerHTML = confirmationItems.map((item) => `
+          <tr>
+            <td>${item.label}</td>
+            <td>${item.owner}</td>
+            <td><label><input id="${item.id}" type="checkbox" /> 已確認</label></td>
+            <td><input id="${item.id}_note" type="text" placeholder="填寫此分類尚需注意的風險或結論" /></td>
+          </tr>
+        `).join("");
+      }
+
+      function validateS3(values) {
+        const checks = [];
+        categoryConfigs.forEach((category) => {
+          const metrics = categoryMetrics(category, values);
+          checks.push({
+            pass: metrics.percent >= 80,
+            label: `${category.label} 必填完成度 >= 80%（目前 ${metrics.percent}%）`
+          });
+          checks.push({
+            pass: metrics.missingCritical.length === 0,
+            label: metrics.missingCritical.length
+              ? `${category.label} 尚有 critical 題未填：${metrics.missingCritical.map((item) => item.title).join("、")}`
+              : `${category.label} critical 題已補齊`
+          });
+        });
+
+        if (values["deployment.cicd.platform"] === "none") {
+          checks.push({
+            pass: String(values["deployment.cicd.none_reason"] || "").trim() !== "",
+            label: "無 CI/CD 時已補齊原因與補齊計畫"
+          });
+        }
+
+        if (values["backend.auth.method"] === "jwt") {
+          const jwtConfig = values["backend.auth.jwt_config"] || {};
+          checks.push({
+            pass: ["access_token_lifetime", "refresh_token_enabled", "refresh_token_lifetime", "token_storage"].every((key) => String(jwtConfig[key] || "").trim() !== ""),
+            label: "JWT 設定細節已完整"
+          });
+        }
+
+        const confirmedCount = confirmationItems.filter((item) => {
+          const input = document.getElementById(item.id);
+          return input && input.checked;
+        }).length;
+        checks.push({
+          pass: confirmedCount >= 4,
+          label: `各角色確認至少 4 類（目前 ${confirmedCount} 類）`
+        });
+
+        validationListEl.innerHTML = "";
+        checks.forEach((check) => {
+          const item = document.createElement("li");
+          item.innerHTML = `${check.label}<span class="badge ${check.pass ? "ok" : "warn"}">${check.pass ? "通過" : "待補"}</span>`;
+          validationListEl.appendChild(item);
+        });
+
+        const failCount = checks.filter((check) => !check.pass).length;
+        importStatusEl.className = `status ${failCount ? "warn" : "ok"}`;
+        importStatusEl.textContent = failCount
+          ? `S3 驗證未通過：${failCount} 項待補`
+          : "S3 驗證通過，可進入 S4 驗證期。";
+      }
+
+      function toS3Context(values) {
+        return {
+          project_id: importedContext.project_id || "PRJ-001",
+          from_stage: importedContext.stage || "S2",
+          stage: "S3",
+          categories: Object.fromEntries(categoryConfigs.map((category) => [
+            category.id,
+            Object.fromEntries(category.questions
+              .filter((question) => !question.when || question.when(values, importedContext))
+              .map((question) => [question.id, values[question.id]])
+            )
+          ])),
+          confirmations: confirmationItems.map((item) => ({
+            category: item.categoryId,
+            label: item.label,
+            owner: item.owner,
+            confirmed: !!document.getElementById(item.id)?.checked,
+            note: document.getElementById(`${item.id}_note`)?.value || ""
+          }))
+        };
+      }
+
+      function exportJsonFile(filename, payload) {
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function refreshAll() {
+        renderCategories();
+        const values = collectValues();
+        buildCompletionCards(values);
+        renderSuggestions(values);
+        renderRecommendationSummary(values);
+        s4Checklist = buildS4Checklist(values);
+        contextPreviewEl.textContent = JSON.stringify(toS3Context(values), null, 2);
+        s4PreviewEl.textContent = JSON.stringify(s4Checklist, null, 2);
+      }
+
+      async function importJson() {
+        const file = importFileEl.files && importFileEl.files[0];
+        if (!file) {
+          importStatusEl.className = "status warn";
+          importStatusEl.textContent = "請先選擇 JSON。";
+          return;
+        }
+        try {
+          const raw = JSON.parse(await file.text());
+          importedContext = normalizeImportedData(raw);
+          applyPrefill({ ...suggestedPrefill, ...importedContext.prefill });
+          importStatusEl.className = "status ok";
+          importStatusEl.textContent = `匯入成功：${file.name}`;
+          validateS3(collectValues());
+        } catch (error) {
+          importStatusEl.className = "status warn";
+          importStatusEl.textContent = `匯入失敗：${error.message}`;
+        }
+      }
+
+      function exportS3Context() {
+        exportJsonFile("prj001-s3-design-context.json", toS3Context(collectValues()));
+      }
+
+      function exportS4ChecklistFile() {
+        exportJsonFile("prj001-s4-validation-checklist.json", {
+          project_id: importedContext.project_id || "PRJ-001",
+          from_stage: "S3",
+          to_stage: "S4",
+          generated_at: new Date().toISOString(),
+          checks: s4Checklist
+        });
+      }
+
+      function exportMergedProjectContext() {
+        const values = collectValues();
+        const base = importedContext.raw && typeof importedContext.raw === "object" ? { ...importedContext.raw } : {};
+        const merged = {
+          ...base,
+          project_id: importedContext.project_id || base.project_id || "PRJ-001",
+          current_stage: "S3",
+          questionnaire_prefill: {
+            ...(base.questionnaire_prefill || {}),
+            ...values
+          },
+          stages: {
+            ...(base.stages || {}),
+            s3: {
+              completed_at: new Date().toISOString(),
+              answers: values,
+              s4_checks: s4Checklist
+            }
+          },
+          handoff: {
+            next_stage: "S4",
+            generated_at: new Date().toISOString()
+          }
+        };
+        exportJsonFile("prj001-project-context.json", merged);
+      }
+
+      function openHelpModal(helpId) {
+        const item = questionHelp[helpId];
+        if (!item) return;
+        helpModalTitleEl.textContent = item.title;
+        helpModalSummaryEl.textContent = item.summary;
+        helpModalDiffsEl.innerHTML = `<ul class="check-list">${item.diffs.map((diff) => `<li>${diff}</li>`).join("")}</ul>`;
+        if (item.compare && item.compare.length) {
+          const [header, ...rows] = item.compare;
+          helpModalCompareEl.innerHTML = `
+            <table>
+              <thead>
+                <tr>${header.map((cell) => `<th>${cell}</th>`).join("")}</tr>
+              </thead>
+              <tbody>
+                ${rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("")}
+              </tbody>
+            </table>
+          `;
+        } else {
+          helpModalCompareEl.textContent = "目前無比較表。";
+        }
+        helpModalUseCaseEl.textContent = item.useCase;
+        helpModalExampleEl.textContent = item.example;
+        helpModalBackdropEl.classList.add("open");
+        helpModalBackdropEl.setAttribute("aria-hidden", "false");
+      }
+
+      function closeHelpModal() {
+        helpModalBackdropEl.classList.remove("open");
+        helpModalBackdropEl.setAttribute("aria-hidden", "true");
+      }
+
+      document.getElementById("importBtn").addEventListener("click", importJson);
+      document.getElementById("validateBtn").addEventListener("click", () => validateS3(collectValues()));
+      document.getElementById("suggestBtn").addEventListener("click", refreshAll);
+      document.getElementById("exportContextBtn").addEventListener("click", exportS3Context);
+      document.getElementById("exportS4Btn").addEventListener("click", exportS4ChecklistFile);
+      document.getElementById("exportMergedContextBtn").addEventListener("click", exportMergedProjectContext);
+      document.addEventListener("input", () => {
+        refreshAll();
+      });
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement && target.dataset.helpId) {
+          openHelpModal(target.dataset.helpId);
+        }
+      });
+      document.getElementById("closeHelpBtn").addEventListener("click", closeHelpModal);
+      helpModalBackdropEl.addEventListener("click", (event) => {
+        if (event.target === helpModalBackdropEl) closeHelpModal();
+      });
+
+      renderConfirmTable();
+      applyPrefill(suggestedPrefill);
+      validateS3(collectValues());
+    </script>
+  </body>
+</html>

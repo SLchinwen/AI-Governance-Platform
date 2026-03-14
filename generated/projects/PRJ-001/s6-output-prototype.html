@@ -1,0 +1,974 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRJ-001 S6 Output Prototype</title>
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --card: #fff;
+        --line: #d9e0ea;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --brand: #0f62fe;
+        --ok: #166534;
+        --warn: #92400e;
+        --error: #b91c1c;
+        --info: #1d4ed8;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", "Noto Sans TC", Arial, sans-serif;
+      }
+      .wrap {
+        max-width: 1220px;
+        margin: 20px auto;
+        padding: 0 14px 40px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      h1 { margin: 0 0 8px; font-size: 24px; }
+      h2 { margin: 0 0 8px; font-size: 18px; }
+      h3 { margin: 10px 0 8px; font-size: 15px; }
+      .meta, .hint {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .grid { display: grid; gap: 10px; }
+      .two-col { grid-template-columns: 1.2fr 1fr; }
+      .three-col { grid-template-columns: repeat(3, 1fr); }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      button {
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 12px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .primary { background: var(--brand); color: #fff; }
+      .secondary { background: #e9efff; color: #13346e; }
+      .status { margin-top: 8px; font-size: 14px; }
+      .ok { color: var(--ok); }
+      .warn { color: var(--warn); }
+      .error { color: var(--error); }
+      .badge {
+        display: inline-block;
+        margin-left: 6px;
+        font-size: 12px;
+        border-radius: 999px;
+        padding: 2px 8px;
+      }
+      .badge.ok { background: #e7f7ec; color: #166534; }
+      .badge.warn { background: #fff4e6; color: #92400e; }
+      .badge.error { background: #fee2e2; color: #991b1b; }
+      .badge.info { background: #edf4ff; color: #0f62fe; }
+      .summary-box {
+        border: 1px solid #dbe3f0;
+        border-radius: 10px;
+        padding: 10px;
+        background: #f8fbff;
+      }
+      .summary-box strong { display: block; margin-bottom: 4px; }
+      .output-card {
+        border: 1px solid #dbe3f0;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      .output-card:last-child { margin-bottom: 0; }
+      .output-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+      .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .help-btn {
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        border: 1px solid #bcd0fb;
+        background: #eef4ff;
+        color: #0f62fe;
+        font-weight: 700;
+        padding: 0;
+      }
+      .check-list, .summary-list {
+        margin: 8px 0 0;
+        padding-left: 18px;
+      }
+      .check-list li, .summary-list li {
+        margin: 6px 0;
+        line-height: 1.6;
+      }
+      pre {
+        margin: 8px 0 0;
+        background: #0b1220;
+        color: #eaf1ff;
+        border-radius: 8px;
+        padding: 10px;
+        overflow: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .modal-backdrop.open { display: flex; }
+      .modal {
+        width: min(760px, 100%);
+        max-height: 85vh;
+        overflow: auto;
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #dbe3f0;
+        padding: 16px;
+      }
+      .modal-header {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .modal-title {
+        margin: 0;
+        font-size: 20px;
+      }
+      .close-btn {
+        background: #eef2f7;
+        color: #334155;
+      }
+      .help-section-title {
+        margin: 14px 0 6px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .help-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      @media (max-width: 960px) {
+        .two-col, .three-col {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <section class="card">
+        <h1>S6 Output 產出期 Prototype</h1>
+        <div class="meta">
+          目標：根據 `S5` 核准結果，產出正式文件資產，供專案 repo、AI 工具與後續治理直接使用。<br />
+          這一版可預覽並匯出：`tech-stack.json`、`ai-context.md`、`readiness-report.md`、`adr-draft.md`、`cursor-rules-draft.mdc`。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>匯入前階段 JSON</h2>
+        <label for="importJsonFile">選擇 `S5 approved review packet` / `S6 handoff` / `project-context.json`</label>
+        <input id="importJsonFile" type="file" accept=".json,application/json" />
+        <div class="actions">
+          <button class="secondary" type="button" id="importBtn">匯入並生成輸出</button>
+          <button class="secondary" type="button" id="refreshBtn">重新生成</button>
+          <button class="primary" type="button" id="exportBundleBtn">匯出全部檔案</button>
+          <button class="secondary" type="button" id="exportMergedContextBtn">回存 project-context.json</button>
+        </div>
+        <div id="importStatus" class="status"></div>
+      </section>
+
+      <section class="card">
+        <h2>產出就緒總覽</h2>
+        <div id="summaryGrid" class="grid three-col"></div>
+      </section>
+
+      <div class="grid two-col">
+        <section class="card">
+          <div class="section-head">
+            <h2>輸出說明與檢查</h2>
+            <button type="button" class="help-btn" data-help-id="output_readiness" aria-label="查看輸出就緒說明">?</button>
+          </div>
+          <ul id="readinessList" class="check-list"></ul>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <h2>建議發布備註</h2>
+            <button type="button" class="help-btn" data-help-id="publish_notes" aria-label="查看發布備註說明">?</button>
+          </div>
+          <ul id="publishNotesList" class="check-list"></ul>
+        </section>
+      </div>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>正式輸出檔案</h2>
+          <button type="button" class="help-btn" data-help-id="output_files" aria-label="查看輸出檔案說明">?</button>
+        </div>
+        <div class="output-card">
+          <div class="output-head">
+            <strong>`tech-stack.json`</strong>
+            <div class="actions">
+              <button class="secondary" type="button" id="exportTechStackBtn">匯出此檔</button>
+            </div>
+          </div>
+          <div class="hint">技術棧結構化 SSOT，供系統與後續 repo 匯入。</div>
+          <pre id="techStackPreview">{}</pre>
+        </div>
+
+        <div class="output-card">
+          <div class="output-head">
+            <strong>`ai-context.md`</strong>
+            <div class="actions">
+              <button class="secondary" type="button" id="exportAiContextBtn">匯出此檔</button>
+            </div>
+          </div>
+          <div class="hint">給 Cursor / Copilot / 其他 AI 工具的專案上下文。</div>
+          <pre id="aiContextPreview"></pre>
+        </div>
+
+        <div class="output-card">
+          <div class="output-head">
+            <strong>`readiness-report.md`</strong>
+            <div class="actions">
+              <button class="secondary" type="button" id="exportReadinessBtn">匯出此檔</button>
+            </div>
+          </div>
+          <div class="hint">記錄此版本的整體就緒度、阻擋項目與建議行動。</div>
+          <pre id="readinessPreview"></pre>
+        </div>
+
+        <div class="output-card">
+          <div class="output-head">
+            <strong>`adr-draft.md`</strong>
+            <div class="actions">
+              <button class="secondary" type="button" id="exportAdrBtn">匯出此檔</button>
+            </div>
+          </div>
+          <div class="hint">把關鍵決策轉成可被 repo 保留的 ADR 草稿。</div>
+          <pre id="adrPreview"></pre>
+        </div>
+
+        <div class="output-card">
+          <div class="output-head">
+            <strong>`cursor-rules-draft.mdc`</strong>
+            <div class="actions">
+              <button class="secondary" type="button" id="exportCursorRulesBtn">匯出此檔</button>
+            </div>
+          </div>
+          <div class="hint">把這次核准的技術棧與安全紅線，轉成 AI 協作規則草案。</div>
+          <pre id="cursorRulesPreview"></pre>
+        </div>
+      </section>
+    </div>
+
+    <div id="helpModalBackdrop" class="modal-backdrop" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+        <div class="modal-header">
+          <div>
+            <h2 id="helpModalTitle" class="modal-title">輸出說明</h2>
+            <div id="helpModalSummary" class="meta"></div>
+          </div>
+          <button type="button" id="closeHelpBtn" class="close-btn">關閉</button>
+        </div>
+        <div class="help-section-title">差異說明</div>
+        <div id="helpModalDiffs" class="help-box"></div>
+        <div class="help-section-title">快速比較</div>
+        <div id="helpModalCompare" class="help-box"></div>
+        <div class="help-section-title">適用情境</div>
+        <div id="helpModalUseCase" class="help-box"></div>
+        <div class="help-section-title">簡單範例</div>
+        <div id="helpModalExample" class="help-box"></div>
+      </div>
+    </div>
+
+    <script>
+      const helpContent = {
+        output_readiness: {
+          title: "輸出就緒在看什麼？",
+          summary: "S6 不是再做審核，而是確認哪些檔案可以正式產出、哪些還要附註風險。",
+          diffs: [
+            "S5 決定能不能產出。",
+            "S6 決定要產出哪些正式檔案，以及檔案內容怎麼組裝。",
+            "如果 S5 沒批准，S6 只能生成草稿，不應視為正式版。"
+          ],
+          compare: [
+            ["階段", "重點"],
+            ["S5", "正式簽核與版本鎖定"],
+            ["S6", "產出正式文件資產"],
+            ["S7", "發布到 repo / PR 流程"]
+          ],
+          useCase: "當你已經完成 S5 核准，S6 就應自動產出可被 repo 與 AI 工具直接引用的檔案。",
+          example: "例如輸出 `tech-stack.json` 給系統讀取，輸出 `ai-context.md` 給 Cursor 使用。"
+        },
+        publish_notes: {
+          title: "發布備註為什麼重要？",
+          summary: "即使已經核准，仍可能有少量 warning 或後續追蹤點，需要一起帶進 repo。",
+          diffs: [
+            "不是所有 warning 都要阻止產出。",
+            "但若保留 warning，就應一起寫進發布備註。",
+            "這樣後面建 PR 或交接時，大家才知道哪些是已知風險。"
+          ],
+          compare: [
+            ["情況", "做法"],
+            ["完全通過", "可直接正式產出"],
+            ["有少量 warning", "產出時附上備註與處理計畫"],
+            ["未批准", "只可視為草稿，不宜正式發布"]
+          ],
+          useCase: "特別適合 MVP 先上線，但有少量治理項目要在下一個 sprint 補齊的情況。",
+          example: "例如先接受沒有 IaC，但要求下一版補 Bicep。"
+        },
+        output_files: {
+          title: "五種輸出檔案差在哪？",
+          summary: "每個輸出檔用途不同，不是重複文件，而是面向不同接收者。",
+          diffs: [
+            "`tech-stack.json`：給系統與資料交換。",
+            "`ai-context.md`：給 AI 工具理解專案背景。",
+            "`readiness-report.md`：給治理與審核追蹤。",
+            "`adr-draft.md`：給 repo 留下決策紀錄。",
+            "`cursor-rules-draft.mdc`：給 IDE / AI 協作規則。"
+          ],
+          compare: [
+            ["檔案", "主要用途"],
+            ["tech-stack.json", "機器可讀 SSOT"],
+            ["ai-context.md", "AI 專案上下文"],
+            ["readiness-report.md", "治理與審核紀錄"],
+            ["adr-draft.md", "架構決策歷程"],
+            ["cursor-rules-draft.mdc", "AI 行為限制與規範"]
+          ],
+          useCase: "你可以把這五個檔案一起放到專案 repo，作為 AI 開發與治理的起始基線。",
+          example: "例如 repo 初始就帶 `tech-stack.json + ai-context.md + cursor-rules-draft.mdc`。"
+        }
+      };
+
+      const defaultData = {
+        project_id: "PRJ-001",
+        project_name: "Questionnaire System",
+        review_status: "approved",
+        approved_version: "review-v1.0.0",
+        readiness_score: 82,
+        blocker_count: 0,
+        warning_count: 2,
+        values: {
+          "project_basic.profile.name": "Questionnaire System",
+          "project_basic.profile.type": "web_application",
+          "project_basic.profile.scope": "medium",
+          "project_basic.profile.is_new": "greenfield",
+          "project_basic.delivery.channel": "internal_only",
+          "project_basic.integration.level": "internal_systems",
+          "project_basic.artifact.readiness": "ready_for_codegen",
+          "project_basic.profile.timeline": "2026-03-16 ~ 2026-06-12",
+          "project_basic.profile.team_size": 4,
+          "project_basic.compliance.data_sensitivity": "confidential",
+          "architecture.pattern.style": "modular_monolith",
+          "architecture.pattern.layers": ["presentation", "application", "domain", "infrastructure", "data_access"],
+          "architecture.hosting.platform": "azure",
+          "backend.runtime.platform": "dotnet",
+          "backend.runtime.dotnet_version": "net8",
+          "backend.framework.dotnet_type": "webapi",
+          "backend.orm.choice": "ef_core",
+          "backend.auth.method": "jwt",
+          "backend.auth.jwt_config": {
+            "access_token_lifetime": "30",
+            "refresh_token_enabled": "yes",
+            "refresh_token_lifetime": "7",
+            "token_storage": "HttpOnly Cookie"
+          },
+          "backend.logging.framework": "serilog",
+          "backend.testing.strategy": ["unit_test", "integration_test", "api_test"],
+          "frontend.framework.choice": "react",
+          "frontend.language.typescript": "strict",
+          "frontend.ui.component_library": "ant_design",
+          "frontend.styling.method": "tailwind",
+          "frontend.state.management": "zustand",
+          "frontend.routing.solution": "react_router",
+          "frontend.build.tool": "vite",
+          "frontend.form.library": "react_hook_form",
+          "frontend.testing.tools": ["vitest", "react_testing_library", "playwright"],
+          "database.primary.engine": "azure_sql",
+          "database.design.approach": "migration",
+          "database.cache.strategy": "azure_redis",
+          "database.naming.convention": "snake_case",
+          "database.backup.strategy": "azure_auto",
+          "database.sensitive_data.handling": ["encryption_at_rest", "encryption_in_transit", "data_masking", "audit_log"],
+          "api.style.type": "restful",
+          "api.versioning.strategy": "url_path",
+          "api.documentation.openapi": "swagger_auto",
+          "api.response.format": "envelope",
+          "api.error.handling": "global_exception",
+          "api.external.integrations": ["storage", "ai_service"],
+          "security.auth.authorization": "rbac",
+          "security.compliance.requirements": ["iso_27001", "company_policy", "owasp_top10"],
+          "security.secrets.management": "azure_key_vault",
+          "security.ai.boundaries": ["no_prod_data", "no_secrets", "code_review_required", "approved_models_only", "audit_trail"],
+          "deployment.cicd.platform": "github_actions",
+          "deployment.strategy.type": "rolling",
+          "deployment.environments.list": ["local", "dev", "uat", "production"],
+          "deployment.monitoring.tools": ["app_insights", "health_checks"],
+          "deployment.logging.centralized": "app_insights",
+          "deployment.git.branching": "github_flow",
+          "deployment.iac.tool": "bicep",
+          "ai_collaboration.boundary_summary": "private_model_only"
+        },
+        unresolved_warnings: [
+          "正式環境監控與告警仍需持續調校",
+          "IaC 雖有方向，但實際模板仍待後續補齊"
+        ]
+      };
+
+      const summaryGridEl = document.getElementById("summaryGrid");
+      const readinessListEl = document.getElementById("readinessList");
+      const publishNotesListEl = document.getElementById("publishNotesList");
+      const techStackPreviewEl = document.getElementById("techStackPreview");
+      const aiContextPreviewEl = document.getElementById("aiContextPreview");
+      const readinessPreviewEl = document.getElementById("readinessPreview");
+      const adrPreviewEl = document.getElementById("adrPreview");
+      const cursorRulesPreviewEl = document.getElementById("cursorRulesPreview");
+      const importFileEl = document.getElementById("importJsonFile");
+      const importStatusEl = document.getElementById("importStatus");
+      const helpModalBackdropEl = document.getElementById("helpModalBackdrop");
+      const helpModalTitleEl = document.getElementById("helpModalTitle");
+      const helpModalSummaryEl = document.getElementById("helpModalSummary");
+      const helpModalDiffsEl = document.getElementById("helpModalDiffs");
+      const helpModalCompareEl = document.getElementById("helpModalCompare");
+      const helpModalUseCaseEl = document.getElementById("helpModalUseCase");
+      const helpModalExampleEl = document.getElementById("helpModalExample");
+
+      let currentData = JSON.parse(JSON.stringify(defaultData));
+
+      function clone(obj) {
+        return JSON.parse(JSON.stringify(obj));
+      }
+
+      function normalizeImportedData(raw) {
+        const data = clone(defaultData);
+        if (raw.project_id) data.project_id = raw.project_id;
+        if (raw.project_name) data.project_name = raw.project_name;
+
+        if (raw.approved_version) data.approved_version = raw.approved_version;
+        if (raw.review_status) data.review_status = raw.review_status;
+        if (raw.validation_summary) {
+          data.readiness_score = raw.validation_summary.readiness_score ?? data.readiness_score;
+          data.blocker_count = raw.validation_summary.blocker_count ?? data.blocker_count;
+          data.warning_count = raw.validation_summary.warning_count ?? data.warning_count;
+        }
+        if (Array.isArray(raw.unresolved_warnings)) {
+          data.unresolved_warnings = raw.unresolved_warnings.map((item) => typeof item === "string" ? item : (item.message || item.title || JSON.stringify(item)));
+        }
+        if (raw.locked_review && raw.locked_review.validation_summary) {
+          data.readiness_score = raw.locked_review.validation_summary.readiness_score ?? data.readiness_score;
+          data.blocker_count = raw.locked_review.validation_summary.blocker_count ?? data.blocker_count;
+          data.warning_count = raw.locked_review.validation_summary.warning_count ?? data.warning_count;
+          data.review_status = raw.locked_review.review_status || data.review_status;
+          data.approved_version = raw.approved_version || raw.locked_review.version_lock?.version || data.approved_version;
+        }
+        if (raw.questionnaire_prefill) {
+          data.values = { ...data.values, ...raw.questionnaire_prefill };
+        }
+        if (raw.prefill) {
+          data.values = { ...data.values, ...raw.prefill };
+        }
+        if (raw.stages) {
+          ["s1", "s2", "s3"].forEach((stage) => {
+            if (raw.stages[stage] && raw.stages[stage].answers) {
+              data.values = { ...data.values, ...raw.stages[stage].answers };
+            }
+          });
+          if (raw.stages.s5 && raw.stages.s5.approved_review_packet) {
+            const approved = raw.stages.s5.approved_review_packet;
+            data.review_status = approved.review_status || data.review_status;
+            data.approved_version = approved.version_lock?.version || data.approved_version;
+            if (approved.validation_summary) {
+              data.readiness_score = approved.validation_summary.readiness_score ?? data.readiness_score;
+              data.blocker_count = approved.validation_summary.blocker_count ?? data.blocker_count;
+              data.warning_count = approved.validation_summary.warning_count ?? data.warning_count;
+            }
+            if (Array.isArray(approved.unresolved_warnings)) {
+              data.unresolved_warnings = approved.unresolved_warnings.map((item) => item.message || item.title || JSON.stringify(item));
+            }
+          }
+        }
+        return data;
+      }
+
+      function listOrDash(value) {
+        if (Array.isArray(value) && value.length) return value.join(", ");
+        return value || "-";
+      }
+
+      function buildTechStackJson(data) {
+        const v = data.values;
+        return {
+          output_id: `OUT-${new Date().toISOString().slice(0, 10)}-TS`,
+          project_id: data.project_id,
+          output_type: "tech_stack",
+          generated_at: new Date().toISOString(),
+          generated_from_version: data.approved_version,
+          format: "json",
+          review_status: data.review_status,
+          content: {
+            project: {
+              name: v["project_basic.profile.name"],
+              type: v["project_basic.profile.type"],
+              scope: v["project_basic.profile.scope"],
+              is_new: v["project_basic.profile.is_new"],
+              timeline: v["project_basic.profile.timeline"],
+              team_size: v["project_basic.profile.team_size"],
+              data_sensitivity: v["project_basic.compliance.data_sensitivity"]
+            },
+            architecture: {
+              style: v["architecture.pattern.style"],
+              layers: v["architecture.pattern.layers"] || []
+            },
+            backend: {
+              platform: v["backend.runtime.platform"],
+              version: v["backend.runtime.dotnet_version"] || "",
+              framework: v["backend.framework.dotnet_type"] || "",
+              orm: v["backend.orm.choice"],
+              auth: {
+                method: v["backend.auth.method"],
+                jwt_config: v["backend.auth.jwt_config"] || {}
+              },
+              logging: v["backend.logging.framework"],
+              testing: v["backend.testing.strategy"] || []
+            },
+            frontend: {
+              framework: v["frontend.framework.choice"],
+              language: v["frontend.language.typescript"],
+              ui_library: v["frontend.ui.component_library"],
+              styling: v["frontend.styling.method"],
+              state_management: v["frontend.state.management"],
+              routing: v["frontend.routing.solution"],
+              build_tool: v["frontend.build.tool"],
+              form_library: v["frontend.form.library"]
+            },
+            database: {
+              engine: v["database.primary.engine"],
+              design_approach: v["database.design.approach"],
+              cache: v["database.cache.strategy"],
+              naming_convention: v["database.naming.convention"],
+              backup_strategy: v["database.backup.strategy"],
+              sensitive_data_handling: v["database.sensitive_data.handling"] || []
+            },
+            api: {
+              style: v["api.style.type"],
+              versioning: v["api.versioning.strategy"],
+              documentation: v["api.documentation.openapi"],
+              response_format: v["api.response.format"],
+              error_handling: v["api.error.handling"],
+              external_integrations: v["api.external.integrations"] || []
+            },
+            security: {
+              authorization: v["security.auth.authorization"],
+              compliance: v["security.compliance.requirements"] || [],
+              secrets_management: v["security.secrets.management"],
+              ai_boundaries: v["security.ai.boundaries"] || []
+            },
+            infrastructure: {
+              platform: v["architecture.hosting.platform"],
+              cicd: v["deployment.cicd.platform"],
+              deployment_strategy: v["deployment.strategy.type"],
+              environments: v["deployment.environments.list"] || [],
+              monitoring: v["deployment.monitoring.tools"] || [],
+              logging_platform: v["deployment.logging.centralized"],
+              branching_strategy: v["deployment.git.branching"],
+              iac: v["deployment.iac.tool"]
+            }
+          }
+        };
+      }
+
+      function buildAiContextMd(data) {
+        const v = data.values;
+        return `# AI Context - ${v["project_basic.profile.name"]}
+
+## 專案概述
+- 類型：${v["project_basic.profile.type"]}
+- 範圍：${v["project_basic.profile.scope"]}
+- 狀態：${v["project_basic.profile.is_new"]}
+- 時程：${v["project_basic.profile.timeline"]}
+- 資料敏感度：${v["project_basic.compliance.data_sensitivity"]}
+
+## 技術棧
+### 後端
+- 平台：${v["backend.runtime.platform"]} ${v["backend.runtime.dotnet_version"] || ""}
+- 框架：${v["backend.framework.dotnet_type"] || "-"}
+- ORM：${v["backend.orm.choice"]}
+- 認證：${v["backend.auth.method"]}
+- 日誌：${v["backend.logging.framework"]}
+
+### 前端
+- 框架：${v["frontend.framework.choice"]}
+- 語言：${v["frontend.language.typescript"]}
+- UI 庫：${v["frontend.ui.component_library"]}
+- 樣式：${v["frontend.styling.method"]}
+- 狀態管理：${v["frontend.state.management"]}
+
+### 資料庫
+- 引擎：${v["database.primary.engine"]}
+- 設計方式：${v["database.design.approach"]}
+- 快取：${v["database.cache.strategy"]}
+- 命名規範：${v["database.naming.convention"]}
+
+### API
+- 風格：${v["api.style.type"]}
+- 版本策略：${v["api.versioning.strategy"]}
+- 文件：${v["api.documentation.openapi"]}
+- 回應格式：${v["api.response.format"]}
+- 錯誤處理：${v["api.error.handling"]}
+
+## 架構規範
+- 架構風格：${v["architecture.pattern.style"]}
+- 分層：${listOrDash(v["architecture.pattern.layers"])}
+- 部署平台：${v["architecture.hosting.platform"]}
+
+## AI 協作規則
+- AI 邊界摘要：${v["ai_collaboration.boundary_summary"]}
+- AI 安全邊界：${listOrDash(v["security.ai.boundaries"])}
+- 機敏資訊管理：${v["security.secrets.management"]}
+- 合規要求：${listOrDash(v["security.compliance.requirements"])}
+
+## 交付與維運
+- CI/CD：${v["deployment.cicd.platform"]}
+- 部署策略：${v["deployment.strategy.type"]}
+- 環境：${listOrDash(v["deployment.environments.list"])}
+- 監控：${listOrDash(v["deployment.monitoring.tools"])}
+- Git 分支策略：${v["deployment.git.branching"]}`;
+      }
+
+      function buildReadinessReportMd(data) {
+        const status = data.readiness_score >= 85 ? "高" : data.readiness_score >= 70 ? "可進行" : "待補強";
+        const blockers = data.blocker_count === 0 ? "- 無" : `- 尚有 ${data.blocker_count} 個 blocker`;
+        const warnings = data.unresolved_warnings.length
+          ? data.unresolved_warnings.map((item) => `- ${item}`).join("\n")
+          : "- 無";
+        const actions = [];
+        if (data.warning_count > 0) actions.push("追蹤未解決 warning 的處理進度");
+        if (data.values["deployment.iac.tool"] === "bicep" || data.values["deployment.iac.tool"] === "terraform") {
+          actions.push("把 IaC 模板與實際部署流程對齊並納入 repo");
+        } else {
+          actions.push("補齊 IaC 或至少補正式部署手冊");
+        }
+        actions.push("確認 S7 發布時一併附上 AI 使用揭露與變更摘要");
+        return `# AI 協作就緒度報告
+
+## 總體評分：${data.readiness_score}/100 (${status})
+
+## 核准資訊
+- 專案：${data.project_name}
+- 版本：${data.approved_version}
+- 審核狀態：${data.review_status}
+
+## 阻擋項目（Blockers）
+${blockers}
+
+## 警告事項
+${warnings}
+
+## 品質重點
+- 後端測試策略：${listOrDash(data.values["backend.testing.strategy"])}
+- 資料保護：${listOrDash(data.values["database.sensitive_data.handling"])}
+- API 文件：${data.values["api.documentation.openapi"]}
+- AI 安全邊界：${listOrDash(data.values["security.ai.boundaries"])}
+
+## 建議行動
+${actions.map((item) => `- ${item}`).join("\n")}`;
+      }
+
+      function buildAdrDraftMd(data) {
+        const v = data.values;
+        return `# ADR Draft - ${data.project_name}
+
+## 狀態
+Approved (from ${data.approved_version})
+
+## 背景
+本專案為 ${v["project_basic.profile.type"]}，資料敏感度為 ${v["project_basic.compliance.data_sensitivity"]}，團隊規模約 ${v["project_basic.profile.team_size"]} 人。
+
+## 決策摘要
+1. 採用 ${v["architecture.pattern.style"]} 作為主要架構風格。
+2. 後端採用 ${v["backend.runtime.platform"]} ${v["backend.runtime.dotnet_version"] || ""}，框架為 ${v["backend.framework.dotnet_type"] || "-"}。
+3. 前端採用 ${v["frontend.framework.choice"]}，搭配 ${v["frontend.ui.component_library"]} 與 ${v["frontend.build.tool"]}。
+4. 資料庫採用 ${v["database.primary.engine"]}，設計方式為 ${v["database.design.approach"]}。
+5. API 採用 ${v["api.style.type"]}，回應格式為 ${v["api.response.format"]}。
+6. 資安授權採用 ${v["security.auth.authorization"]}，機敏資訊管理採用 ${v["security.secrets.management"]}。
+7. 部署與維運採用 ${v["deployment.cicd.platform"]}、${v["deployment.strategy.type"]}、${v["deployment.git.branching"]}。
+
+## AI 協作決策
+- AI 邊界摘要：${v["ai_collaboration.boundary_summary"]}
+- AI 安全邊界：${listOrDash(v["security.ai.boundaries"])}
+
+## 後續注意事項
+${data.unresolved_warnings.length
+  ? data.unresolved_warnings.map((item) => `- ${item}`).join("\n")
+  : "- 目前無額外保留事項"}`
+      }
+
+      function buildCursorRulesDraft(data) {
+        const v = data.values;
+        return `---
+description: Questionnaire System approved tech stack draft
+globs:
+alwaysApply: false
+---
+
+- Backend must use \`${v["backend.runtime.platform"]} ${v["backend.runtime.dotnet_version"] || ""}\` with \`${v["backend.framework.dotnet_type"] || "-"}\`.
+- Frontend must use \`${v["frontend.framework.choice"]}\`, \`${v["frontend.ui.component_library"]}\`, and \`${v["frontend.build.tool"]}\`.
+- API style must follow \`${v["api.style.type"]}\` with response format \`${v["api.response.format"]}\`.
+- Database must use \`${v["database.primary.engine"]}\` with design approach \`${v["database.design.approach"]}\`.
+- Authorization must follow \`${v["security.auth.authorization"]}\`.
+- Secrets must be managed by \`${v["security.secrets.management"]}\`; never hardcode credentials.
+- AI boundaries must include: ${listOrDash(v["security.ai.boundaries"])}.
+- Deployment workflow should align with \`${v["deployment.cicd.platform"]}\` and branching strategy \`${v["deployment.git.branching"]}\`.
+- If generating code, preserve the approved architecture style \`${v["architecture.pattern.style"]}\` and layers ${listOrDash(v["architecture.pattern.layers"])}.`;
+      }
+
+      function renderSummary(data) {
+        const cards = [
+          {
+            title: "審核狀態",
+            value: data.review_status,
+            detail: data.review_status === "approved" ? "可正式產出" : "僅可當草稿",
+            tone: data.review_status === "approved" ? "ok" : "warn"
+          },
+          {
+            title: "核准版本",
+            value: data.approved_version,
+            detail: "此版本將成為正式輸出依據",
+            tone: "ok"
+          },
+          {
+            title: "Readiness Score",
+            value: data.readiness_score,
+            detail: data.readiness_score >= 70 ? "已達輸出基線" : "輸出前仍建議補強",
+            tone: data.readiness_score >= 70 ? "ok" : "warn"
+          }
+        ];
+        summaryGridEl.innerHTML = cards.map((card) => `
+          <div class="summary-box">
+            <strong>${card.title}</strong>
+            <div class="${card.tone}">${card.value}</div>
+            <div class="hint">${card.detail}</div>
+          </div>
+        `).join("");
+      }
+
+      function renderReadinessChecks(data) {
+        const checks = [
+          {
+            pass: data.review_status === "approved",
+            label: "S5 已正式批准"
+          },
+          {
+            pass: data.blocker_count === 0,
+            label: `未解決 blocker 為 0（目前 ${data.blocker_count}）`
+          },
+          {
+            pass: data.readiness_score >= 70,
+            label: `Readiness Score >= 70（目前 ${data.readiness_score}）`
+          },
+          {
+            pass: Boolean(data.approved_version),
+            label: "已指定核准版本"
+          },
+          {
+            pass: Boolean(data.values["project_basic.profile.name"]),
+            label: "已具備專案名稱與基本資料，可產出正式文件"
+          }
+        ];
+        readinessListEl.innerHTML = checks.map((item) => `
+          <li>${item.label}<span class="badge ${item.pass ? "ok" : "warn"}">${item.pass ? "通過" : "待補"}</span></li>
+        `).join("");
+
+        const failCount = checks.filter((item) => !item.pass).length;
+        importStatusEl.className = `status ${failCount === 0 ? "ok" : "warn"}`;
+        importStatusEl.textContent = failCount === 0
+          ? "S6 可正式產出完整文件資產。"
+          : `S6 可先預覽草稿，但仍有 ${failCount} 項建議補強。`;
+      }
+
+      function renderPublishNotes(data) {
+        const notes = [];
+        if (data.review_status !== "approved") {
+          notes.push("目前審核狀態不是 approved，若要發布到 repo，應明確標示為 draft。");
+        }
+        if (data.warning_count > 0) {
+          notes.push(`尚有 ${data.warning_count} 個 warning，建議在 PR 說明附上處理計畫。`);
+        }
+        if (data.values["ai_collaboration.boundary_summary"] === "private_model_only") {
+          notes.push("發布時請明確註記：此專案 AI 協作應限制在核准模型與受控環境。");
+        }
+        notes.push("S7 發布時建議附上 AI 使用揭露與本次版本核准說明。");
+        publishNotesListEl.innerHTML = notes.map((item) => `<li>${item}</li>`).join("");
+      }
+
+      function refreshAll() {
+        const techStack = buildTechStackJson(currentData);
+        const aiContext = buildAiContextMd(currentData);
+        const readiness = buildReadinessReportMd(currentData);
+        const adr = buildAdrDraftMd(currentData);
+        const cursorRules = buildCursorRulesDraft(currentData);
+
+        renderSummary(currentData);
+        renderReadinessChecks(currentData);
+        renderPublishNotes(currentData);
+
+        techStackPreviewEl.textContent = JSON.stringify(techStack, null, 2);
+        aiContextPreviewEl.textContent = aiContext;
+        readinessPreviewEl.textContent = readiness;
+        adrPreviewEl.textContent = adr;
+        cursorRulesPreviewEl.textContent = cursorRules;
+      }
+
+      function exportTextFile(filename, content, type = "text/plain") {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function exportBundle() {
+        exportTextFile("tech-stack.json", JSON.stringify(buildTechStackJson(currentData), null, 2), "application/json");
+        exportTextFile("ai-context.md", buildAiContextMd(currentData), "text/markdown");
+        exportTextFile("readiness-report.md", buildReadinessReportMd(currentData), "text/markdown");
+        exportTextFile("adr-draft.md", buildAdrDraftMd(currentData), "text/markdown");
+        exportTextFile("cursor-rules-draft.mdc", buildCursorRulesDraft(currentData), "text/plain");
+      }
+
+      function exportMergedProjectContext() {
+        const merged = {
+          project_id: currentData.project_id,
+          current_stage: "S6",
+          questionnaire_prefill: {
+            ...currentData.values
+          },
+          stages: {
+            s6: {
+              completed_at: new Date().toISOString(),
+              outputs: {
+                tech_stack: buildTechStackJson(currentData),
+                ai_context: buildAiContextMd(currentData),
+                readiness_report: buildReadinessReportMd(currentData),
+                adr_draft: buildAdrDraftMd(currentData),
+                cursor_rules_draft: buildCursorRulesDraft(currentData)
+              }
+            }
+          },
+          handoff: {
+            next_stage: "S7",
+            generated_at: new Date().toISOString()
+          }
+        };
+        exportTextFile("prj001-project-context.json", JSON.stringify(merged, null, 2), "application/json");
+      }
+
+      async function importJson() {
+        const file = importFileEl.files && importFileEl.files[0];
+        if (!file) {
+          importStatusEl.className = "status warn";
+          importStatusEl.textContent = "請先選擇 JSON。";
+          return;
+        }
+        try {
+          const raw = JSON.parse(await file.text());
+          currentData = normalizeImportedData(raw);
+          refreshAll();
+          importStatusEl.className = "status ok";
+          importStatusEl.textContent = `匯入成功：${file.name}`;
+        } catch (error) {
+          importStatusEl.className = "status warn";
+          importStatusEl.textContent = `匯入失敗：${error.message}`;
+        }
+      }
+
+      function openHelpModal(helpId) {
+        const item = helpContent[helpId];
+        if (!item) return;
+        helpModalTitleEl.textContent = item.title;
+        helpModalSummaryEl.textContent = item.summary;
+        helpModalDiffsEl.innerHTML = `<ul class="check-list">${item.diffs.map((d) => `<li>${d}</li>`).join("")}</ul>`;
+        if (item.compare && item.compare.length) {
+          const [header, ...rows] = item.compare;
+          helpModalCompareEl.innerHTML = `
+            <table>
+              <thead>
+                <tr>${header.map((h) => `<th>${h}</th>`).join("")}</tr>
+              </thead>
+              <tbody>
+                ${rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("")}
+              </tbody>
+            </table>
+          `;
+        } else {
+          helpModalCompareEl.textContent = "目前無比較表。";
+        }
+        helpModalUseCaseEl.textContent = item.useCase;
+        helpModalExampleEl.textContent = item.example;
+        helpModalBackdropEl.classList.add("open");
+        helpModalBackdropEl.setAttribute("aria-hidden", "false");
+      }
+
+      function closeHelpModal() {
+        helpModalBackdropEl.classList.remove("open");
+        helpModalBackdropEl.setAttribute("aria-hidden", "true");
+      }
+
+      document.getElementById("importBtn").addEventListener("click", importJson);
+      document.getElementById("refreshBtn").addEventListener("click", refreshAll);
+      document.getElementById("exportBundleBtn").addEventListener("click", exportBundle);
+      document.getElementById("exportMergedContextBtn").addEventListener("click", exportMergedProjectContext);
+      document.getElementById("exportTechStackBtn").addEventListener("click", () => exportTextFile("tech-stack.json", JSON.stringify(buildTechStackJson(currentData), null, 2), "application/json"));
+      document.getElementById("exportAiContextBtn").addEventListener("click", () => exportTextFile("ai-context.md", buildAiContextMd(currentData), "text/markdown"));
+      document.getElementById("exportReadinessBtn").addEventListener("click", () => exportTextFile("readiness-report.md", buildReadinessReportMd(currentData), "text/markdown"));
+      document.getElementById("exportAdrBtn").addEventListener("click", () => exportTextFile("adr-draft.md", buildAdrDraftMd(currentData), "text/markdown"));
+      document.getElementById("exportCursorRulesBtn").addEventListener("click", () => exportTextFile("cursor-rules-draft.mdc", buildCursorRulesDraft(currentData), "text/plain"));
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement && target.dataset.helpId) {
+          openHelpModal(target.dataset.helpId);
+        }
+      });
+      document.getElementById("closeHelpBtn").addEventListener("click", closeHelpModal);
+      helpModalBackdropEl.addEventListener("click", (event) => {
+        if (event.target === helpModalBackdropEl) closeHelpModal();
+      });
+
+      refreshAll();
+    </script>
+  </body>
+</html>

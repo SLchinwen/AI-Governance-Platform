@@ -1,0 +1,1130 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRJ-001 S4 Validation Prototype</title>
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --card: #fff;
+        --line: #d9e0ea;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --brand: #0f62fe;
+        --ok: #166534;
+        --warn: #92400e;
+        --error: #b91c1c;
+        --info: #1d4ed8;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", "Noto Sans TC", Arial, sans-serif;
+      }
+      .wrap {
+        max-width: 1220px;
+        margin: 20px auto;
+        padding: 0 14px 40px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      h1 { margin: 0 0 8px; font-size: 24px; }
+      h2 { margin: 0 0 8px; font-size: 18px; }
+      h3 { margin: 0 0 8px; font-size: 15px; }
+      .meta, .hint {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .grid { display: grid; gap: 10px; }
+      .two-col { grid-template-columns: 1.4fr 1fr; }
+      .three-col { grid-template-columns: repeat(3, 1fr); }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      button {
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 12px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .primary { background: var(--brand); color: #fff; }
+      .secondary { background: #e9efff; color: #13346e; }
+      .status { margin-top: 8px; font-size: 14px; }
+      .ok { color: var(--ok); }
+      .warn { color: var(--warn); }
+      .error { color: var(--error); }
+      .badge {
+        display: inline-block;
+        margin-left: 6px;
+        font-size: 12px;
+        border-radius: 999px;
+        padding: 2px 8px;
+      }
+      .badge.ok { background: #e7f7ec; color: #166534; }
+      .badge.warn { background: #fff4e6; color: #92400e; }
+      .badge.error { background: #fee2e2; color: #991b1b; }
+      .badge.info { background: #edf4ff; color: #0f62fe; }
+      .summary-box {
+        border: 1px solid #dbe3f0;
+        border-radius: 10px;
+        padding: 10px;
+        background: #f8fbff;
+      }
+      .summary-box strong { display: block; margin-bottom: 4px; }
+      .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .help-btn {
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        border: 1px solid #bcd0fb;
+        background: #eef4ff;
+        color: #0f62fe;
+        font-weight: 700;
+        padding: 0;
+      }
+      .check-list, .summary-list {
+        margin: 8px 0 0;
+        padding-left: 18px;
+      }
+      .check-list li, .summary-list li {
+        margin: 6px 0;
+        line-height: 1.6;
+      }
+      .issue-card {
+        border: 1px solid #dbe3f0;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      .issue-card.error-card { border-color: #fecaca; background: #fff8f8; }
+      .issue-card.warn-card { border-color: #fde68a; background: #fffcf3; }
+      .issue-head {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+      .issue-meta {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      label { display: block; font-size: 14px; margin-bottom: 6px; }
+      input[type="text"], textarea, select {
+        width: 100%;
+        border: 1px solid #c8d2e2;
+        border-radius: 8px;
+        padding: 9px;
+        font-size: 14px;
+      }
+      textarea { min-height: 72px; resize: vertical; }
+      .inline-field {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 8px;
+        align-items: center;
+        margin-top: 8px;
+      }
+      table { width: 100%; border-collapse: collapse; }
+      th, td {
+        border: 1px solid #d8dfeb;
+        padding: 8px;
+        text-align: left;
+        font-size: 13px;
+        vertical-align: top;
+      }
+      th { background: #f4f7ff; }
+      pre {
+        margin: 8px 0 0;
+        background: #0b1220;
+        color: #eaf1ff;
+        border-radius: 8px;
+        padding: 10px;
+        overflow: auto;
+      }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .modal-backdrop.open { display: flex; }
+      .modal {
+        width: min(760px, 100%);
+        max-height: 85vh;
+        overflow: auto;
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #dbe3f0;
+        padding: 16px;
+      }
+      .modal-header {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .modal-title {
+        margin: 0;
+        font-size: 20px;
+      }
+      .close-btn {
+        background: #eef2f7;
+        color: #334155;
+      }
+      .help-section-title {
+        margin: 14px 0 6px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .help-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      @media (max-width: 960px) {
+        .two-col, .three-col, .inline-field {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <section class="card">
+        <h1>S4 Validation 驗證期 Prototype</h1>
+        <div class="meta">
+          目標：把 S1-S3 的答案做成可審核的驗證報告。<br />
+          內容包含：自動規則檢查、Blocker / Warning 分流、Readiness Score、人工處理計畫、以及送往 S5 的 review packet。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>匯入前階段 JSON</h2>
+        <label for="importJsonFile">選擇 `S3 Context` / `project-context.json` / 前階段匯出 JSON</label>
+        <input id="importJsonFile" type="file" accept=".json,application/json" />
+        <div class="actions">
+          <button class="secondary" type="button" id="importBtn">匯入並分析</button>
+          <button class="secondary" type="button" id="runValidationBtn">重新執行驗證</button>
+          <button class="primary" type="button" id="refreshBtn">刷新摘要</button>
+          <button class="secondary" type="button" id="exportReportBtn">匯出驗證報告 JSON</button>
+          <button class="secondary" type="button" id="exportS5Btn">匯出 S5 Review Packet JSON</button>
+          <button class="secondary" type="button" id="exportMergedContextBtn">回存 project-context.json</button>
+        </div>
+        <div id="importStatus" class="status"></div>
+      </section>
+
+      <section class="card">
+        <h2>驗證總覽</h2>
+        <div id="summaryGrid" class="grid three-col"></div>
+      </section>
+
+      <div class="grid two-col">
+        <section class="card">
+          <div class="section-head">
+            <h2>Blockers（Error）</h2>
+            <button type="button" class="help-btn" data-help-id="blockers" aria-label="查看 Blockers 說明">?</button>
+          </div>
+          <div class="hint">必須先清空，Gate 3 才能通過。</div>
+          <div id="blockerList"></div>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <h2>Warnings</h2>
+            <button type="button" class="help-btn" data-help-id="warnings" aria-label="查看 Warnings 說明">?</button>
+          </div>
+          <div class="hint">允許存在少量 warning，但必須有處理計畫，且數量需 <= 3。</div>
+          <div id="warningList"></div>
+        </section>
+      </div>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>人工確認與處理</h2>
+          <button type="button" class="help-btn" data-help-id="manual_review" aria-label="查看人工確認說明">?</button>
+        </div>
+        <div class="hint">架構師在這裡標記每個問題是否已補件、接受風險或需開會。這是 S4 到 S5 的交接核心。</div>
+        <table>
+          <thead>
+            <tr>
+              <th>項目</th>
+              <th>等級</th>
+              <th>目前狀態</th>
+              <th>處理方式</th>
+              <th>備註</th>
+            </tr>
+          </thead>
+          <tbody id="manualReviewTableBody"></tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>低信心與會議建議</h2>
+          <button type="button" class="help-btn" data-help-id="meeting_guidance" aria-label="查看會議建議說明">?</button>
+        </div>
+        <ul id="meetingSuggestionList" class="check-list"></ul>
+      </section>
+
+      <section class="card">
+        <h2>Gate 3 判定</h2>
+        <ul id="gateCheckList" class="check-list"></ul>
+      </section>
+
+      <section class="card">
+        <h2>輸出預覽</h2>
+        <h3>Validation Report</h3>
+        <pre id="reportPreview">{}</pre>
+        <h3>S5 Review Packet</h3>
+        <pre id="s5Preview">{}</pre>
+      </section>
+    </div>
+
+    <div id="helpModalBackdrop" class="modal-backdrop" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+        <div class="modal-header">
+          <div>
+            <h2 id="helpModalTitle" class="modal-title">驗證說明</h2>
+            <div id="helpModalSummary" class="meta"></div>
+          </div>
+          <button type="button" id="closeHelpBtn" class="close-btn">關閉</button>
+        </div>
+        <div class="help-section-title">差異說明</div>
+        <div id="helpModalDiffs" class="help-box"></div>
+        <div class="help-section-title">快速比較</div>
+        <div id="helpModalCompare" class="help-box"></div>
+        <div class="help-section-title">適用情境</div>
+        <div id="helpModalUseCase" class="help-box"></div>
+        <div class="help-section-title">簡單範例</div>
+        <div id="helpModalExample" class="help-box"></div>
+      </div>
+    </div>
+
+    <script>
+      const helpContent = {
+        blockers: {
+          title: "Blocker 是什麼？",
+          summary: "Blocker 代表這個問題會直接阻止進入 S5 審核期，必須先修掉或重新填答。",
+          diffs: [
+            "Error / Blocker：一定要先處理，不能帶著進下一關。",
+            "Warning：可以暫時保留，但必須有理由與處理計畫。",
+            "Info：只是提醒，不影響 Gate。"
+          ],
+          compare: [
+            ["等級", "是否阻擋 Gate", "處理要求"],
+            ["Blocker", "會阻擋", "必須修正或退回"],
+            ["Warning", "不一定阻擋", "需補處理計畫"],
+            ["Info", "不阻擋", "可做後續優化"]
+          ],
+          useCase: "像是把 secrets 寫死、對外系統沒有認證、機密資料沒加密，這些都屬 Blocker。",
+          example: "例如 `security.secrets.management = hardcoded`，這種一定不能送審。"
+        },
+        warnings: {
+          title: "Warning 是什麼？",
+          summary: "Warning 代表風險或治理還不完整，但未必需要立刻停下來。",
+          diffs: [
+            "Warning 通常是規範不足、文件不足、策略未成熟。",
+            "若 warning 太多，雖然沒有 blocker，也不建議直接進 S5。",
+            "S4 的重點是幫每個 warning 補上合理的處理方式。"
+          ],
+          compare: [
+            ["情況", "可否先前進", "需要什麼"],
+            ["少量 warning", "可以", "補處理計畫"],
+            ["warning 太多", "不建議", "需先收斂"],
+            ["warning 無說明", "不建議", "需補負責人與時程"]
+          ],
+          useCase: "像是有正式環境卻沒監控、REST API 沒統一 response 格式，通常會先列 warning。",
+          example: "例如 `deployment.monitoring.tools` 選 `none`，但有 `production` 環境。"
+        },
+        manual_review: {
+          title: "人工確認在做什麼？",
+          summary: "S4 不是只有系統判斷，還要由架構師或主責人決定每個問題是修正、接受風險還是開會。",
+          diffs: [
+            "系統只能檢查規則，無法理解商業例外。",
+            "人工確認可以決定：已修正、接受風險、退回補件、安排會議。",
+            "這些決定會變成 S5 審核的依據。"
+          ],
+          compare: [
+            ["處理方式", "代表意思", "何時用"],
+            ["fix_now", "先修掉", "Blocker 或容易補齊時"],
+            ["accepted_with_plan", "接受但要列計畫", "Warning 類問題"],
+            ["return_to_owner", "退回主責角色", "內容不足或方向錯誤"],
+            ["meeting_required", "需要跨角色討論", "涉及架構/安全/產品衝突"]
+          ],
+          useCase: "當規則檢查結果和專案現況之間有例外，就要靠人工確認把決策留下來。",
+          example: "例如目前先接受沒有 IaC，但要求下個 sprint 補 Terraform/Bicep。"
+        },
+        meeting_guidance: {
+          title: "什麼情況要開會？",
+          summary: "當問題跨越多角色，或系統無法單獨判定誰該讓步時，S4 應主動建議會議。",
+          diffs: [
+            "單一角色可解決：直接補件即可。",
+            "跨角色衝突：應安排會議。",
+            "高風險但尚無定案：也應安排會議。"
+          ],
+          compare: [
+            ["情況", "建議"],
+            ["少量單點缺漏", "退回補件"],
+            ["API / Security / Deployment 互相影響", "安排跨角色會議"],
+            ["機密資料與 AI 邊界衝突", "優先安全會議"]
+          ],
+          useCase: "像是 AI 可產碼，但資安邊界又過於寬鬆，這類議題通常不能只靠單一角色決定。",
+          example: "例如 PM 想快上線，但 Security 要求私有模型與更完整審查。"
+        }
+      };
+
+      const requiredQuestionGroups = {
+        project_basic: [
+          "project_basic.profile.name",
+          "project_basic.profile.type",
+          "project_basic.profile.scope",
+          "project_basic.profile.is_new",
+          "project_basic.delivery.channel",
+          "project_basic.integration.level",
+          "project_basic.artifact.readiness",
+          "project_basic.profile.timeline",
+          "project_basic.profile.team_size",
+          "project_basic.compliance.data_sensitivity"
+        ],
+        architecture: [
+          "architecture.pattern.style",
+          "architecture.pattern.layers",
+          "backend.runtime.platform",
+          "frontend.framework.choice",
+          "database.primary.engine",
+          "api.style.type",
+          "backend.auth.method",
+          "security.auth.authorization",
+          "architecture.hosting.platform",
+          "ai_collaboration.boundary_summary"
+        ],
+        design: [
+          "backend.runtime.platform",
+          "backend.orm.choice",
+          "backend.auth.method",
+          "backend.testing.strategy",
+          "frontend.framework.choice",
+          "frontend.language.typescript",
+          "frontend.ui.component_library",
+          "database.primary.engine",
+          "database.design.approach",
+          "database.sensitive_data.handling",
+          "api.style.type",
+          "api.documentation.openapi",
+          "api.response.format",
+          "security.auth.authorization",
+          "security.secrets.management",
+          "security.ai.boundaries",
+          "deployment.cicd.platform",
+          "deployment.strategy.type",
+          "deployment.environments.list",
+          "deployment.monitoring.tools",
+          "deployment.git.branching"
+        ]
+      };
+
+      const validationRules = [
+        {
+          id: "VAL-001",
+          severity: "error",
+          category: "required_if",
+          title: ".NET 版本與框架必填",
+          evaluate(values) {
+            const hit = values["backend.runtime.platform"] === "dotnet";
+            const pass = !hit || (isFilled(values["backend.runtime.dotnet_version"]) && isFilled(values["backend.framework.dotnet_type"]));
+            return buildResult(this, pass, ["backend.runtime.platform", "backend.runtime.dotnet_version", "backend.framework.dotnet_type"], "選擇 .NET 作為後端平台時，必須指定 .NET 版本與專案框架類型");
+          }
+        },
+        {
+          id: "VAL-002",
+          severity: "error",
+          category: "required_if",
+          title: "JWT 設定必填",
+          evaluate(values) {
+            const cfg = values["backend.auth.jwt_config"] || {};
+            const hit = values["backend.auth.method"] === "jwt";
+            const pass = !hit || ["access_token_lifetime", "refresh_token_enabled", "refresh_token_lifetime", "token_storage"].every((key) => isFilled(cfg[key]));
+            return buildResult(this, pass, ["backend.auth.method", "backend.auth.jwt_config"], "使用 JWT 認證時，必須填寫 Token 生命週期與 Refresh Token 策略");
+          }
+        },
+        {
+          id: "VAL-003",
+          severity: "error",
+          category: "required_if",
+          title: "無 CI/CD 需補計畫",
+          evaluate(values) {
+            const hit = values["deployment.cicd.platform"] === "none";
+            const pass = !hit || isFilled(values["deployment.cicd.none_reason"]);
+            return buildResult(this, pass, ["deployment.cicd.platform", "deployment.cicd.none_reason"], "無 CI/CD 管線必須說明原因並提出建立計畫");
+          }
+        },
+        {
+          id: "VAL-004",
+          severity: "warning",
+          category: "cross_field",
+          title: "對外 API 建議有文件",
+          evaluate(values) {
+            const projectType = values["project_basic.profile.type"];
+            const hit = ["web_application", "api_platform"].includes(projectType);
+            const pass = !hit || values["api.documentation.openapi"] !== "no_docs";
+            return buildResult(this, pass, ["project_basic.profile.type", "api.documentation.openapi"], "對外系統應備有 API 文件（Swagger 或 OpenAPI spec）");
+          }
+        },
+        {
+          id: "VAL-005",
+          severity: "error",
+          category: "cross_field",
+          title: "機密資料需加密",
+          evaluate(values) {
+            const sensitivity = values["project_basic.compliance.data_sensitivity"];
+            const handling = values["database.sensitive_data.handling"] || [];
+            const hit = ["confidential", "restricted"].includes(sensitivity);
+            const pass = !hit || containsAny(handling, ["encryption_at_rest", "column_encryption"]);
+            return buildResult(this, pass, ["project_basic.compliance.data_sensitivity", "database.sensitive_data.handling"], "處理機密或高度機密資料時，資料庫必須啟用加密措施");
+          }
+        },
+        {
+          id: "VAL-006",
+          severity: "error",
+          category: "conflict_check",
+          title: "Secrets 不得硬編碼",
+          evaluate(values) {
+            const pass = values["security.secrets.management"] !== "hardcoded";
+            return buildResult(this, pass, ["security.secrets.management"], "機敏資訊寫死在程式碼中是嚴重安全風險，必須使用 Key Vault 或環境變數管理");
+          }
+        },
+        {
+          id: "VAL-010",
+          severity: "warning",
+          category: "cross_field",
+          title: "API 回應格式一致性",
+          evaluate(values) {
+            const hit = ["restful", "graphql"].includes(values["api.style.type"]);
+            const pass = !hit || values["api.response.format"] !== "no_standard";
+            return buildResult(this, pass, ["api.style.type", "api.response.format"], "REST/GraphQL API 應定義統一的回應格式，確保前後端一致性");
+          }
+        },
+        {
+          id: "VAL-011",
+          severity: "warning",
+          category: "cross_field",
+          title: "正式環境需監控",
+          evaluate(values) {
+            const envs = values["deployment.environments.list"] || [];
+            const monitoring = values["deployment.monitoring.tools"] || [];
+            const hit = envs.includes("production");
+            const pass = !hit || !monitoring.includes("none");
+            return buildResult(this, pass, ["deployment.environments.list", "deployment.monitoring.tools"], "正式環境必須有監控機制");
+          }
+        },
+        {
+          id: "VAL-012",
+          severity: "error",
+          category: "cross_field",
+          title: "對外系統必須有認證",
+          evaluate(values) {
+            const hit = ["web_application", "api_platform"].includes(values["project_basic.profile.type"]);
+            const pass = !hit || values["backend.auth.method"] !== "none";
+            return buildResult(this, pass, ["project_basic.profile.type", "backend.auth.method"], "對外的 Web 應用或 API 平台必須有認證機制");
+          }
+        },
+        {
+          id: "VAL-013",
+          severity: "error",
+          category: "cross_field",
+          title: "有合規時需稽核日誌",
+          evaluate(values) {
+            const compliance = values["security.compliance.requirements"] || [];
+            const handling = values["database.sensitive_data.handling"] || [];
+            const hit = containsAny(compliance, ["gdpr", "pdpa_tw", "iso_27001", "soc2", "pci_dss", "hipaa"]);
+            const pass = !hit || handling.includes("audit_log");
+            return buildResult(this, pass, ["security.compliance.requirements", "database.sensitive_data.handling"], "有法規合規要求時，必須建立稽核日誌機制");
+          }
+        },
+        {
+          id: "VAL-014",
+          severity: "error",
+          category: "always_on",
+          title: "Prompt 不得含機敏資訊",
+          evaluate(values) {
+            const aiBoundaries = values["security.ai.boundaries"] || [];
+            const pass = aiBoundaries.includes("no_secrets") || values["project_basic.compliance.data_sensitivity"] === "public";
+            return buildResult(this, pass, ["security.ai.boundaries", "project_basic.compliance.data_sensitivity"], "任何傳送給 AI 的 Prompt 不得包含密碼、金鑰、個資或機密資料");
+          }
+        },
+        {
+          id: "VAL-017",
+          severity: "error",
+          category: "cross_field",
+          title: "高度機密資料需收緊 AI 邊界",
+          evaluate(values) {
+            const boundaries = values["security.ai.boundaries"] || [];
+            const hit = values["project_basic.compliance.data_sensitivity"] === "restricted";
+            const pass = !hit || containsAll(boundaries, ["no_prod_data", "no_pii", "approved_models_only"]);
+            return buildResult(this, pass, ["project_basic.compliance.data_sensitivity", "security.ai.boundaries"], "處理高度機密資料時，AI 協作邊界必須包含：禁止接觸正式資料、禁止 PII、僅用核准模型");
+          }
+        },
+        {
+          id: "VAL-018",
+          severity: "warning",
+          category: "compatibility",
+          title: "前端框架與建構工具相容性",
+          evaluate(values) {
+            const framework = values["frontend.framework.choice"];
+            const tool = values["frontend.build.tool"];
+            let pass = true;
+            if (framework === "react_next" && !["turbopack", "webpack"].includes(tool)) pass = false;
+            if (framework === "react" && tool === "cra") pass = false;
+            if (framework === "vue_nuxt" && tool === "vite") pass = false;
+            return buildResult(this, pass, ["frontend.framework.choice", "frontend.build.tool"], "前端框架與建構工具應相容（如 Next.js 搭配 Turbopack/Webpack，不使用 CRA）");
+          }
+        },
+        {
+          id: "VAL-020",
+          severity: "error",
+          category: "required_if",
+          title: "微服務需定義通訊方式",
+          evaluate(values) {
+            const hit = ["microservices", "event_driven"].includes(values["architecture.pattern.style"]);
+            const pass = !hit || isFilled(values["architecture.communication.style"]);
+            return buildResult(this, pass, ["architecture.pattern.style", "architecture.communication.style"], "微服務或事件驅動架構必須定義服務間的通訊方式");
+          }
+        }
+      ];
+
+      const suggestedPrefill = {
+        "project_basic.profile.name": "Questionnaire System",
+        "project_basic.profile.type": "web_application",
+        "project_basic.profile.scope": "medium",
+        "project_basic.profile.is_new": "greenfield",
+        "project_basic.delivery.channel": "internal_only",
+        "project_basic.integration.level": "internal_systems",
+        "project_basic.artifact.readiness": "ready_for_codegen",
+        "project_basic.profile.timeline": "2026-03-16 ~ 2026-06-12",
+        "project_basic.profile.team_size": 4,
+        "project_basic.compliance.data_sensitivity": "confidential",
+        "architecture.pattern.style": "modular_monolith",
+        "architecture.pattern.layers": ["presentation", "application", "domain", "infrastructure", "data_access"],
+        "architecture.hosting.platform": "azure",
+        "backend.runtime.platform": "dotnet",
+        "backend.runtime.dotnet_version": "net8",
+        "backend.framework.dotnet_type": "webapi",
+        "backend.orm.choice": "ef_core",
+        "backend.auth.method": "jwt",
+        "backend.auth.jwt_config": {
+          "access_token_lifetime": "30",
+          "refresh_token_enabled": "yes",
+          "refresh_token_lifetime": "7",
+          "token_storage": "HttpOnly Cookie"
+        },
+        "backend.testing.strategy": ["unit_test", "integration_test", "api_test"],
+        "frontend.framework.choice": "react",
+        "frontend.build.tool": "vite",
+        "frontend.language.typescript": "strict",
+        "frontend.ui.component_library": "ant_design",
+        "database.primary.engine": "azure_sql",
+        "database.design.approach": "migration",
+        "database.sensitive_data.handling": ["encryption_at_rest", "encryption_in_transit", "data_masking", "audit_log"],
+        "api.style.type": "restful",
+        "api.documentation.openapi": "swagger_auto",
+        "api.response.format": "envelope",
+        "security.auth.authorization": "rbac",
+        "security.compliance.requirements": ["iso_27001", "company_policy", "owasp_top10"],
+        "security.secrets.management": "azure_key_vault",
+        "security.ai.boundaries": ["no_prod_data", "no_secrets", "code_review_required", "approved_models_only", "audit_trail"],
+        "deployment.cicd.platform": "github_actions",
+        "deployment.strategy.type": "rolling",
+        "deployment.environments.list": ["local", "dev", "uat", "production"],
+        "deployment.monitoring.tools": ["app_insights", "health_checks"],
+        "deployment.git.branching": "github_flow",
+        "ai_collaboration.boundary_summary": "private_model_only"
+      };
+
+      const summaryGridEl = document.getElementById("summaryGrid");
+      const blockerListEl = document.getElementById("blockerList");
+      const warningListEl = document.getElementById("warningList");
+      const manualReviewTableBodyEl = document.getElementById("manualReviewTableBody");
+      const meetingSuggestionListEl = document.getElementById("meetingSuggestionList");
+      const gateCheckListEl = document.getElementById("gateCheckList");
+      const reportPreviewEl = document.getElementById("reportPreview");
+      const s5PreviewEl = document.getElementById("s5Preview");
+      const importFileEl = document.getElementById("importJsonFile");
+      const importStatusEl = document.getElementById("importStatus");
+      const helpModalBackdropEl = document.getElementById("helpModalBackdrop");
+      const helpModalTitleEl = document.getElementById("helpModalTitle");
+      const helpModalSummaryEl = document.getElementById("helpModalSummary");
+      const helpModalDiffsEl = document.getElementById("helpModalDiffs");
+      const helpModalCompareEl = document.getElementById("helpModalCompare");
+      const helpModalUseCaseEl = document.getElementById("helpModalUseCase");
+      const helpModalExampleEl = document.getElementById("helpModalExample");
+
+      let importedContext = { project_id: "PRJ-001", stage: "S3", raw: null, values: { ...suggestedPrefill } };
+      let validationResults = [];
+
+      function isFilled(value) {
+        if (Array.isArray(value)) return value.length > 0;
+        if (value && typeof value === "object") return Object.values(value).some((item) => String(item || "").trim() !== "");
+        return String(value || "").trim() !== "";
+      }
+
+      function containsAny(source, targets) {
+        return Array.isArray(source) && targets.some((target) => source.includes(target));
+      }
+
+      function containsAll(source, targets) {
+        return Array.isArray(source) && targets.every((target) => source.includes(target));
+      }
+
+      function buildResult(rule, pass, relatedQuestions, message) {
+        return {
+          rule_id: rule.id,
+          severity: rule.severity,
+          category: rule.category,
+          title: rule.title,
+          pass,
+          related_questions: relatedQuestions,
+          message
+        };
+      }
+
+      function normalizeImportedData(raw) {
+        const values = {};
+        if (raw.questionnaire_prefill) Object.assign(values, raw.questionnaire_prefill);
+        if (raw.prefill) Object.assign(values, raw.prefill);
+        if (raw.answers && !Array.isArray(raw.answers)) Object.assign(values, raw.answers);
+        if (Array.isArray(raw.answers)) {
+          raw.answers.forEach((item) => {
+            if (item && item.question_id) values[item.question_id] = item.value;
+          });
+        }
+        if (raw.stages) {
+          ["s1", "s2", "s3"].forEach((stage) => {
+            if (raw.stages[stage] && raw.stages[stage].answers) {
+              Object.assign(values, raw.stages[stage].answers);
+            }
+          });
+        }
+        if (raw.categories) {
+          Object.values(raw.categories).forEach((group) => {
+            if (group && typeof group === "object") Object.assign(values, group);
+          });
+        }
+        return {
+          project_id: raw.project_id || (raw.meta && raw.meta.project_id) || (raw.project && raw.project.id) || "PRJ-001",
+          stage: raw.stage || raw.current_stage || (raw.meta && raw.meta.stage) || "S3",
+          raw,
+          values: { ...suggestedPrefill, ...values }
+        };
+      }
+
+      function evaluateReadiness(values) {
+        const projectBasicScore = calcCompletion(requiredQuestionGroups.project_basic, values);
+        const architectureScore = calcCompletion(requiredQuestionGroups.architecture, values);
+        const designScore = calcCompletion(requiredQuestionGroups.design, values);
+        const readiness = Math.round((projectBasicScore * 0.2) + (architectureScore * 0.25) + (designScore * 0.55));
+        return {
+          projectBasicScore,
+          architectureScore,
+          designScore,
+          readiness
+        };
+      }
+
+      function calcCompletion(questionIds, values) {
+        const filled = questionIds.filter((id) => isFilled(values[id])).length;
+        return questionIds.length ? Math.round((filled / questionIds.length) * 100) : 100;
+      }
+
+      function runValidation(values) {
+        validationResults = validationRules.map((rule) => rule.evaluate(values));
+        renderAll(values);
+      }
+
+      function renderAll(values) {
+        const readiness = evaluateReadiness(values);
+        const blockers = validationResults.filter((item) => !item.pass && item.severity === "error");
+        const warnings = validationResults.filter((item) => !item.pass && item.severity === "warning");
+
+        renderSummary(readiness, blockers, warnings);
+        renderIssues(blockers, blockerListEl, "error");
+        renderIssues(warnings, warningListEl, "warning");
+        renderManualReviewTable([...blockers, ...warnings]);
+        renderMeetingSuggestions(values, blockers, warnings, readiness);
+        renderGateChecks(blockers, warnings, readiness, values);
+        reportPreviewEl.textContent = JSON.stringify(buildValidationReport(values), null, 2);
+        s5PreviewEl.textContent = JSON.stringify(buildS5ReviewPacket(values), null, 2);
+      }
+
+      function renderSummary(readiness, blockers, warnings) {
+        summaryGridEl.innerHTML = "";
+        const cards = [
+          {
+            title: "Readiness Score",
+            value: readiness.readiness,
+            detail: `S1 ${readiness.projectBasicScore}% / S2 ${readiness.architectureScore}% / S3 ${readiness.designScore}%`,
+            tone: readiness.readiness >= 70 ? "ok" : "warn"
+          },
+          {
+            title: "Blockers",
+            value: blockers.length,
+            detail: blockers.length === 0 ? "可進入審核前置" : "需先清空",
+            tone: blockers.length === 0 ? "ok" : "error"
+          },
+          {
+            title: "Warnings",
+            value: warnings.length,
+            detail: warnings.length <= 3 ? "在 Gate 允許範圍內" : "建議先收斂到 3 個以下",
+            tone: warnings.length <= 3 ? "ok" : "warn"
+          }
+        ];
+        cards.forEach((card) => {
+          const el = document.createElement("div");
+          el.className = "summary-box";
+          el.innerHTML = `
+            <strong>${card.title}</strong>
+            <div class="${card.tone}">${card.value}</div>
+            <div class="hint">${card.detail}</div>
+          `;
+          summaryGridEl.appendChild(el);
+        });
+      }
+
+      function renderIssues(issues, container, tone) {
+        container.innerHTML = "";
+        if (!issues.length) {
+          const empty = document.createElement("div");
+          empty.className = "summary-box";
+          empty.innerHTML = `<strong>目前沒有 ${tone === "error" ? "Blocker" : "Warning"}</strong><div class="hint">這一區目前是空的。</div>`;
+          container.appendChild(empty);
+          return;
+        }
+        issues.forEach((issue) => {
+          const el = document.createElement("div");
+          el.className = `issue-card ${tone === "error" ? "error-card" : "warn-card"}`;
+          el.innerHTML = `
+            <div class="issue-head">
+              <div>
+                <strong>${issue.title}</strong>
+                <div class="issue-meta">${issue.rule_id} / ${issue.category}</div>
+              </div>
+              <span class="badge ${tone === "error" ? "error" : "warn"}">${tone === "error" ? "Blocker" : "Warning"}</span>
+            </div>
+            <div>${issue.message}</div>
+            <div class="hint">相關欄位：${issue.related_questions.join("、")}</div>
+          `;
+          container.appendChild(el);
+        });
+      }
+
+      function renderManualReviewTable(issues) {
+        manualReviewTableBodyEl.innerHTML = "";
+        if (!issues.length) {
+          manualReviewTableBodyEl.innerHTML = `
+            <tr>
+              <td colspan="5">目前沒有待處理問題，可直接準備 S5 審核資料。</td>
+            </tr>
+          `;
+          return;
+        }
+        issues.forEach((issue, index) => {
+          const id = `manual_${index}`;
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${issue.title}<div class="issue-meta">${issue.rule_id}</div></td>
+            <td><span class="badge ${issue.severity === "error" ? "error" : "warn"}">${issue.severity}</span></td>
+            <td>${issue.message}</td>
+            <td>
+              <select id="${id}_status">
+                <option value="pending">待處理</option>
+                <option value="fix_now">立即修正</option>
+                <option value="accepted_with_plan">接受風險但列計畫</option>
+                <option value="return_to_owner">退回主責角色</option>
+                <option value="meeting_required">安排跨角色會議</option>
+              </select>
+            </td>
+            <td><input id="${id}_note" type="text" placeholder="填寫負責人、期限或處理結論" /></td>
+          `;
+          manualReviewTableBodyEl.appendChild(tr);
+        });
+      }
+
+      function renderMeetingSuggestions(values, blockers, warnings, readiness) {
+        const suggestions = [];
+        if (blockers.some((item) => item.related_questions.some((q) => q.startsWith("security.")))) {
+          suggestions.push("有資安類 blocker，建議安排 `Security Lead + Architect + PM` 會議先定紅線。");
+        }
+        if (warnings.some((item) => item.related_questions.some((q) => q.startsWith("api.") || q.startsWith("frontend.")))) {
+          suggestions.push("API 與前端相關 warning 並存，建議安排 `Backend Lead + Frontend Lead` 對齊契約。");
+        }
+        if (values["project_basic.compliance.data_sensitivity"] === "confidential" && (values["ai_collaboration.boundary_summary"] === "analysis_and_code_with_review" || !(values["security.ai.boundaries"] || []).includes("approved_models_only"))) {
+          suggestions.push("機密專案的 AI 邊界仍有討論空間，建議安排 `PM + Architect + Security Lead` 做最終確認。");
+        }
+        if (readiness.readiness < 70) {
+          suggestions.push("目前 Readiness Score 尚未達標，建議先收斂缺漏後再進 S5。");
+        }
+        if (!suggestions.length) {
+          suggestions.push("目前沒有明顯需要開會的高風險衝突，若主責人都確認完成，可直接準備送審。");
+        }
+        meetingSuggestionListEl.innerHTML = suggestions.map((item) => `<li>${item}</li>`).join("");
+      }
+
+      function renderGateChecks(blockers, warnings, readiness, values) {
+        const checks = [
+          {
+            pass: blockers.length === 0,
+            label: `0 個 Error（目前 ${blockers.length} 個）`
+          },
+          {
+            pass: warnings.length <= 3,
+            label: `Warning <= 3（目前 ${warnings.length} 個）`
+          },
+          {
+            pass: readiness.readiness >= 70,
+            label: `Readiness Score >= 70（目前 ${readiness.readiness}）`
+          },
+          {
+            pass: readiness.architectureScore >= 80,
+            label: `AI / 架構相關分類完成度 >= 80（目前 ${readiness.architectureScore}）`
+          },
+          {
+            pass: (values["security.ai.boundaries"] || []).includes("code_review_required"),
+            label: "AI 安全邊界已包含人工審查要求"
+          }
+        ];
+
+        gateCheckListEl.innerHTML = "";
+        checks.forEach((check) => {
+          const li = document.createElement("li");
+          li.innerHTML = `${check.label}<span class="badge ${check.pass ? "ok" : "warn"}">${check.pass ? "通過" : "待補"}</span>`;
+          gateCheckListEl.appendChild(li);
+        });
+
+        const failCount = checks.filter((item) => !item.pass).length;
+        importStatusEl.className = `status ${failCount ? "warn" : "ok"}`;
+        importStatusEl.textContent = failCount
+          ? `S4 Gate 3 尚未通過：${failCount} 項待補`
+          : "S4 Gate 3 通過，可準備進入 S5 審核期。";
+      }
+
+      function buildValidationReport(values) {
+        const readiness = evaluateReadiness(values);
+        const blockers = validationResults.filter((item) => !item.pass && item.severity === "error");
+        const warnings = validationResults.filter((item) => !item.pass && item.severity === "warning");
+        return {
+          project_id: importedContext.project_id || "PRJ-001",
+          stage: "S4",
+          from_stage: importedContext.stage || "S3",
+          generated_at: new Date().toISOString(),
+          summary: {
+            readiness_score: readiness.readiness,
+            project_basic_score: readiness.projectBasicScore,
+            architecture_score: readiness.architectureScore,
+            design_score: readiness.designScore,
+            blocker_count: blockers.length,
+            warning_count: warnings.length
+          },
+          results: validationResults,
+          blockers,
+          warnings
+        };
+      }
+
+      function buildManualReviewItems() {
+        const rows = Array.from(manualReviewTableBodyEl.querySelectorAll("tr"));
+        return rows
+          .map((row, index) => {
+            const status = row.querySelector(`#manual_${index}_status`);
+            const note = row.querySelector(`#manual_${index}_note`);
+            const titleCell = row.children[0];
+            if (!status || !note || !titleCell) return null;
+            return {
+              item: titleCell.textContent.trim(),
+              status: status.value,
+              note: note.value.trim()
+            };
+          })
+          .filter(Boolean);
+      }
+
+      function buildS5ReviewPacket(values) {
+        const report = buildValidationReport(values);
+        return {
+          project_id: importedContext.project_id || "PRJ-001",
+          from_stage: "S4",
+          to_stage: "S5",
+          generated_at: new Date().toISOString(),
+          gate3_recommendation: {
+            ready_for_review: report.summary.blocker_count === 0 && report.summary.warning_count <= 3 && report.summary.readiness_score >= 70,
+            blocker_count: report.summary.blocker_count,
+            warning_count: report.summary.warning_count,
+            readiness_score: report.summary.readiness_score
+          },
+          validation_summary: report.summary,
+          unresolved_blockers: report.blockers,
+          unresolved_warnings: report.warnings,
+          manual_review: buildManualReviewItems(),
+          required_reviewers: ["Architect", "PM"],
+          review_focus: [
+            "所有答案已由對應角色填寫",
+            "驗證規則全部通過或有處理計畫",
+            "AI 安全邊界已確認",
+            "無未解決退回修正"
+          ]
+        };
+      }
+
+      function exportJsonFile(filename, payload) {
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      async function importJson() {
+        const file = importFileEl.files && importFileEl.files[0];
+        if (!file) {
+          importStatusEl.className = "status warn";
+          importStatusEl.textContent = "請先選擇 JSON。";
+          return;
+        }
+        try {
+          const raw = JSON.parse(await file.text());
+          importedContext = normalizeImportedData(raw);
+          runValidation(importedContext.values);
+          importStatusEl.className = "status ok";
+          importStatusEl.textContent = `匯入成功：${file.name}`;
+          renderAll(importedContext.values);
+        } catch (err) {
+          importStatusEl.className = "status warn";
+          importStatusEl.textContent = `匯入失敗：${err.message}`;
+        }
+      }
+
+      function exportValidationReport() {
+        exportJsonFile("prj001-s4-validation-report.json", buildValidationReport(importedContext.values));
+      }
+
+      function exportS5Packet() {
+        exportJsonFile("prj001-s5-review-packet.json", buildS5ReviewPacket(importedContext.values));
+      }
+
+      function exportMergedProjectContext() {
+        const base = importedContext.raw && typeof importedContext.raw === "object" ? { ...importedContext.raw } : {};
+        const merged = {
+          ...base,
+          project_id: importedContext.project_id || base.project_id || "PRJ-001",
+          current_stage: "S4",
+          questionnaire_prefill: {
+            ...(base.questionnaire_prefill || {}),
+            ...importedContext.values
+          },
+          stages: {
+            ...(base.stages || {}),
+            s4: {
+              completed_at: new Date().toISOString(),
+              validation_report: buildValidationReport(importedContext.values),
+              s5_review_packet: buildS5ReviewPacket(importedContext.values)
+            }
+          },
+          handoff: {
+            next_stage: "S5",
+            generated_at: new Date().toISOString()
+          }
+        };
+        exportJsonFile("prj001-project-context.json", merged);
+      }
+
+      function openHelpModal(helpId) {
+        const item = helpContent[helpId];
+        if (!item) return;
+        helpModalTitleEl.textContent = item.title;
+        helpModalSummaryEl.textContent = item.summary;
+        helpModalDiffsEl.innerHTML = `<ul class="check-list">${item.diffs.map((d) => `<li>${d}</li>`).join("")}</ul>`;
+        if (item.compare && item.compare.length) {
+          const [header, ...rows] = item.compare;
+          helpModalCompareEl.innerHTML = `
+            <table>
+              <thead>
+                <tr>${header.map((h) => `<th>${h}</th>`).join("")}</tr>
+              </thead>
+              <tbody>
+                ${rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("")}
+              </tbody>
+            </table>
+          `;
+        } else {
+          helpModalCompareEl.textContent = "目前無比較表。";
+        }
+        helpModalUseCaseEl.textContent = item.useCase;
+        helpModalExampleEl.textContent = item.example;
+        helpModalBackdropEl.classList.add("open");
+        helpModalBackdropEl.setAttribute("aria-hidden", "false");
+      }
+
+      function closeHelpModal() {
+        helpModalBackdropEl.classList.remove("open");
+        helpModalBackdropEl.setAttribute("aria-hidden", "true");
+      }
+
+      document.getElementById("importBtn").addEventListener("click", importJson);
+      document.getElementById("runValidationBtn").addEventListener("click", () => runValidation(importedContext.values));
+      document.getElementById("refreshBtn").addEventListener("click", () => renderAll(importedContext.values));
+      document.getElementById("exportReportBtn").addEventListener("click", exportValidationReport);
+      document.getElementById("exportS5Btn").addEventListener("click", exportS5Packet);
+      document.getElementById("exportMergedContextBtn").addEventListener("click", exportMergedProjectContext);
+      document.addEventListener("change", (event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement && target.closest("#manualReviewTableBody")) {
+          renderAll(importedContext.values);
+        }
+      });
+      document.addEventListener("input", (event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement && target.closest("#manualReviewTableBody")) {
+          renderAll(importedContext.values);
+        }
+      });
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement && target.dataset.helpId) {
+          openHelpModal(target.dataset.helpId);
+        }
+      });
+      document.getElementById("closeHelpBtn").addEventListener("click", closeHelpModal);
+      helpModalBackdropEl.addEventListener("click", (event) => {
+        if (event.target === helpModalBackdropEl) closeHelpModal();
+      });
+
+      runValidation(importedContext.values);
+    </script>
+  </body>
+</html>
