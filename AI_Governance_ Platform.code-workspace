@@ -1,9 +1,7 @@
 {
-  "folders": [
-    {
-      "name": "AI_Governance_ Platform",
-      "path": "."
-    }
-  ],
-  "settings": {}
+	"folders": [
+		{
+			"path": "."
+		}
+	]
 }
