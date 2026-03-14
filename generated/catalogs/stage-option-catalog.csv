@@ -75,3 +75,267 @@ S2,Planning,api,api.response.format,resource_oriented,資源導向原生格式,,
 S2,Planning,api,api.external.integrations,none,無,,,這題在判斷外部依賴是否會影響核心流程,若沒有外部依賴可選 none,例如純內部運作的服務,1,generated/projects/PRJ-001/s2-architecture-prototype.html
 S2,Planning,api,api.external.integrations,non_critical,非關鍵,,,這題在判斷外部依賴是否會影響核心流程,若依賴失效仍可降級服務可選 non_critical,例如通知 API 壞掉不影響主流程,2,generated/projects/PRJ-001/s2-architecture-prototype.html
 S2,Planning,api,api.external.integrations,critical,關鍵,,,這題在判斷外部依賴是否會影響核心流程,若依賴失效會直接卡住核心流程可選 critical,例如 ERP 主資料同步或付款授權,3,generated/projects/PRJ-001/s2-architecture-prototype.html
+S3,Design,backend,backend.runtime.platform,dotnet,.NET (C#),,最貼近你們現有團隊與 Azure,這題決定後端主語言與生態系,若團隊與雲端主力在 Azure/.NET 可優先選 dotnet,例如治理平台後端採 .NET 8 Web API,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.runtime.platform,nodejs,Node.js,,全端同語言，迭代快,這題決定後端主語言與生態系,若想前後端同語言且團隊熟悉 Node 可選 nodejs,例如快速迭代型內部系統,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.runtime.platform,java,Java / Spring Boot,,企業治理成熟,這題決定後端主語言與生態系,若團隊已有成熟 Java 體系可選 java,例如企業服務平台,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.runtime.platform,python,Python,,資料處理與 API 開發快,這題決定後端主語言與生態系,若需要資料處理與快速 API 可選 python,例如資料服務型系統,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.runtime.platform,go,Go,,高效能服務導向,這題決定後端主語言與生態系,若重視高效能服務可選 go,例如高併發內部服務,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.runtime.dotnet_version,net6,.NET 6 LTS,,,,若需舊版 LTS 相容可選 net6,例如既有套件仍依賴 .NET 6,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.runtime.dotnet_version,net8,.NET 8 LTS,,,,目前多數新案建議優先 net8,例如與 Azure 現行環境對齊,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.runtime.dotnet_version,net9,.NET 9,,,,若團隊明確要用新版功能可選 net9,例如實驗性新案,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.runtime.dotnet_version,net_framework_48,.NET Framework 4.8,,,,若需相容 legacy 系統才選此項,例如舊地端系統延伸,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.framework.dotnet_type,webapi,ASP.NET Core Web API,,,,若是標準 API 後端通常選 webapi,例如問券系統後端服務,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.framework.dotnet_type,minimal_api,Minimal API,,,,若服務較小且想更精簡可選 minimal_api,例如小型內部 API,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.framework.dotnet_type,mvc,ASP.NET Core MVC,,,,若需要傳統 MVC 頁面結構可選 mvc,例如含 server-rendered 管理頁,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.framework.dotnet_type,worker_service,Worker Service,,,,若主要是背景工作或排程服務可選 worker_service,例如批次同步服務,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.framework.dotnet_type,grpc_service,gRPC Service,,,,若主要做內部高效能 RPC 可選 grpc_service,例如服務間通訊,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.orm.choice,ef_core,Entity Framework Core,,,,若要快速穩定生成 CRUD 與 migration 通常選 ef_core,例如標準企業系統,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.orm.choice,dapper,Dapper,,,,若重視 SQL 可控與查詢效能可選 dapper,例如報表查詢服務,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.orm.choice,ef_core_dapper,EF Core + Dapper 混用,,,,若 CRUD 與查詢需求差異大可選混用,例如標準交易 + 複雜報表,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.orm.choice,ado_net,ADO.NET,,,,若是高客製或 legacy 相容可選 ado_net,例如舊系統整合,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.orm.choice,prisma,Prisma,,,,若後端為 Node.js 可選 prisma,例如 TypeScript 服務,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.orm.choice,typeorm,TypeORM,,,,若後端為 Node.js 且使用傳統 ORM 可選 typeorm,例如 Node API 專案,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.auth.method,jwt,JWT Token,,,,一般 Web/API 系統常見選項,例如前後端分離後台系統,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.auth.method,oauth2,OAuth 2.0 / OIDC,,,,若需標準授權流程可選 oauth2,例如對外平台授權,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.auth.method,azure_ad,Azure AD / Entra ID,,,,若是公司帳號整合可選 azure_ad,例如內部治理平台,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.auth.method,identity_server,IdentityServer / Duende,,,,若需自建授權中心可選 identity_server,例如多系統單一登入,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.auth.method,cookie,Cookie-based Session,,,,若傳統 MVC 系統可選 cookie,例如 server-rendered 後台,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.auth.method,api_key,API Key,,,,若是服務對服務驗證可選 api_key,例如內部 API,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.auth.method,none,無認證（內部服務）,,,,僅限受控內網或非對外服務,例如封閉型背景服務,7,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.auth.jwt_config,access_token_lifetime,Access Token 有效期（分鐘）,,,,JWT 設定子欄位,例如 30 分鐘,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.auth.jwt_config,refresh_token_enabled,是否啟用 Refresh Token,,,,JWT 設定子欄位,例如 yes / no,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.auth.jwt_config,refresh_token_lifetime,Refresh Token 有效期（天）,,,,JWT 設定子欄位,例如 7 天,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.auth.jwt_config,token_storage,Token 儲存方式,,,,JWT 設定子欄位,例如 HttpOnly Cookie,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.logging.framework,serilog,Serilog,,,,若用 .NET 且需結構化日誌通常選 serilog,例如 API 後端日誌,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.logging.framework,ms_logging,Microsoft.Extensions.Logging,,,,若先用原生 logging 可選 ms_logging,例如標準 .NET 專案,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.logging.framework,nlog,NLog,,,,若團隊既有使用 NLog 可選此項,例如 legacy .NET 專案,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.logging.framework,winston,Winston,,,,若後端為 Node.js 可選 winston,例如 Node API 專案,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.logging.framework,pino,Pino,,,,若後端為 Node.js 且要高效能 logging 可選 pino,例如高吞吐服務,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.testing.strategy,unit_test,單元測試,,,,若希望穩定驗證邏輯應至少有 unit_test,例如 service 層測試,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.testing.strategy,integration_test,整合測試,,,,若有 DB/API/外部整合應補 integration_test,例如 API + DB 流程,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.testing.strategy,api_test,API 測試,,,,若系統以 API 為主建議加入 api_test,例如 REST endpoint 驗證,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.testing.strategy,contract_test,契約測試,,,,若前後端或外部整合重度依賴契約可選 contract_test,例如 consumer/provider 測試,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.testing.strategy,load_test,負載測試,,,,若預期流量較高應補 load_test,例如高併發服務,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.testing.strategy,no_test,目前無測試計畫,,,,不建議長期採用,例如早期 PoC 暫時狀態,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.coding.conventions,editorconfig,使用 .editorconfig,,,,用於統一格式與縮排,例如團隊共同程式碼規範,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.coding.conventions,analyzers,使用 Analyzers / ESLint,,,,用於自動檢查程式碼品質,例如 Roslyn Analyzers,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.coding.conventions,naming_convention,有命名規範文件,,,,用於明確 class/檔案/資料表命名,例如內部命名規範文件,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.coding.conventions,code_review,有 Code Review 流程,,,,用於確保人工審查,例如 PR reviewer 規則,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,backend.coding.conventions,pr_template,有 PR Template,,,,用於統一 PR 說明格式,例如變更摘要與測試欄位,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.framework.choice,react,React,,多數內部系統與 AI 產碼最穩,這題決定前端主框架,若多頁表單與管理頁較多通常優先 react,例如問券流程頁,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.framework.choice,react_next,React + Next.js,,要 SSR/路由整合時適合,這題決定前端主框架,若需要 SSR 或全端同構可選 react_next,例如對外入口網站,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.framework.choice,vue3,Vue 3,,較直觀，需看團隊熟悉度,這題決定前端主框架,若團隊熟悉 Vue 可選 vue3,例如內部管理系統,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.framework.choice,vue_nuxt,Vue 3 + Nuxt,,Vue + SSR 場景,這題決定前端主框架,若需要 Vue 生態的 SSR 可選 vue_nuxt,例如內容型平台,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.framework.choice,vanilla,純 HTML/CSS/JS,,小型頁面可用，不建議大型系統,這題決定前端主框架,若只做非常小型 prototype 可選 vanilla,例如一次性示範頁,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.language.typescript,strict,TypeScript（strict）,,,,若重視型別與 AI 產碼穩定性建議 strict,例如正式產品前端,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.language.typescript,standard,TypeScript（標準）,,,,若想保留 TypeScript 但不開最嚴格限制可選 standard,例如中型專案,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.language.typescript,javascript,JavaScript,,,,若短期 prototype 或 legacy 需求可選 javascript,例如快速驗證頁面,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.ui.component_library,ant_design,Ant Design,,,,若偏後台表單與表格系統通常選 ant_design,例如內部管理平台,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.ui.component_library,material_ui,Material UI,,,,若偏企業通用元件生態可選 material_ui,例如標準企業 Web 系統,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.ui.component_library,shadcn,shadcn/ui,,,,若想兼顧客製與元件化可選 shadcn,例如設計系統導向專案,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.ui.component_library,bootstrap,Bootstrap,,,,若需要快速標準介面可選 bootstrap,例如簡易管理頁,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.ui.component_library,tailwind_only,Tailwind CSS（無元件庫）,,,,若要高度自由但願意自行組元件可選 tailwind_only,例如客製設計頁,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.ui.component_library,custom,自建元件庫,,,,若已有內部 design system 可選 custom,例如企業共用元件庫,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.styling.method,tailwind,Tailwind CSS,,,,若重視快速組版與 utility-first 可選 tailwind,例如內部系統前端,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.styling.method,css_modules,CSS Modules,,,,若希望樣式就近管理可選 css_modules,例如 React 元件專案,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.styling.method,styled_components,Styled Components,,,,若習慣 CSS-in-JS 可選 styled_components,例如元件式 UI,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.styling.method,sass,SASS / SCSS,,,,若已有 SCSS 習慣或需較多共用變數可選 sass,例如傳統前端團隊,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.styling.method,plain_css,原生 CSS,,,,若頁面規模小可選 plain_css,例如簡單 prototype,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.state.management,redux_toolkit,Redux Toolkit,,,,若狀態複雜且需明確 store 結構可選 redux_toolkit,例如大型表單流程系統,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.state.management,zustand,Zustand,,,,若希望輕量簡單的全域狀態可選 zustand,例如中型 React 專案,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.state.management,context_api,React Context API,,,,若狀態不大且只需基礎共享可選 context_api,例如小型管理頁,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.state.management,tanstack_query,TanStack Query,,,,若重視 server state 管理可選 tanstack_query,例如 API 為主的前端,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.state.management,pinia,Pinia,,,,若前端為 Vue 3 通常選 pinia,例如 Vue 管理系統,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.state.management,none,無全域狀態管理,,,,若頁面非常單純才考慮 none,例如小型單頁工具,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.routing.solution,react_router,React Router v6+,,,,若前端為 React 常見選擇,例如 SPA 表單流程,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.routing.solution,next_app_router,Next.js App Router,,,,若前端為 Next.js 通常選 next_app_router,例如 SSR/混合渲染專案,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.routing.solution,vue_router,Vue Router,,,,若前端為 Vue 通常選 vue_router,例如 Vue SPA,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.routing.solution,tanstack_router,TanStack Router,,,,若前端採用其路由生態可選 tanstack_router,例如資料驅動頁面,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.build.tool,vite,Vite,,,,若追求快速開發與建構通常優先選 vite,例如 React 前端,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.build.tool,webpack,Webpack,,,,若需較舊或複雜客製建構可選 webpack,例如 legacy 前端,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.build.tool,turbopack,Turbopack,,,,若使用 Next.js 新版可考慮 turbopack,例如 Next 專案,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.build.tool,esbuild,esbuild,,,,若想要極簡與高速打包可選 esbuild,例如小型工具專案,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.form.library,react_hook_form,React Hook Form,,,,若前端為 React 且表單較多通常優先選 react_hook_form,例如問券系統,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.form.library,formik,Formik,,,,若團隊既有使用經驗可選 formik,例如既有 React 專案,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.form.library,ant_form,Ant Design Form,,,,若 UI 庫就是 Ant Design 可選 ant_form,例如後台表單頁,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.form.library,vee_validate,VeeValidate,,,,若前端為 Vue 可選 vee_validate,例如 Vue 表單流程,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.form.library,custom,自建表單處理,,,,若要完全客製流程可選 custom,例如特殊互動表單,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.testing.tools,vitest,Vitest,,,,若前端採 Vite 生態可優先選 vitest,例如 React + Vite 專案,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.testing.tools,jest,Jest,,,,若團隊既有 Jest 習慣可選 jest,例如既有 React 專案,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.testing.tools,react_testing_library,React Testing Library,,,,若要測元件互動通常加入 RTL,例如表單元件測試,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.testing.tools,playwright,Playwright,,,,若要端對端測試通常優先 playwright,例如登入與流程測試,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.testing.tools,cypress,Cypress,,,,若團隊已有 Cypress 體系可選此項,例如既有 E2E 流程,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,frontend.testing.tools,storybook,Storybook,,,,若要元件文件與展示可選 storybook,例如設計系統,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.primary.engine,azure_sql,Azure SQL Database,,,,若環境在 Azure 通常優先選 azure_sql,例如治理平台資料庫,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.primary.engine,sql_server,SQL Server,,,,若地端或既有生態偏 SQL Server 可選此項,例如既有企業系統,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.primary.engine,postgresql,PostgreSQL,,,,若要開源彈性可選 postgresql,例如跨平台專案,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.primary.engine,mysql,MySQL / MariaDB,,,,若既有環境使用 MySQL 可選此項,例如一般 Web 系統,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.primary.engine,cosmos_db,Azure Cosmos DB,,,,若資料模型偏 NoSQL 可考慮 cosmos_db,例如文件型資料,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.primary.engine,mongodb,MongoDB,,,,若資料結構較彈性可選 mongodb,例如文件式應用,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.design.approach,code_first,Code First,,,,若是新案且要搭配 AI 生成通常選 code_first,例如新系統 schema,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.design.approach,db_first,Database First,,,,若已有既有資料庫可選 db_first,例如 legacy DB 延伸,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.design.approach,migration,Migration 管理,,,,若重視版本化與可追蹤性可選 migration,例如正式產品專案,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.design.approach,manual_sql,手動 SQL Script,,,,若需嚴格 DBA 管控可選 manual_sql,例如高控管資料庫,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.design.approach,hybrid,混合方式,,,,若專案同時有多種來源可選 hybrid,例如部分 legacy + 新模組,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.cache.strategy,azure_redis,Azure Cache for Redis,,,,若主要平台在 Azure 通常選 azure_redis,例如雲端快取,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.cache.strategy,redis,Redis,,,,若需要通用型快取通常選 redis,例如 session/cache,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.cache.strategy,in_memory,In-Memory Cache,,,,若是單實例或短期快取可選 in_memory,例如本機快取,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.cache.strategy,distributed_cache,Distributed Cache,,,,若多實例共享快取可選 distributed_cache,例如分散式服務,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.cache.strategy,none,不使用快取,,,,若目前需求單純可暫不使用快取,例如小型內部工具,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.naming.convention,pascal_case,PascalCase,,,,若團隊偏 .NET 命名風格可選 pascal_case,例如 UserProfile,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.naming.convention,snake_case,snake_case,,,,若想兼顧 SQL 易讀性通常選 snake_case,例如 user_profile,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.naming.convention,camel_case,camelCase,,,,較少用於 DB，但若既有系統如此可選此項,例如 userProfile,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.naming.convention,plural,複數形式,,,,若資料表慣例使用複數可選 plural,例如 Users,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.naming.convention,singular,單數形式,,,,若資料表慣例使用單數可選 singular,例如 User,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.backup.strategy,azure_auto,Azure 自動備份,,,,若使用 Azure SQL 通常優先 azure_auto,例如雲端託管資料庫,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.backup.strategy,scheduled,排程備份,,,,若需自定備份排程可選 scheduled,例如每日夜間備份,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.backup.strategy,continuous,持續備份,,,,若需 point-in-time recovery 可選 continuous,例如重要交易系統,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.backup.strategy,geo_redundant,異地備援,,,,若需跨區域災難復原可選 geo_redundant,例如高可用系統,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.backup.strategy,manual,手動備份,,,,若暫時沒有自動化可選 manual,例如早期 PoC,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.backup.strategy,not_planned,尚未規劃,,,,不建議長期保留,例如早期草案階段,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.sensitive_data.handling,encryption_at_rest,靜態加密,,,,若資料落地需保護通常必選,例如機密資料專案,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.sensitive_data.handling,encryption_in_transit,傳輸加密,,,,若資料傳輸經 API/服務間通訊通常必選,例如 TLS 保護,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.sensitive_data.handling,column_encryption,欄位層級加密,,,,若特定欄位高度敏感可選 column_encryption,例如個資欄位,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.sensitive_data.handling,data_masking,資料遮罩,,,,若需限制查閱可選 data_masking,例如客服查詢畫面,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.sensitive_data.handling,hashing,密碼雜湊,,,,若資料含密碼通常應選 hashing,例如帳號驗證系統,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.sensitive_data.handling,audit_log,存取稽核日誌,,,,若有合規要求通常應選 audit_log,例如 ISO 27001,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,database.sensitive_data.handling,rbac,資料庫層級 RBAC,,,,若需更細資料權限控制可選 rbac,例如敏感資料維運,7,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.style.type,restful,RESTful API,,,,若系統以標準 Web/API 為主通常優先選 restful,例如問券平台 API,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.style.type,graphql,GraphQL,,,,若前端查詢彈性需求高可選 graphql,例如複雜聚合查詢,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.style.type,grpc,gRPC,,,,若內部服務高效能通訊可選 grpc,例如服務間 RPC,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.style.type,mixed,混合（REST + GraphQL）,,,,若不同場景需要不同介面可選 mixed,例如管理後台 REST + 查詢服務 GraphQL,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.versioning.strategy,url_path,URL 路徑版本,,,,最直覺且常見的版本策略,例如 /api/v1/,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.versioning.strategy,query_string,Query String 版本,,,,若需維持路徑穩定可選 query_string,例如 ?api-version=1,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.versioning.strategy,header,Header 版本,,,,若要避免 URL 變動可選 header,例如 X-API-Version,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.versioning.strategy,media_type,Media Type 版本,,,,若要用 content negotiation 可選 media_type,例如 vendor media type,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.versioning.strategy,no_versioning,不做版本管理,,,,不建議長期使用,例如極早期內部 API,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.documentation.openapi,swagger_auto,自動產生 Swagger,,,,若希望文件與程式同步通常選 swagger_auto,例如 Web API 專案,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.documentation.openapi,openapi_manual,手動維護 OpenAPI spec,,,,若想契約先行可選 openapi_manual,例如 API-first 團隊,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.documentation.openapi,postman,Postman Collection,,,,若團隊先以測試集合分享可選 postman,例如內部串接團隊,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.documentation.openapi,markdown,Markdown 文件,,,,若暫時以文件說明為主可選 markdown,例如早期規劃階段,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.documentation.openapi,no_docs,目前無 API 文件,,,,不建議長期保留,例如尚未整理契約,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.response.format,envelope,統一信封格式,,,,若希望前後端與 AI 一致通常優先 envelope,例如 success/data/error,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.response.format,problem_details,RFC 7807 Problem Details,,,,若重視標準錯誤格式可選 problem_details,例如標準 API 錯誤回傳,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.response.format,json_api,JSON:API 規範,,,,若整體 API 採 JSON:API 可選此項,例如資源導向平台,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.response.format,custom,自定義格式,,,,若團隊已有既定格式可選 custom,例如內部標準 envelope 變體,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.response.format,no_standard,無統一格式,,,,不建議長期保留,例如早期快速開發,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.error.handling,global_exception,全域例外處理 Middleware,,,,若希望集中管理錯誤通常選 global_exception,例如 ASP.NET Core middleware,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.error.handling,result_pattern,Result Pattern,,,,若團隊偏顯式錯誤回傳可選 result_pattern,例如 domain result flow,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.error.handling,exception_filter,Exception Filter,,,,若沿用框架 filter 模型可選 exception_filter,例如 MVC 型應用,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.error.handling,try_catch,各別 Try-Catch,,,,不建議大規模使用,例如早期簡易服務,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.error.handling,mixed,混合方式,,,,若需分層處理錯誤可選 mixed,例如 middleware + domain result,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.rate_limiting.enabled,yes_per_client,依客戶端限流,,,,若對外服務需依 client 控流可選此項,例如 API key 客戶,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.rate_limiting.enabled,yes_per_endpoint,依端點限流,,,,若端點流量差異大可選此項,例如登入 API,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.rate_limiting.enabled,yes_global,全域限流,,,,若先做簡單全域保護可選此項,例如內部平台 API,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.rate_limiting.enabled,api_gateway,由 API Gateway 處理,,,,若限流放在 gateway 層可選此項,例如 Azure APIM,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.rate_limiting.enabled,no,否,,,,若目前無對外壓力可暫不啟用,例如封閉型內部工具,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.external.integrations,email,Email 服務,,,,若需寄送通知可選 email,例如驗證信或告警信,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.external.integrations,storage,雲端儲存,,,,若有檔案上傳可選 storage,例如 Blob/S3,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.external.integrations,erp,ERP 系統,,,,若需串接內部 ERP 可選 erp,例如主資料同步,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.external.integrations,crm,CRM 系統,,,,若需客戶資料整合可選 crm,例如客戶主檔同步,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.external.integrations,ai_service,AI / ML 服務,,,,若要串接模型或推理服務可選 ai_service,例如 Azure OpenAI,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.external.integrations,payment,金流服務,,,,若有支付流程可選 payment,例如第三方支付 API,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,api.external.integrations,none,無外部整合,,,,若系統獨立運作可選 none,例如純內部工具,7,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.auth.authorization,rbac,RBAC,,,,若角色清楚通常優先 rbac,例如 PM/架構師/DevOps 權限模型,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.auth.authorization,abac,ABAC,,,,若需依屬性與情境控權可選 abac,例如多條件授權,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.auth.authorization,pbac,Policy-Based,,,,若以政策規則控權可選 pbac,例如政策式資源存取,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.auth.authorization,claims_based,Claims-Based,,,,若依 token claims 授權可選 claims_based,例如 SSO 整合系統,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.auth.authorization,simple,簡單角色檢查,,,,僅適合早期簡化版本,例如小型內部工具,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.encryption.transport,tls_13,TLS 1.3,,,,若可採最新安全標準通常優先 tls_13,例如正式對外 API,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.encryption.transport,tls_12,TLS 1.2,,,,若需相容既有環境可選 tls_12,例如舊客戶端相容,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.encryption.transport,https_only,強制 HTTPS,,,,若以簡單安全基線為主可選 https_only,例如一般 Web 系統,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.encryption.transport,mutual_tls,Mutual TLS,,,,若服務間需要雙向驗證可選 mutual_tls,例如高安全內部 API,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.encryption.transport,not_configured,尚未配置,,,,不建議長期保留,例如早期草案,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.compliance.requirements,iso_27001,ISO 27001,,,,若需符合公司資安標準通常加入 iso_27001,例如治理平台,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.compliance.requirements,pdpa_tw,個資法（台灣）,,,,若涉及個資處理可加入 pdpa_tw,例如會員資料系統,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.compliance.requirements,owasp_top10,OWASP Top 10,,,,若要納入常見 Web 弱點控制可加入 owasp_top10,例如所有 Web 系統,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.compliance.requirements,company_policy,公司內部資安政策,,,,若需遵守內部治理規範可加入 company_policy,例如內部專案治理,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.compliance.requirements,gdpr,GDPR,,,,若有歐盟資料處理需求可加入 gdpr,例如跨境服務,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.compliance.requirements,none,無特殊合規要求,,,,若專案沒有額外法遵要求可選 none,例如簡單內部工具,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.vulnerability.scanning,dependabot,GitHub Dependabot,,,,若 repo 在 GitHub 通常可先加入 dependabot,例如套件更新檢查,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.vulnerability.scanning,owasp_zap,OWASP ZAP,,,,若要做 Web 弱點掃描可選 owasp_zap,例如外部網站測試,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.vulnerability.scanning,sonarqube,SonarQube,,,,若要做靜態分析可選 sonarqube,例如企業程式碼品質治理,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.vulnerability.scanning,snyk,Snyk,,,,若要做依賴與容器掃描可選 snyk,例如安全性檢查,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.vulnerability.scanning,github_advanced,GitHub Advanced Security,,,,若已有 GitHub 進階安全授權可選此項,例如 code scanning,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.secrets.management,azure_key_vault,Azure Key Vault,,,,若部署在 Azure 通常優先選 azure_key_vault,例如 connection string/keys 管理,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.secrets.management,hashicorp_vault,HashiCorp Vault,,,,若有跨平台 secrets 需求可選 hashicorp_vault,例如多雲環境,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.secrets.management,env_variables,環境變數,,,,若先採簡單安全方式可選 env_variables,例如 CI/CD 注入 secrets,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.secrets.management,user_secrets,.NET User Secrets,,,,僅適合本機開發,例如 local 開發環境,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.secrets.management,config_file,組態檔案（需改善）,,,,屬過渡方案不建議正式使用,例如早期測試環境,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.secrets.management,hardcoded,寫死在程式碼中（禁止）,,,,屬高風險做法不可正式採用,例如直接寫在程式檔案內,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.ai.boundaries,no_prod_data,AI 不得接觸正式環境資料,,,,若專案有敏感資料通常應選此項,例如正式 DB 不可餵給 AI,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.ai.boundaries,no_secrets,AI 不得處理機敏資訊,,,,若專案有密碼或金鑰資料通常應選此項,例如禁止把 secrets 放入 prompt,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.ai.boundaries,code_review_required,AI 產出必須人工審查,,,,若允許 AI 產碼幾乎都應選此項,例如 PR review 流程,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.ai.boundaries,sandbox_only,AI 僅在沙箱環境操作,,,,若要限制執行環境可選 sandbox_only,例如測試環境 agent,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.ai.boundaries,approved_models_only,僅使用公司核准模型,,,,若屬機密專案通常應選此項,例如 private model only,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.ai.boundaries,audit_trail,AI 操作需留稽核軌跡,,,,若需治理追蹤通常選 audit_trail,例如 AI 操作紀錄,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,security.ai.boundaries,no_pii,Prompt 不得包含個資,,,,若專案涉及個資通常應選此項,例如 prompt 遮罩資料,7,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.cicd.platform,github_actions,GitHub Actions,,,,若 repo 在 GitHub 通常優先選 github_actions,例如 PR 自動驗證,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.cicd.platform,azure_devops,Azure DevOps Pipelines,,,,若企業內控偏 Azure 可選 azure_devops,例如公司標準 pipeline,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.cicd.platform,jenkins,Jenkins,,,,若需高度客製可選 jenkins,例如 legacy CI/CD,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.cicd.platform,gitlab_ci,GitLab CI/CD,,,,若 repo 在 GitLab 可選 gitlab_ci,例如 GitLab 團隊,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.cicd.platform,none,無 CI/CD,,,,僅適合過渡期,例如早期 PoC,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.strategy.type,rolling,滾動更新,,,,一般服務最常見部署策略,例如 App Service/容器逐步更新,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.strategy.type,blue_green,藍綠部署,,,,若重視快速回滾可選 blue_green,例如正式高穩定服務,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.strategy.type,canary,金絲雀部署,,,,若重視低風險漸進上線可選 canary,例如高風險功能發佈,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.strategy.type,recreate,重建部署,,,,若可接受短暫停機可選 recreate,例如內部低風險服務,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.strategy.type,manual,手動部署,,,,若尚未自動化可選 manual,例如初版 PoC,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.environments.list,local,Local,,,,本地開發環境,例如工程師本機,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.environments.list,dev,Development,,,,開發整合環境,例如內部測試部署,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.environments.list,sit,SIT,,,,系統整合測試環境,例如跨模組整合驗證,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.environments.list,uat,UAT,,,,使用者驗收測試環境,例如 PM/顧問驗收,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.environments.list,staging,Staging,,,,正式前預備環境,例如 release 候選驗證,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.environments.list,production,Production,,,,正式服務環境,例如客戶正式使用,6,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.environments.list,dr,DR,,,,災難復原環境,例如異地備援,7,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.monitoring.tools,app_insights,Azure Application Insights,,,,若在 Azure 上通常優先選 app_insights,例如 API 與前端監控,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.monitoring.tools,azure_monitor,Azure Monitor,,,,若需更完整 Azure 監控可選 azure_monitor,例如雲端資源監控,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.monitoring.tools,prometheus,Prometheus + Grafana,,,,若偏容器與自建監控可選 prometheus,例如 K8s 環境,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.monitoring.tools,health_checks,Health Check Endpoints,,,,若至少要有服務健康檢查可加此項,例如 API /health,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.monitoring.tools,none,無監控,,,,不建議正式環境採用,例如早期草案,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.logging.centralized,app_insights,Azure Application Insights,,,,若已在 Azure 上且想簡化整合可選此項,例如雲端平台專案,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.logging.centralized,azure_log_analytics,Azure Log Analytics,,,,若集中查詢與分析需求較高可選此項,例如企業雲端治理,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.logging.centralized,seq,Seq,,,,若主要日誌為 Serilog 且需集中查詢可選 seq,例如 .NET API 專案,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.logging.centralized,elk,ELK Stack,,,,若已有自建日誌平台可選 elk,例如多服務集中式 logging,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.logging.centralized,none,無集中日誌,,,,不建議正式環境採用,例如早期測試環境,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.git.branching,github_flow,GitHub Flow,,,,若 repo 在 GitHub 且 feature branch + PR 為主通常選 github_flow,例如現行專案流程,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.git.branching,git_flow,Git Flow,,,,若 release/hotfix 分支治理較重可選 git_flow,例如大型產品專案,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.git.branching,trunk_based,Trunk-Based Development,,,,若追求快速小步合併可選 trunk_based,例如持續交付團隊,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.git.branching,custom,自定義策略,,,,若公司已有內部 Git 流程可選 custom,例如公司專屬流程,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.git.branching,no_strategy,無明確策略,,,,不建議搭配 AI 協作長期使用,例如早期試作狀態,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.iac.tool,bicep,Azure Bicep,,,,若基礎設施主要在 Azure 通常選 bicep,例如 Azure 資源部署,1,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.iac.tool,terraform,Terraform,,,,若要跨平台 IaC 通常選 terraform,例如多雲部署,2,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.iac.tool,arm,ARM Templates,,,,若沿用舊版 Azure 模板可選 arm,例如既有雲端腳本,3,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.iac.tool,pulumi,Pulumi,,,,若想用程式語言管理 IaC 可選 pulumi,例如程式碼導向 IaC,4,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.iac.tool,manual,手動設定,,,,若暫未自動化可選 manual,例如早期環境建置,5,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,deployment.iac.tool,none,無 IaC,,,,不建議正式長期維持,例如 PoC 階段,6,generated/projects/PRJ-001/s3-design-prototype.html
+S4,Validation,validation,validation.issue.disposition,pending,待處理,,,,S4 人工確認時的處理狀態,若尚未決定先選 pending,例如剛看完驗證報告,1,generated/projects/PRJ-001/s4-validation-prototype.html
+S4,Validation,validation,validation.issue.disposition,fix_now,立即修正,,,,S4 人工確認時的處理狀態,若問題可立即修補通常選 fix_now,例如補 API 文件,2,generated/projects/PRJ-001/s4-validation-prototype.html
+S4,Validation,validation,validation.issue.disposition,accepted_with_plan,接受風險但列計畫,,,,S4 人工確認時的處理狀態,若可先接受但需後續追蹤可選此項,例如 warning 類問題,3,generated/projects/PRJ-001/s4-validation-prototype.html
+S4,Validation,validation,validation.issue.disposition,return_to_owner,退回主責角色,,,,S4 人工確認時的處理狀態,若內容不足或方向錯誤可退回,例如缺少安全規格,4,generated/projects/PRJ-001/s4-validation-prototype.html
+S4,Validation,validation,validation.issue.disposition,meeting_required,安排跨角色會議,,,,S4 人工確認時的處理狀態,若涉及跨角色衝突應選此項,例如 AI 邊界與交付衝突,5,generated/projects/PRJ-001/s4-validation-prototype.html
+S5,Review,review,review.architect.decision,pending,待審核,,,,S5 架構師主審結果,若尚未完成主審先選 pending,1,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,review.architect.decision,approved,通過,,,,S5 架構師主審結果,若技術方向與治理可接受可選 approved,2,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,review.architect.decision,approved_with_notes,通過但附註,,,,S5 架構師主審結果,若可前進但需保留風險附註可選此項,3,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,review.architect.decision,return_for_fix,退回修正,,,,S5 架構師主審結果,若尚有重大缺漏可選 return_for_fix,4,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,review.architect.decision,meeting_required,需要討論,,,,S5 架構師主審結果,若需跨角色決議可選 meeting_required,5,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,review.pm.decision,pending,待確認,,,,S5 PM 確認結果,若尚未確認交付風險先選 pending,1,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,review.pm.decision,confirmed,確認通過,,,,S5 PM 確認結果,若交付與時程可接受可選 confirmed,2,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,review.pm.decision,confirmed_with_notes,確認通過但附註,,,,S5 PM 確認結果,若可通過但需保留說明可選此項,3,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,review.pm.decision,return_for_fix,退回修正,,,,S5 PM 確認結果,若交付或時程風險不可接受可退回,4,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,review.pm.decision,meeting_required,需要討論,,,,S5 PM 確認結果,若需重新協調時程或範圍可選此項,5,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,review.version_lock.status,draft,尚未鎖定,,,,S5 版本狀態,若審核尚未完成先選 draft,1,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,review.version_lock.status,approved,已簽核，可進 S6,,,,S5 版本狀態,若已完成雙方簽核可選 approved,2,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,review.version_lock.status,returned,退回修正,,,,S5 版本狀態,若決定回前階段補件可選 returned,3,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,review.version_lock.status,needs_meeting,待會議決議,,,,S5 版本狀態,若需討論後再鎖版可選 needs_meeting,4,generated/projects/PRJ-001/s5-review-prototype.html
+S6,Output,output,output.assets.selected,tech_stack_json,tech-stack.json,,,,S6 正式輸出資產,用於系統與 repo 讀取技術棧 SSOT,1,generated/projects/PRJ-001/s6-output-prototype.html
+S6,Output,output,output.assets.selected,ai_context_md,ai-context.md,,,,S6 正式輸出資產,用於 AI 工具讀取專案上下文,2,generated/projects/PRJ-001/s6-output-prototype.html
+S6,Output,output,output.assets.selected,readiness_report_md,readiness-report.md,,,,S6 正式輸出資產,用於治理與審核紀錄,3,generated/projects/PRJ-001/s6-output-prototype.html
+S6,Output,output,output.assets.selected,adr_draft_md,adr-draft.md,,,,S6 正式輸出資產,用於 repo 保留架構決策草稿,4,generated/projects/PRJ-001/s6-output-prototype.html
+S6,Output,output,output.assets.selected,cursor_rules_draft_mdc,cursor-rules-draft.mdc,,,,S6 正式輸出資產,用於 IDE / AI 協作規則草案,5,generated/projects/PRJ-001/s6-output-prototype.html
+S6,Output,output,output.publish.note_policy,include_ai_disclosure,附上 AI 使用揭露,,,,S6 發布備註項目,若要進入 S7 發布建議加入此項,1,generated/projects/PRJ-001/s6-output-prototype.html
+S6,Output,output,output.publish.note_policy,include_change_summary,附上變更摘要,,,,S6 發布備註項目,若要建立 PR 建議加入此項,2,generated/projects/PRJ-001/s6-output-prototype.html
+S6,Output,output,output.publish.note_policy,include_warning_plan,附上 warning 處理計畫,,,,S6 發布備註項目,若仍有 warning 建議加入此項,3,generated/projects/PRJ-001/s6-output-prototype.html
+S6,Output,output,output.publish.note_policy,include_review_version,附上核准版本號,,,,S6 發布備註項目,若要確保輸出來源可追蹤建議加入此項,4,generated/projects/PRJ-001/s6-output-prototype.html
+S7,Publish,ai_disclosure,publish.ai.disclosure_level,required,必須揭露,,,,S7 AI 揭露程度決定 PR 與發布文件中的揭露強度,若屬治理文件或高敏感專案通常選 required,例如正式治理基線與稽核文件,1,generated/projects/PRJ-001/s7-publish-prototype.html
+S7,Publish,ai_disclosure,publish.ai.disclosure_level,recommended,建議揭露,,,,S7 AI 揭露程度決定 PR 與發布文件中的揭露強度,若屬一般內部協作 repo 通常選 recommended,例如內部開發專案發布,2,generated/projects/PRJ-001/s7-publish-prototype.html
+S7,Publish,ai_disclosure,publish.ai.disclosure_level,minimal,簡化揭露,,,,S7 AI 揭露程度決定 PR 與發布文件中的揭露強度,若屬低風險草稿或 PoC 可選 minimal,例如內部試作與低敏感草案,3,generated/projects/PRJ-001/s7-publish-prototype.html

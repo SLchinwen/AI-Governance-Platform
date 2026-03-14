@@ -203,6 +203,7 @@
         <div class="actions">
           <button class="secondary" type="button" id="importBtn">匯入並生成輸出</button>
           <button class="secondary" type="button" id="refreshBtn">重新生成</button>
+          <button class="secondary" type="button" id="exportHandoffBtn">匯出 S7 handoff</button>
           <button class="primary" type="button" id="exportBundleBtn">匯出全部檔案</button>
           <button class="secondary" type="button" id="exportMergedContextBtn">回存 project-context.json</button>
         </div>
@@ -467,6 +468,7 @@
       const helpModalExampleEl = document.getElementById("helpModalExample");
 
       let currentData = JSON.parse(JSON.stringify(defaultData));
+      let importedSource = null;
 
       function clone(obj) {
         return JSON.parse(JSON.stringify(obj));
@@ -870,29 +872,87 @@ alwaysApply: false
         exportTextFile("cursor-rules-draft.mdc", buildCursorRulesDraft(currentData), "text/plain");
       }
 
-      function exportMergedProjectContext() {
-        const merged = {
+      function buildS7Handoff() {
+        const outputs = {
+          tech_stack: buildTechStackJson(currentData),
+          ai_context: buildAiContextMd(currentData),
+          readiness_report: buildReadinessReportMd(currentData),
+          adr_draft: buildAdrDraftMd(currentData),
+          cursor_rules_draft: buildCursorRulesDraft(currentData)
+        };
+        const outputTargets = [
+          "tech-stack.json",
+          "ai-context.md",
+          "readiness-report.md",
+          "adr-draft.md",
+          "cursor-rules-draft.mdc"
+        ];
+        return {
           project_id: currentData.project_id,
-          current_stage: "S6",
-          questionnaire_prefill: {
-            ...currentData.values
+          project_name: currentData.project_name,
+          stage: "S6",
+          approved_version: currentData.approved_version,
+          review_status: currentData.review_status,
+          validation_summary: {
+            readiness_score: currentData.readiness_score,
+            blocker_count: currentData.blocker_count,
+            warning_count: currentData.warning_count
           },
-          stages: {
-            s6: {
-              completed_at: new Date().toISOString(),
-              outputs: {
-                tech_stack: buildTechStackJson(currentData),
-                ai_context: buildAiContextMd(currentData),
-                readiness_report: buildReadinessReportMd(currentData),
-                adr_draft: buildAdrDraftMd(currentData),
-                cursor_rules_draft: buildCursorRulesDraft(currentData)
-              }
-            }
-          },
+          unresolved_warnings: [...currentData.unresolved_warnings],
+          output_targets: outputTargets,
+          outputs,
           handoff: {
             next_stage: "S7",
-            generated_at: new Date().toISOString()
+            generated_at: new Date().toISOString(),
+            source_stage: "S6"
           }
+        };
+      }
+
+      function exportS7Handoff() {
+        exportTextFile("prj001-s7-publish-handoff.json", JSON.stringify(buildS7Handoff(), null, 2), "application/json");
+      }
+
+      function exportMergedProjectContext() {
+        const merged = importedSource && typeof importedSource === "object"
+          ? clone(importedSource)
+          : {};
+        const s7Handoff = buildS7Handoff();
+        const outputs = s7Handoff.outputs;
+        merged.project_id = currentData.project_id;
+        merged.project_name = currentData.project_name;
+        merged.current_stage = "S6";
+        merged.approved_version = currentData.approved_version;
+        merged.review_status = currentData.review_status;
+        merged.validation_summary = {
+          readiness_score: currentData.readiness_score,
+          blocker_count: currentData.blocker_count,
+          warning_count: currentData.warning_count
+        };
+        merged.unresolved_warnings = [...currentData.unresolved_warnings];
+        merged.questionnaire_prefill = {
+          ...(merged.questionnaire_prefill || {}),
+          ...currentData.values
+        };
+        merged.stages = merged.stages || {};
+        merged.stages.s6 = {
+          completed_at: new Date().toISOString(),
+          approved_version: currentData.approved_version,
+          review_status: currentData.review_status,
+          validation_summary: {
+            readiness_score: currentData.readiness_score,
+            blocker_count: currentData.blocker_count,
+            warning_count: currentData.warning_count
+          },
+          unresolved_warnings: [...currentData.unresolved_warnings],
+          output_targets: [...s7Handoff.output_targets],
+          outputs,
+          s7_handoff: s7Handoff
+        };
+        merged.handoff = {
+          next_stage: "S7",
+          generated_at: new Date().toISOString(),
+          source_stage: "S6"
         };
         exportTextFile("prj001-project-context.json", JSON.stringify(merged, null, 2), "application/json");
       }
@@ -906,6 +966,7 @@ alwaysApply: false
         }
         try {
           const raw = JSON.parse(await file.text());
+          importedSource = raw;
           currentData = normalizeImportedData(raw);
           refreshAll();
           importStatusEl.className = "status ok";
@@ -950,6 +1011,7 @@ alwaysApply: false
 
       document.getElementById("importBtn").addEventListener("click", importJson);
       document.getElementById("refreshBtn").addEventListener("click", refreshAll);
+      document.getElementById("exportHandoffBtn").addEventListener("click", exportS7Handoff);
       document.getElementById("exportBundleBtn").addEventListener("click", exportBundle);
       document.getElementById("exportMergedContextBtn").addEventListener("click", exportMergedProjectContext);
       document.getElementById("exportTechStackBtn").addEventListener("click", () => exportTextFile("tech-stack.json", JSON.stringify(buildTechStackJson(currentData), null, 2), "application/json"));

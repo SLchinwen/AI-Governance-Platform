@@ -27,3 +27,68 @@ S2,Planning,architecture,系統架構,architecture.communication.style,服務間
 S2,Planning,security,資安與合規,backend.auth.token_strategy,Token Strategy,single_select,false,backend_lead|security_lead,medium,backend.auth.method,in,"jwt|oauth2",S2 條件題：JWT/OAuth2 下的 token 發放與刷新策略,,generated/projects/PRJ-001/s2-architecture-prototype.html
 S2,Planning,api,API 設計,api.response.format,Response Format,single_select,false,backend_lead,medium,api.style.type,in,"restful|graphql",S2 條件題：API 回應是否統一格式,,generated/projects/PRJ-001/s2-architecture-prototype.html
 S2,Planning,api,API 設計,api.external.integrations,外部整合關鍵性,single_select,false,architect|pm,medium,project_basic.profile.type,in,"integration|api_platform",S2 條件題：整合型/API 平台專案的外部依賴關鍵性,,generated/projects/PRJ-001/s2-architecture-prototype.html
+S3,Design,backend,後端技術棧,backend.runtime.platform,後端執行平台,single_select,true,backend_lead|architect,critical,,,,S3 後端主平台選型，決定後端骨架、套件與部署方向,後端平台是 AI 與工程規格的核心基線,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,後端技術棧,backend.runtime.dotnet_version,.NET 版本,single_select,true,backend_lead,critical,backend.runtime.platform,equals,dotnet,S3 條件題：選擇 .NET 後需補齊版本資訊,版本錯誤會導致生成與相容性問題,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,後端技術棧,backend.framework.dotnet_type,.NET 專案類型,single_select,true,backend_lead,high,backend.runtime.platform,equals,dotnet,S3 條件題：選擇 .NET 後需補齊專案框架類型,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,後端技術棧,backend.orm.choice,ORM / 資料存取方式,single_select,true,backend_lead,high,,,,S3 後端資料存取模式選型，用於決定 repository 與查詢風格,ORM 會影響 AI 生成的資料層寫法,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,後端技術棧,backend.auth.method,認證機制,single_select,true,backend_lead|architect,critical,,,,S3 後端登入驗證方式，用於串接 API 與安全規格,認證機制錯誤會直接影響安全設計,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,後端技術棧,backend.auth.jwt_config,JWT 設定細節,matrix,true,backend_lead,high,backend.auth.method,equals,jwt,S3 條件題：JWT token 生命週期與儲存方式設定,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,後端技術棧,backend.logging.framework,日誌框架,single_select,true,backend_lead,medium,,,,S3 後端日誌方案，用於記錄與監控整合,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,後端技術棧,backend.testing.strategy,測試策略,multi_select,true,backend_lead,high,,,,S3 後端測試規劃，用於驗證 AI 與人工產出品質,未定義測試策略時 AI 產碼風險較高,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,backend,後端技術棧,backend.coding.conventions,程式碼規範,multi_select,false,backend_lead,high,,,,S3 後端程式碼規範與治理要求,規範不足時 AI 產出風格易不一致,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,前端技術棧,frontend.framework.choice,前端框架,single_select,true,frontend_lead,critical,,,,S3 前端主要框架選型，決定元件、路由與生態系,前端框架決定 AI 生成的元件結構,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,前端技術棧,frontend.language.typescript,TypeScript 使用方式,single_select,true,frontend_lead,high,,,,S3 前端語言型別策略，決定型別嚴格度與生成方式,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,前端技術棧,frontend.ui.component_library,UI 元件庫,single_select,true,frontend_lead,high,,,,S3 前端 UI 元件庫選型，決定畫面元件與設計一致性,AI 必須知道元件庫才能產出正確 import 與元件用法,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,前端技術棧,frontend.styling.method,CSS 方案,single_select,true,frontend_lead,medium,,,,S3 前端樣式管理方式，用於決定 class 與樣式架構,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,前端技術棧,frontend.state.management,狀態管理方案,single_select,true,frontend_lead,high,,,,S3 前端狀態管理方式，用於決定頁面資料流與 store 結構,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,前端技術棧,frontend.routing.solution,路由方案,single_select,true,frontend_lead,medium,,,,S3 前端路由策略，用於決定頁面流程與導航模式,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,前端技術棧,frontend.build.tool,建構工具,single_select,true,frontend_lead,medium,,,,S3 前端建構工具，用於決定 dev/build 流程與專案設定,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,前端技術棧,frontend.form.library,表單處理方案,single_select,false,frontend_lead,medium,,,,S3 前端表單處理與驗證套件，用於支援問券與設定頁,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,frontend,前端技術棧,frontend.testing.tools,前端測試工具,multi_select,false,frontend_lead,medium,,,,S3 前端測試工具與文件化規劃,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,資料庫設計,database.primary.engine,主要資料庫引擎,single_select,true,backend_lead|architect,critical,,,,S3 主要資料庫引擎選型，用於決定 schema 與部署服務,資料庫引擎會影響 SQL/ORM/雲端相容性,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,資料庫設計,database.design.approach,資料庫設計方法,single_select,true,backend_lead,high,,,,S3 schema 設計與版本管理方式，用於決定 migration 流程,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,資料庫設計,database.cache.strategy,快取策略,single_select,true,backend_lead|architect,medium,,,,S3 快取策略，用於效能與查詢治理,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,資料庫設計,database.naming.convention,資料表命名規範,single_select,true,backend_lead,high,,,,S3 資料表與欄位命名風格，用於維持 schema 一致性,命名規範會影響 AI schema 產出一致性,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,資料庫設計,database.backup.strategy,備份策略,single_select,true,backend_lead|devops,medium,,,,S3 備份與災難復原方式，用於維運與合規,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,database,資料庫設計,database.sensitive_data.handling,敏感資料處理方式,multi_select,true,backend_lead|security_lead,critical,,,,S3 資料保護措施，用於加密、遮罩與稽核控制,AI 必須知道敏感資料保護要求,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,API 設計,api.style.type,API 設計風格,single_select,true,backend_lead|architect,critical,,,,S3 API 風格定義，用於 Controller/Resolver/契約規劃,API 風格決定整體介面結構,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,API 設計,api.versioning.strategy,API 版本策略,single_select,true,backend_lead,high,,,,S3 API 版本管理方式，用於相容性與演進策略,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,API 設計,api.documentation.openapi,API 文件狀態,single_select,true,backend_lead,high,,,,S3 API 文件方式，用於前後端與測試共享契約,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,API 設計,api.response.format,API 回應格式標準,single_select,true,backend_lead,high,,,,S3 API 統一回應格式，用於前後端一致性,回應格式是前後端契約核心,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,API 設計,api.error.handling,錯誤處理策略,single_select,true,backend_lead,high,,,,S3 API 錯誤處理方式，用於例外與錯誤碼規範,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,API 設計,api.rate_limiting.enabled,Rate Limiting,single_select,true,backend_lead|architect,medium,,,,S3 流量限制策略，用於對外服務保護與資源控管,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,api,API 設計,api.external.integrations,外部系統整合,multi_select,false,backend_lead|architect,high,,,,S3 對外 API/第三方服務整合清單，用於風險與 fallback 規劃,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,資安與合規,security.auth.authorization,授權機制,single_select,true,security_lead|architect,critical,,,,S3 權限控制模型，用於角色與政策規則定義,授權邏輯是安全與治理核心,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,資安與合規,security.encryption.transport,傳輸加密,single_select,true,security_lead|devops,critical,,,,S3 傳輸加密方式，用於 API 與系統間連線安全,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,資安與合規,security.compliance.requirements,合規要求,multi_select,true,pm|security_lead,critical,,,,S3 合規與治理要求，用於資安標準與稽核範圍,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,資安與合規,security.vulnerability.scanning,弱點掃描工具,multi_select,false,security_lead|devops,medium,,,,S3 自動化弱掃與安全掃描工具規劃,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,資安與合規,security.secrets.management,機敏資訊管理,single_select,true,devops|security_lead,critical,,,,S3 secrets 管理方式，用於金鑰、密碼與 connection string 控管,AI 絕不能把 secrets 寫死在程式碼裡,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,security,資安與合規,security.ai.boundaries,AI 協作安全邊界,multi_select,true,security_lead|architect,critical,,,,S3 AI 安全紅線，用於限制模型、資料與操作權限,這是 AI 治理的核心控制項目,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,部署與維運,deployment.cicd.platform,CI/CD 平台,single_select,true,devops,critical,,,,S3 自動化建置與部署平台，用於 workflow 與 pipeline 生成,CI/CD 會影響 AI 產生的自動化腳本,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,部署與維運,deployment.cicd.none_reason,無 CI/CD 的原因與補齊計畫,text,true,devops,high,deployment.cicd.platform,equals,none,S3 條件題：若目前無 CI/CD，需說明原因與補齊計畫,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,部署與維運,deployment.strategy.type,部署策略,single_select,true,devops,high,,,,S3 正式環境部署更新方式，用於上線與回滾流程,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,部署與維運,deployment.environments.list,環境清單,multi_select,true,devops,high,,,,S3 環境配置清單，用於開發、測試、正式與 DR 規劃,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,部署與維運,deployment.monitoring.tools,監控工具,multi_select,true,devops,medium,,,,S3 監控與告警工具，用於維運與健康檢查,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,部署與維運,deployment.logging.centralized,集中式日誌平台,single_select,true,devops,medium,,,,S3 集中式日誌查詢平台，用於觀測性與稽核,,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,部署與維運,deployment.git.branching,Git 分支策略,single_select,true,devops|backend_lead,high,,,,S3 版本控制分支治理，用於 PR 與 AI 協作流程,分支策略會影響 AI 建議的協作方式,generated/projects/PRJ-001/s3-design-prototype.html
+S3,Design,deployment,部署與維運,deployment.iac.tool,基礎設施即代碼（IaC）,single_select,false,devops,medium,,,,S3 基礎設施自動化工具，用於環境標準化與重現性,,generated/projects/PRJ-001/s3-design-prototype.html
+S4,Validation,validation,驗證報告,validation.issue.disposition,驗證問題處置方式,single_select,false,architect,high,,,,S4 人工確認時對每個 blocker/warning 的處理決定，用於退回、接受風險或安排會議,,generated/projects/PRJ-001/s4-validation-prototype.html
+S4,Validation,validation,驗證報告,validation.issue.note,驗證問題處置備註,text,false,architect,medium,,,,S4 對每個驗證問題補充負責人、時程或處理結論,,generated/projects/PRJ-001/s4-validation-prototype.html
+S5,Review,review,正式審核,review.architect.decision,架構師審核決定,single_select,true,architect,critical,,,,S5 架構師主審結果，用於決定是否可通過、退回或開會,,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,正式審核,review.architect.note,架構師審核意見,text,false,architect,high,,,,S5 架構師主審補充意見、風險與附註,,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,正式審核,review.pm.decision,PM 確認決定,single_select,true,pm,critical,,,,S5 PM 確認結果，用於正式簽核或退回修正,,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,正式審核,review.pm.note,PM 確認意見,text,false,pm,high,,,,S5 PM 對交付、時程與風險接受的說明,,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,正式審核,review.version_lock.version,審核版本號,text,true,architect|pm,high,,,,S5 鎖定版本識別碼，用於後續 S6 正式輸出依據,,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,正式審核,review.version_lock.status,版本狀態,single_select,true,architect|pm,critical,,,,S5 鎖版狀態，用於決定能否進入 S6 正式輸出,,generated/projects/PRJ-001/s5-review-prototype.html
+S5,Review,review,正式審核,review.version_lock.note,版本說明,text,false,architect|pm,medium,,,,S5 對鎖版結果的附註、退回原因或保留事項,,generated/projects/PRJ-001/s5-review-prototype.html
+S6,Output,output,正式輸出,output.assets.selected,正式輸出檔案清單,multi_select,true,system,critical,,,,S6 正式輸出資產集合，用於 repo、AI 與治理引用,,generated/projects/PRJ-001/s6-output-prototype.html
+S6,Output,output,正式輸出,output.publish.note_policy,multi_select,false,architect|pm|devops,medium,,,,S6 發布備註與發布時應附帶的說明項目，用於 S7 發布與 PR 描述,,generated/projects/PRJ-001/s6-output-prototype.html
+S7,Publish,publish,發布準備,publish.repo.base_branch,Base Branch,text,true,devops|architect,high,,,,S7 發布目標分支設定，用於決定最終 PR 合併位置,,generated/projects/PRJ-001/s7-publish-prototype.html
+S7,Publish,publish,發布準備,publish.repo.publish_branch,Publish Branch,text,true,devops,high,,,,S7 發布工作分支名稱，用於整理本次發布內容與提交範圍,,generated/projects/PRJ-001/s7-publish-prototype.html
+S7,Publish,publish,發布準備,publish.release.tag,Tag / Version,text,true,architect|devops,critical,,,,S7 正式發布版本識別碼，用於追蹤核准輸出與版本標記,未定義版本標記會降低發布內容可追溯性,generated/projects/PRJ-001/s7-publish-prototype.html
+S7,Publish,publish,發布準備,publish.pr.title,PR Title,text,true,architect|pm|devops,medium,,,,S7 Pull Request 標題，用於讓 reviewer 快速理解這次發布目的,,generated/projects/PRJ-001/s7-publish-prototype.html
+S7,Publish,publish,發布準備,publish.reviewers.list,Reviewers,text,true,architect|pm|devops,high,,,,S7 指定審核角色清單，用於安排 Architect、PM、DevOps 等發布審查,未指定 reviewer 可能導致治理與交付缺少必要覆核,generated/projects/PRJ-001/s7-publish-prototype.html
+S7,Publish,ai_disclosure,AI 使用揭露,publish.ai.disclosure_level,AI 揭露程度,single_select,true,architect|pm|security_lead,critical,,,,S7 AI 使用揭露強度，用於決定 PR 與發布文件中的揭露深度,揭露程度不足會造成 AI 使用情況不透明與治理風險,generated/projects/PRJ-001/s7-publish-prototype.html
+S7,Publish,ai_disclosure,AI 使用揭露,publish.ai.tools,使用 AI 工具,text,false,architect|pm,medium,,,,S7 列出本次發布過程中使用的 AI 工具名稱，用於保留發布脈絡,,generated/projects/PRJ-001/s7-publish-prototype.html
+S7,Publish,ai_disclosure,AI 使用揭露,publish.ai.disclosure,AI 揭露內容,text,true,architect|pm|security_lead,critical,,,,S7 說明 AI 參與範圍、人工覆核與限制方式,未完整揭露 AI 使用方式會降低治理可追溯性,generated/projects/PRJ-001/s7-publish-prototype.html
+S7,Publish,publish,發布準備,publish.change.summary,變更摘要,text,true,architect|pm|devops,high,,,,S7 發布摘要內容，用於說明本次正式輸出、發布目的與影響,變更摘要不足會增加 reviewer 理解成本與發布風險,generated/projects/PRJ-001/s7-publish-prototype.html

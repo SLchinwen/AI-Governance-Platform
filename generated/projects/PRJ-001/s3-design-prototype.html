@@ -269,7 +269,7 @@
 
       <section class="card">
         <h2>匯入上階段 JSON</h2>
-        <label for="importJsonFile">選擇 `S2 Context` / `project-context.json` / 前階段 JSON</label>
+        <label for="importJsonFile">選擇 `S2 Context` / `S3 handoff` / `project-context.json` / 前階段 JSON</label>
         <input id="importJsonFile" type="file" accept=".json,application/json" />
         <div class="actions">
           <button class="secondary" type="button" id="importBtn">匯入並預填</button>
@@ -277,6 +277,7 @@
           <button class="primary" type="button" id="suggestBtn">刷新建議與摘要</button>
           <button class="secondary" type="button" id="exportContextBtn">匯出 S3 Context JSON</button>
           <button class="secondary" type="button" id="exportS4Btn">匯出 S4 驗證清單 JSON</button>
+          <button class="secondary" type="button" id="exportHandoffBtn">匯出 S4 Handoff JSON</button>
           <button class="secondary" type="button" id="exportMergedContextBtn">回存 project-context.json</button>
         </div>
         <div id="importStatus" class="status"></div>
@@ -1571,6 +1572,10 @@
         if (raw.stages && raw.stages.s2 && raw.stages.s2.answers) {
           normalized.prefill = { ...normalized.prefill, ...raw.stages.s2.answers };
         }
+        if (raw.stages && raw.stages.s2 && raw.stages.s2.s3_handoff) {
+          const handoff = raw.stages.s2.s3_handoff;
+          if (handoff.questionnaire_prefill) normalized.prefill = { ...normalized.prefill, ...handoff.questionnaire_prefill };
+        }
         return normalized;
       }
 
@@ -1901,9 +1906,34 @@
         });
       }
 
+      function buildS4Handoff(values) {
+        s4Checklist = buildS4Checklist(values);
+        return {
+          project_id: importedContext.project_id || "PRJ-001",
+          project_name: values["project_basic.profile.name"] || "未命名專案",
+          from_stage: "S3",
+          to_stage: "S4",
+          current_stage: "S3",
+          generated_at: new Date().toISOString(),
+          questionnaire_prefill: values,
+          categories: toS3Context(values).categories,
+          s3_context: toS3Context(values),
+          checks: s4Checklist,
+          handoff: {
+            next_stage: "S4",
+            source_stage: "S3"
+          }
+        };
+      }
+
+      function exportS4Handoff() {
+        exportJsonFile("prj001-s4-handoff.json", buildS4Handoff(collectValues()));
+      }
+
       function exportMergedProjectContext() {
         const values = collectValues();
         const base = importedContext.raw && typeof importedContext.raw === "object" ? { ...importedContext.raw } : {};
+        const handoff = buildS4Handoff(values);
         const merged = {
           ...base,
           project_id: importedContext.project_id || base.project_id || "PRJ-001",
@@ -1917,12 +1947,14 @@
             s3: {
               completed_at: new Date().toISOString(),
               answers: values,
-              s4_checks: s4Checklist
+              s4_checks: s4Checklist,
+              s4_handoff: handoff
             }
           },
           handoff: {
             next_stage: "S4",
-            generated_at: new Date().toISOString()
+            generated_at: new Date().toISOString(),
+            source_stage: "S3"
           }
         };
         exportJsonFile("prj001-project-context.json", merged);
@@ -1965,6 +1997,7 @@
       document.getElementById("suggestBtn").addEventListener("click", refreshAll);
       document.getElementById("exportContextBtn").addEventListener("click", exportS3Context);
       document.getElementById("exportS4Btn").addEventListener("click", exportS4ChecklistFile);
+      document.getElementById("exportHandoffBtn").addEventListener("click", exportS4Handoff);
       document.getElementById("exportMergedContextBtn").addEventListener("click", exportMergedProjectContext);
       document.addEventListener("input", () => {
         refreshAll();

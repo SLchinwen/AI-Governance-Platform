@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRJ-001 S7 Publish Prototype</title>
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --card: #fff;
+        --line: #d9e0ea;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --brand: #0f62fe;
+        --ok: #166534;
+        --warn: #92400e;
+        --error: #b91c1c;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", "Noto Sans TC", Arial, sans-serif;
+      }
+      .wrap {
+        max-width: 1220px;
+        margin: 20px auto;
+        padding: 0 14px 40px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      h1 { margin: 0 0 8px; font-size: 24px; }
+      h2 { margin: 0 0 8px; font-size: 18px; }
+      h3 { margin: 10px 0 8px; font-size: 15px; }
+      .meta, .hint {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .grid { display: grid; gap: 10px; }
+      .two-col { grid-template-columns: 1.2fr 1fr; }
+      .three-col { grid-template-columns: repeat(3, 1fr); }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      button {
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 12px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .primary { background: var(--brand); color: #fff; }
+      .secondary { background: #e9efff; color: #13346e; }
+      .status { margin-top: 8px; font-size: 14px; }
+      .ok { color: var(--ok); }
+      .warn { color: var(--warn); }
+      .error { color: var(--error); }
+      .badge {
+        display: inline-block;
+        margin-left: 6px;
+        font-size: 12px;
+        border-radius: 999px;
+        padding: 2px 8px;
+      }
+      .badge.ok { background: #e7f7ec; color: #166534; }
+      .badge.warn { background: #fff4e6; color: #92400e; }
+      .badge.error { background: #fee2e2; color: #991b1b; }
+      .badge.info { background: #edf4ff; color: #0f62fe; }
+      .summary-box {
+        border: 1px solid #dbe3f0;
+        border-radius: 10px;
+        padding: 10px;
+        background: #f8fbff;
+      }
+      .summary-box strong { display: block; margin-bottom: 4px; }
+      .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .help-btn {
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        border: 1px solid #bcd0fb;
+        background: #eef4ff;
+        color: #0f62fe;
+        font-weight: 700;
+        padding: 0;
+      }
+      label { display: block; font-size: 14px; margin-bottom: 6px; }
+      input[type="text"], textarea, select {
+        width: 100%;
+        border: 1px solid #c8d2e2;
+        border-radius: 8px;
+        padding: 9px;
+        font-size: 14px;
+      }
+      textarea { min-height: 86px; resize: vertical; }
+      .inline-grid {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 8px;
+        align-items: center;
+        margin-top: 8px;
+      }
+      .check-list, .summary-list {
+        margin: 8px 0 0;
+        padding-left: 18px;
+      }
+      .check-list li, .summary-list li {
+        margin: 6px 0;
+        line-height: 1.6;
+      }
+      .output-card {
+        border: 1px solid #dbe3f0;
+        border-radius: 10px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      .output-card:last-child { margin-bottom: 0; }
+      pre {
+        margin: 8px 0 0;
+        background: #0b1220;
+        color: #eaf1ff;
+        border-radius: 8px;
+        padding: 10px;
+        overflow: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .modal-backdrop.open { display: flex; }
+      .modal {
+        width: min(760px, 100%);
+        max-height: 85vh;
+        overflow: auto;
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #dbe3f0;
+        padding: 16px;
+      }
+      .modal-header {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .modal-title {
+        margin: 0;
+        font-size: 20px;
+      }
+      .close-btn {
+        background: #eef2f7;
+        color: #334155;
+      }
+      .help-section-title {
+        margin: 14px 0 6px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .help-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      @media (max-width: 960px) {
+        .two-col, .three-col, .inline-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <section class="card">
+        <h1>S7 Publish 發布期 Prototype</h1>
+        <div class="meta">
+          目標：把 `S6` 產出的正式文件，整理成可發佈到 repo / PR 的發布資料。<br />
+          這一版聚焦在：PR 資訊、AI 使用揭露、變更摘要、reviewer 指派、版本標記與發布 manifest。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>匯入前階段 JSON</h2>
+        <label for="importJsonFile">選擇 `S6 handoff` / `project-context.json` / 前階段 JSON</label>
+        <input id="importJsonFile" type="file" accept=".json,application/json" />
+        <div class="actions">
+          <button class="secondary" type="button" id="importBtn">匯入並組裝發布資料</button>
+          <button class="secondary" type="button" id="refreshBtn">刷新發布內容</button>
+          <button class="primary" type="button" id="exportPublishPacketBtn">匯出 Publish Packet JSON</button>
+          <button class="secondary" type="button" id="exportBundleBtn">匯出發布檔案</button>
+          <button class="secondary" type="button" id="exportMergedContextBtn">回存 project-context.json</button>
+        </div>
+        <div id="importStatus" class="status"></div>
+      </section>
+
+      <section class="card">
+        <h2>發布總覽</h2>
+        <div id="summaryGrid" class="grid three-col"></div>
+      </section>
+
+      <div class="grid two-col">
+        <section class="card">
+          <div class="section-head">
+            <h2>發布檢查清單</h2>
+            <button type="button" class="help-btn" data-help-id="publish_checklist" aria-label="查看發布檢查說明">?</button>
+          </div>
+          <ul id="publishChecklist" class="check-list"></ul>
+        </section>
+
+        <section class="card">
+          <div class="section-head">
+            <h2>建議 Reviewer</h2>
+            <button type="button" class="help-btn" data-help-id="reviewers" aria-label="查看 reviewer 說明">?</button>
+          </div>
+          <ul id="reviewerSuggestionList" class="check-list"></ul>
+        </section>
+      </div>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>PR / 發布設定</h2>
+          <button type="button" class="help-btn" data-help-id="pr_setup" aria-label="查看 PR 設定說明">?</button>
+        </div>
+        <div class="inline-grid">
+          <label for="baseBranch">Base Branch</label>
+          <input id="baseBranch" type="text" placeholder="例如 master" />
+        </div>
+        <div class="inline-grid">
+          <label for="publishBranch">Publish Branch</label>
+          <input id="publishBranch" type="text" placeholder="例如 release/prj001-tech-stack-v1" />
+        </div>
+        <div class="inline-grid">
+          <label for="tagName">Tag / Version</label>
+          <input id="tagName" type="text" placeholder="例如 review-v1.0.0" />
+        </div>
+        <div class="inline-grid">
+          <label for="prTitle">PR Title</label>
+          <input id="prTitle" type="text" placeholder="例如 docs: publish approved questionnaire assets for PRJ-001" />
+        </div>
+        <div class="inline-grid">
+          <label for="reviewers">Reviewers</label>
+          <input id="reviewers" type="text" placeholder="例如 Architect, PM, DevOps" />
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>AI 使用揭露</h2>
+          <button type="button" class="help-btn" data-help-id="ai_disclosure" aria-label="查看 AI 揭露說明">?</button>
+        </div>
+        <div class="inline-grid">
+          <label for="disclosureLevel">揭露程度</label>
+          <select id="disclosureLevel">
+            <option value="required">必須揭露</option>
+            <option value="recommended">建議揭露</option>
+            <option value="minimal">簡化揭露</option>
+          </select>
+        </div>
+        <div class="inline-grid">
+          <label for="aiTools">使用 AI 工具</label>
+          <input id="aiTools" type="text" placeholder="例如 Cursor, Claude, GPT" />
+        </div>
+        <div class="inline-grid">
+          <label for="aiDisclosure">揭露內容</label>
+          <textarea id="aiDisclosure" placeholder="填寫 AI 參與範圍、人工覆核與限制方式"></textarea>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>變更摘要</h2>
+          <button type="button" class="help-btn" data-help-id="change_summary" aria-label="查看變更摘要說明">?</button>
+        </div>
+        <div class="inline-grid">
+          <label for="changeSummary">摘要內容</label>
+          <textarea id="changeSummary" placeholder="填寫這次發布包含哪些正式輸出與為什麼要發布"></textarea>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <h2>發布輸出預覽</h2>
+          <button type="button" class="help-btn" data-help-id="publish_outputs" aria-label="查看發布輸出說明">?</button>
+        </div>
+        <div class="output-card">
+          <h3>`pr-body.md` 預覽</h3>
+          <pre id="prBodyPreview"></pre>
+        </div>
+        <div class="output-card">
+          <h3>`ai-disclosure.md` 預覽</h3>
+          <pre id="disclosurePreview"></pre>
+        </div>
+        <div class="output-card">
+          <h3>`publish-manifest.json` 預覽</h3>
+          <pre id="manifestPreview">{}</pre>
+        </div>
+      </section>
+    </div>
+
+    <div id="helpModalBackdrop" class="modal-backdrop" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+        <div class="modal-header">
+          <div>
+            <h2 id="helpModalTitle" class="modal-title">發布說明</h2>
+            <div id="helpModalSummary" class="meta"></div>
+          </div>
+          <button type="button" id="closeHelpBtn" class="close-btn">關閉</button>
+        </div>
+        <div class="help-section-title">差異說明</div>
+        <div id="helpModalDiffs" class="help-box"></div>
+        <div class="help-section-title">快速比較</div>
+        <div id="helpModalCompare" class="help-box"></div>
+        <div class="help-section-title">適用情境</div>
+        <div id="helpModalUseCase" class="help-box"></div>
+        <div class="help-section-title">簡單範例</div>
+        <div id="helpModalExample" class="help-box"></div>
+      </div>
+    </div>
+
+    <script>
+      const helpContent = {
+        publish_checklist: {
+          title: "發布檢查清單在看什麼？",
+          summary: "S7 的重點不是再決策，而是確認正式輸出是否已足夠安全地放入 repo / PR。",
+          diffs: [
+            "S6：產出文件內容。",
+            "S7：整理怎麼發布、誰 review、要揭露什麼。",
+            "如果 S5 未批准，S7 只能當發布草稿，不應視為正式版。"
+          ],
+          compare: [
+            ["階段", "主要任務"],
+            ["S6", "生成正式輸出文件"],
+            ["S7", "整理發布與 PR 資料"],
+            ["Repo / PR", "實際提交與審核"]
+          ],
+          useCase: "當你已經有 tech-stack 與 ai-context 等文件，S7 就是把它們變成可送出 PR 的完整包。",
+          example: "例如產出 PR body、AI 使用揭露、publish manifest。"
+        },
+        reviewers: {
+          title: "Reviewer 為什麼要在這一階段處理？",
+          summary: "因為發布不只是技術檔案上傳，還需要確保對的人看到對的資訊。",
+          diffs: [
+            "Architect：確認技術方向與治理沒有偏移。",
+            "PM：確認交付與範圍一致。",
+            "DevOps：若涉及部署或 repo 發布流程，最好一起 review。"
+          ],
+          compare: [
+            ["角色", "通常負責"],
+            ["Architect", "技術與治理內容"],
+            ["PM", "交付與範圍確認"],
+            ["DevOps", "repo / 發布流程 / CI-CD"]
+          ],
+          useCase: "若這次輸出會直接作為 repo 初始基線，至少應包含 Architect 與 PM。",
+          example: "例如 `Architect, PM, DevOps`。"
+        },
+        pr_setup: {
+          title: "PR / 發布設定在決定什麼？",
+          summary: "這裡決定你的發布資料要往哪個分支、怎麼命名，以及 PR 看起來要長什麼樣子。",
+          diffs: [
+            "Base branch：最終要合併到哪裡。",
+            "Publish branch：這次產出的發佈分支。",
+            "Tag / Version：讓這次核准輸出可追蹤。"
+          ],
+          compare: [
+            ["欄位", "用途"],
+            ["Base Branch", "最終合併目標"],
+            ["Publish Branch", "本次發佈工作分支"],
+            ["Tag / Version", "版本識別與追蹤"],
+            ["PR Title", "讓 reviewer 一眼知道這次發布內容"]
+          ],
+          useCase: "當你準備把這批輸出文件送進 repo 時，就應該先把這些欄位整理好。",
+          example: "例如 base=`master`，branch=`release/prj001-tech-stack-v1`。"
+        },
+        ai_disclosure: {
+          title: "AI 使用揭露要寫什麼？",
+          summary: "不是只寫『有用 AI』，而是說明 AI 參與範圍、限制、以及是否經人工覆核。",
+          diffs: [
+            "完整揭露：適合正式治理文件。",
+            "建議揭露：適合一般內部 repo。",
+            "簡化揭露：適合低敏感、低風險文件。"
+          ],
+          compare: [
+            ["揭露程度", "適合情境"],
+            ["必須揭露", "治理、稽核、機密專案"],
+            ["建議揭露", "一般內部協作 repo"],
+            ["簡化揭露", "低風險 PoC 或內部草稿"]
+          ],
+          useCase: "如果你們要建立長期治理制度，建議至少採 `建議揭露` 以上。",
+          example: "例如說明：AI 協助整理文件與初稿，最終內容由 Architect / PM 人工確認。"
+        },
+        change_summary: {
+          title: "變更摘要應該怎麼寫？",
+          summary: "重點不是列所有檔名，而是說清楚這次為什麼要發布、發布後影響什麼。",
+          diffs: [
+            "低品質摘要：只列檔案。",
+            "高品質摘要：說明目的、範圍、影響、已知限制。"
+          ],
+          compare: [
+            ["寫法", "差異"],
+            ["列檔案", "只能看到改了什麼"],
+            ["寫目的與影響", "能理解為什麼現在發布"]
+          ],
+          useCase: "對 reviewer 來說，好的變更摘要能大幅降低審核成本。",
+          example: "例如『發布 PRJ-001 核准後的治理基線輸出，供 repo 與 AI 開發工作使用。』"
+        },
+        publish_outputs: {
+          title: "這些發布輸出有什麼用途？",
+          summary: "S7 不是直接 push，而是先整理出可被複用的發布資料包。",
+          diffs: [
+            "`pr-body.md`：用來建立 PR。",
+            "`ai-disclosure.md`：用來附在 PR 或 repo 文件中。",
+            "`publish-manifest.json`：用來記錄這次發布內容與版本。"
+          ],
+          compare: [
+            ["檔案", "用途"],
+            ["pr-body.md", "PR 內容草稿"],
+            ["ai-disclosure.md", "AI 使用揭露"],
+            ["publish-manifest.json", "發布與版本追蹤"]
+          ],
+          useCase: "當你想讓發布流程可追蹤、可重建、可治理，這些檔案就很重要。",
+          example: "例如未來自動發布工具可直接讀取 publish-manifest.json。"
+        }
+      };
+
+      const defaultData = {
+        project_id: "PRJ-001",
+        project_name: "Questionnaire System",
+        approved_version: "review-v1.0.0",
+        review_status: "approved",
+        output_targets: [
+          "tech-stack.json",
+          "ai-context.md",
+          "readiness-report.md",
+          "adr-draft.md",
+          "cursor-rules-draft.mdc"
+        ],
+        unresolved_warnings: [
+          "正式環境監控與告警仍需持續調校",
+          "IaC 模板與實際部署腳本仍需在 repo 中補齊"
+        ]
+      };
+
+      const summaryGridEl = document.getElementById("summaryGrid");
+      const publishChecklistEl = document.getElementById("publishChecklist");
+      const reviewerSuggestionListEl = document.getElementById("reviewerSuggestionList");
+      const prBodyPreviewEl = document.getElementById("prBodyPreview");
+      const disclosurePreviewEl = document.getElementById("disclosurePreview");
+      const manifestPreviewEl = document.getElementById("manifestPreview");
+      const importFileEl = document.getElementById("importJsonFile");
+      const importStatusEl = document.getElementById("importStatus");
+      const helpModalBackdropEl = document.getElementById("helpModalBackdrop");
+      const helpModalTitleEl = document.getElementById("helpModalTitle");
+      const helpModalSummaryEl = document.getElementById("helpModalSummary");
+      const helpModalDiffsEl = document.getElementById("helpModalDiffs");
+      const helpModalCompareEl = document.getElementById("helpModalCompare");
+      const helpModalUseCaseEl = document.getElementById("helpModalUseCase");
+      const helpModalExampleEl = document.getElementById("helpModalExample");
+
+      let currentData = JSON.parse(JSON.stringify(defaultData));
+      let importedSource = null;
+
+      function normalizeOutputTargetName(value) {
+        const map = {
+          tech_stack: "tech-stack.json",
+          ai_context: "ai-context.md",
+          readiness_report: "readiness-report.md",
+          adr_draft: "adr-draft.md",
+          cursor_rules_draft: "cursor-rules-draft.mdc"
+        };
+        return map[value] || value;
+      }
+
+      function normalizeImportedData(raw) {
+        const data = JSON.parse(JSON.stringify(defaultData));
+        if (raw.project_id) data.project_id = raw.project_id;
+        if (raw.project_name) data.project_name = raw.project_name;
+        if (raw.questionnaire_prefill?.["project_basic.profile.name"]) {
+          data.project_name = raw.questionnaire_prefill["project_basic.profile.name"];
+        }
+        if (raw.approved_version) data.approved_version = raw.approved_version;
+        if (raw.review_status) data.review_status = raw.review_status;
+        if (Array.isArray(raw.output_targets)) data.output_targets = raw.output_targets.map(normalizeOutputTargetName);
+        if (Array.isArray(raw.unresolved_warnings)) {
+          data.unresolved_warnings = raw.unresolved_warnings.map((item) => typeof item === "string" ? item : (item.message || item.title || JSON.stringify(item)));
+        }
+        if (raw.locked_review) {
+          data.review_status = raw.locked_review.review_status || data.review_status;
+          data.approved_version = raw.approved_version || raw.locked_review.version_lock?.version || data.approved_version;
+        }
+        if (raw.outputs) {
+          data.output_targets = Object.keys(raw.outputs).map(normalizeOutputTargetName);
+          if (raw.outputs.tech_stack) {
+            data.approved_version = raw.outputs.tech_stack.generated_from_version || data.approved_version;
+            data.review_status = raw.outputs.tech_stack.review_status || data.review_status;
+            const techStackProjectName = raw.outputs.tech_stack.content?.project?.name;
+            if (techStackProjectName) data.project_name = techStackProjectName;
+          }
+        }
+        if (raw.stages && raw.stages.s5 && raw.stages.s5.s6_handoff) {
+          const handoff = raw.stages.s5.s6_handoff;
+          data.approved_version = handoff.approved_version || data.approved_version;
+          data.review_status = handoff.approved ? "approved" : data.review_status;
+          if (Array.isArray(handoff.output_targets)) data.output_targets = handoff.output_targets.map(normalizeOutputTargetName);
+        }
+        if (raw.stages && raw.stages.s6) {
+          const s6 = raw.stages.s6;
+          if (s6.approved_version) data.approved_version = s6.approved_version;
+          if (s6.review_status) data.review_status = s6.review_status;
+          if (Array.isArray(s6.unresolved_warnings)) {
+            data.unresolved_warnings = s6.unresolved_warnings.map((item) => typeof item === "string" ? item : (item.message || item.title || JSON.stringify(item)));
+          }
+          if (Array.isArray(s6.output_targets) && s6.output_targets.length) {
+            data.output_targets = s6.output_targets.map(normalizeOutputTargetName);
+          }
+          if (s6.outputs) {
+            data.output_targets = Object.keys(s6.outputs).map(normalizeOutputTargetName);
+            if (s6.outputs.tech_stack) {
+              data.approved_version = s6.outputs.tech_stack.generated_from_version || data.approved_version;
+              data.review_status = s6.outputs.tech_stack.review_status || data.review_status;
+              const techStackProjectName = s6.outputs.tech_stack.content?.project?.name;
+              if (techStackProjectName) data.project_name = techStackProjectName;
+            }
+          }
+          if (s6.s7_handoff) {
+            data.approved_version = s6.s7_handoff.approved_version || data.approved_version;
+            data.review_status = s6.s7_handoff.review_status || data.review_status;
+            if (Array.isArray(s6.s7_handoff.unresolved_warnings)) {
+              data.unresolved_warnings = s6.s7_handoff.unresolved_warnings.map((item) => typeof item === "string" ? item : (item.message || item.title || JSON.stringify(item)));
+            }
+            if (Array.isArray(s6.s7_handoff.output_targets) && s6.s7_handoff.output_targets.length) {
+              data.output_targets = s6.s7_handoff.output_targets.map(normalizeOutputTargetName);
+            }
+          }
+        }
+        return data;
+      }
+
+      function fillDefaults() {
+        document.getElementById("baseBranch").value = "master";
+        document.getElementById("publishBranch").value = `release/${currentData.project_id.toLowerCase()}-${currentData.approved_version.toLowerCase()}`;
+        document.getElementById("tagName").value = currentData.approved_version;
+        document.getElementById("prTitle").value = `docs: publish approved governance assets for ${currentData.project_id}`;
+        document.getElementById("reviewers").value = "Architect, PM, DevOps";
+        document.getElementById("aiTools").value = "Cursor, Claude, GPT";
+        document.getElementById("aiDisclosure").value = `本次發布包含 AI 協助整理與生成的治理文件草稿，但所有正式輸出均依 ${currentData.approved_version} 核准版本整理，並由 Architect / PM 人工確認後發布。`;
+        document.getElementById("changeSummary").value = `發布 ${currentData.project_id} 的核准治理輸出資產，包含 tech-stack、ai-context、readiness-report、ADR 草稿與 Cursor rules 草案，供 repo 與 AI 開發流程使用。`;
+      }
+
+      function getState() {
+        return {
+          baseBranch: document.getElementById("baseBranch").value.trim(),
+          publishBranch: document.getElementById("publishBranch").value.trim(),
+          tagName: document.getElementById("tagName").value.trim(),
+          prTitle: document.getElementById("prTitle").value.trim(),
+          reviewers: document.getElementById("reviewers").value.trim(),
+          disclosureLevel: document.getElementById("disclosureLevel").value,
+          aiTools: document.getElementById("aiTools").value.trim(),
+          aiDisclosure: document.getElementById("aiDisclosure").value.trim(),
+          changeSummary: document.getElementById("changeSummary").value.trim()
+        };
+      }
+
+      function buildChecklist(state) {
+        return [
+          { pass: currentData.review_status === "approved", label: "S5/S6 來源已核准" },
+          { pass: currentData.output_targets.length >= 3, label: `至少已有 3 個正式輸出檔（目前 ${currentData.output_targets.length} 個）` },
+          { pass: state.baseBranch !== "", label: "已指定 base branch" },
+          { pass: state.publishBranch !== "", label: "已指定 publish branch" },
+          { pass: state.tagName !== "", label: "已指定版本 tag" },
+          { pass: state.prTitle !== "", label: "已填寫 PR title" },
+          { pass: state.reviewers !== "", label: "已指定 reviewers" },
+          { pass: state.aiDisclosure !== "", label: "已填寫 AI 使用揭露" },
+          { pass: state.changeSummary !== "", label: "已填寫變更摘要" }
+        ];
+      }
+
+      function buildReviewerSuggestions() {
+        const reviewers = [
+          "Architect：確認技術棧與治理輸出內容未偏移",
+          "PM：確認交付範圍、用途與後續流程一致",
+          "DevOps：若要直接進 repo / PR / release，建議一起 review"
+        ];
+        reviewerSuggestionListEl.innerHTML = reviewers.map((item) => `<li>${item}</li>`).join("");
+      }
+
+      function buildPrBody(state) {
+        return `## Summary
+- 發布 ${currentData.project_id} 的核准治理輸出資產，供 repo 與 AI 開發流程使用。
+- 本次輸出版本：${currentData.approved_version}
+- 包含檔案：${currentData.output_targets.join(", ")}
+
+## Change summary
+${state.changeSummary}
+
+## AI disclosure
+- 揭露程度：${state.disclosureLevel}
+- 使用工具：${state.aiTools}
+- 說明：${state.aiDisclosure}
+
+## Reviewers
+- ${state.reviewers.split(",").map((item) => item.trim()).filter(Boolean).join("\n- ")}
+
+## Notes
+${currentData.unresolved_warnings.length
+  ? currentData.unresolved_warnings.map((item) => `- ${item}`).join("\n")
+  : "- 無額外保留事項"}`;
+      }
+
+      function buildDisclosureMd(state) {
+        return `# AI 使用揭露
+
+## 專案
+- Project: ${currentData.project_id}
+- Version: ${currentData.approved_version}
+- Disclosure level: ${state.disclosureLevel}
+
+## 使用工具
+- ${state.aiTools}
+
+## 揭露內容
+${state.aiDisclosure}
+
+## 人工覆核
+- 本次正式發布內容已由 Architect / PM 完成前階段簽核。
+- 發布前仍建議由指定 reviewer 再次確認 repo 內容與版本標記。`;
+      }
+
+      function buildPublishManifest(state) {
+        return {
+          project_id: currentData.project_id,
+          stage: "S7",
+          generated_at: new Date().toISOString(),
+          publish_ready: buildChecklist(state).every((item) => item.pass),
+          review_status: currentData.review_status,
+          approved_version: currentData.approved_version,
+          target_repo_branch: {
+            base: state.baseBranch,
+            publish: state.publishBranch
+          },
+          release: {
+            tag: state.tagName,
+            pr_title: state.prTitle
+          },
+          output_targets: currentData.output_targets,
+          reviewers: state.reviewers.split(",").map((item) => item.trim()).filter(Boolean),
+          ai_disclosure: {
+            level: state.disclosureLevel,
+            tools: state.aiTools,
+            note: state.aiDisclosure
+          },
+          unresolved_warnings: currentData.unresolved_warnings
+        };
+      }
+
+      function renderSummary(state) {
+        const checklist = buildChecklist(state);
+        const ready = checklist.every((item) => item.pass);
+        const cards = [
+          {
+            title: "發布狀態",
+            value: ready ? "Ready" : "Pending",
+            detail: ready ? "可整理成 PR / 發布資料" : "仍有欄位待補",
+            tone: ready ? "ok" : "warn"
+          },
+          {
+            title: "核准版本",
+            value: currentData.approved_version,
+            detail: currentData.review_status === "approved" ? "已核准" : "尚未正式核准",
+            tone: currentData.review_status === "approved" ? "ok" : "warn"
+          },
+          {
+            title: "正式輸出檔案",
+            value: currentData.output_targets.length,
+            detail: currentData.output_targets.join(", "),
+            tone: "ok"
+          }
+        ];
+        summaryGridEl.innerHTML = cards.map((card) => `
+          <div class="summary-box">
+            <strong>${card.title}</strong>
+            <div class="${card.tone}">${card.value}</div>
+            <div class="hint">${card.detail}</div>
+          </div>
+        `).join("");
+      }
+
+      function renderChecklist(state) {
+        const checklist = buildChecklist(state);
+        publishChecklistEl.innerHTML = checklist.map((item) => `
+          <li>${item.label}<span class="badge ${item.pass ? "ok" : "warn"}">${item.pass ? "通過" : "待補"}</span></li>
+        `).join("");
+        const failCount = checklist.filter((item) => !item.pass).length;
+        importStatusEl.className = `status ${failCount === 0 ? "ok" : "warn"}`;
+        importStatusEl.textContent = failCount === 0
+          ? "S7 發布資料已準備完成，可用於建立 PR 或交付發布流程。"
+          : `S7 尚有 ${failCount} 項待補，建議先補齊再發布。`;
+      }
+
+      function refreshAll() {
+        const state = getState();
+        renderSummary(state);
+        renderChecklist(state);
+        buildReviewerSuggestions();
+        prBodyPreviewEl.textContent = buildPrBody(state);
+        disclosurePreviewEl.textContent = buildDisclosureMd(state);
+        manifestPreviewEl.textContent = JSON.stringify(buildPublishManifest(state), null, 2);
+      }
+
+      function exportTextFile(filename, content, type = "text/plain") {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+
+      async function importJson() {
+        const file = importFileEl.files && importFileEl.files[0];
+        if (!file) {
+          importStatusEl.className = "status warn";
+          importStatusEl.textContent = "請先選擇 JSON。";
+          return;
+        }
+        try {
+          const raw = JSON.parse(await file.text());
+          importedSource = raw;
+          currentData = normalizeImportedData(raw);
+          fillDefaults();
+          refreshAll();
+          importStatusEl.className = "status ok";
+          importStatusEl.textContent = `匯入成功：${file.name}`;
+        } catch (error) {
+          importStatusEl.className = "status warn";
+          importStatusEl.textContent = `匯入失敗：${error.message}`;
+        }
+      }
+
+      function exportPublishPacket() {
+        exportTextFile("prj001-s7-publish-packet.json", JSON.stringify(buildPublishManifest(getState()), null, 2), "application/json");
+      }
+
+      function exportBundle() {
+        const state = getState();
+        exportTextFile("pr-body.md", buildPrBody(state), "text/markdown");
+        exportTextFile("ai-disclosure.md", buildDisclosureMd(state), "text/markdown");
+        exportTextFile("publish-manifest.json", JSON.stringify(buildPublishManifest(state), null, 2), "application/json");
+      }
+
+      function exportMergedProjectContext() {
+        const state = getState();
+        const merged = importedSource && typeof importedSource === "object"
+          ? JSON.parse(JSON.stringify(importedSource))
+          : {};
+        merged.project_id = merged.project_id || currentData.project_id;
+        merged.current_stage = "S7";
+        merged.stages = merged.stages || {};
+        merged.stages.s7 = {
+          completed_at: new Date().toISOString(),
+          publish_packet: buildPublishManifest(state),
+          pr_body: buildPrBody(state),
+          ai_disclosure: buildDisclosureMd(state)
+        };
+        merged.handoff = {
+          next_stage: "published",
+          generated_at: new Date().toISOString()
+        };
+        exportTextFile("prj001-project-context.json", JSON.stringify(merged, null, 2), "application/json");
+      }
+
+      function openHelpModal(helpId) {
+        const item = helpContent[helpId];
+        if (!item) return;
+        helpModalTitleEl.textContent = item.title;
+        helpModalSummaryEl.textContent = item.summary;
+        helpModalDiffsEl.innerHTML = `<ul class="check-list">${item.diffs.map((d) => `<li>${d}</li>`).join("")}</ul>`;
+        if (item.compare && item.compare.length) {
+          const [header, ...rows] = item.compare;
+          helpModalCompareEl.innerHTML = `
+            <table>
+              <thead>
+                <tr>${header.map((h) => `<th>${h}</th>`).join("")}</tr>
+              </thead>
+              <tbody>
+                ${rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("")}
+              </tbody>
+            </table>
+          `;
+        } else {
+          helpModalCompareEl.textContent = "目前無比較表。";
+        }
+        helpModalUseCaseEl.textContent = item.useCase;
+        helpModalExampleEl.textContent = item.example;
+        helpModalBackdropEl.classList.add("open");
+        helpModalBackdropEl.setAttribute("aria-hidden", "false");
+      }
+
+      function closeHelpModal() {
+        helpModalBackdropEl.classList.remove("open");
+        helpModalBackdropEl.setAttribute("aria-hidden", "true");
+      }
+
+      document.getElementById("importBtn").addEventListener("click", importJson);
+      document.getElementById("refreshBtn").addEventListener("click", refreshAll);
+      document.getElementById("exportPublishPacketBtn").addEventListener("click", exportPublishPacket);
+      document.getElementById("exportBundleBtn").addEventListener("click", exportBundle);
+      document.getElementById("exportMergedContextBtn").addEventListener("click", exportMergedProjectContext);
+      document.addEventListener("input", refreshAll);
+      document.addEventListener("change", refreshAll);
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement && target.dataset.helpId) {
+          openHelpModal(target.dataset.helpId);
+        }
+      });
+      document.getElementById("closeHelpBtn").addEventListener("click", closeHelpModal);
+      helpModalBackdropEl.addEventListener("click", (event) => {
+        if (event.target === helpModalBackdropEl) closeHelpModal();
+      });
+
+      fillDefaults();
+      refreshAll();
+    </script>
+  </body>
+</html>

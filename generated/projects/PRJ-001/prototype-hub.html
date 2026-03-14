@@ -46,7 +46,7 @@
       .two-col { grid-template-columns: 1.4fr 1fr; }
       .three-col { grid-template-columns: repeat(3, 1fr); }
       .stage-grid { grid-template-columns: repeat(2, 1fr); }
-      .flow-grid { grid-template-columns: repeat(6, 1fr); }
+      .flow-grid { grid-template-columns: repeat(7, 1fr); }
       .stage-card {
         border: 1px solid #dbe3f0;
         border-radius: 12px;
@@ -151,12 +151,12 @@
       <section class="card">
         <h1>PRJ-001 Prototype Hub</h1>
         <div class="meta">
-          這一頁是 `S1-S6` prototype 的總入口，方便依照階段順序操作、匯入前階段 JSON、再匯出下一階段資料。<br />
+          這一頁是 `S1-S7` prototype 的總入口，方便依照階段順序操作、匯入前階段 JSON、再匯出下一階段資料。<br />
           建議從 `S1` 開始，逐階匯出 `project-context.json` 或該階段 handoff 檔，再帶進下一階段。
         </div>
         <div class="actions">
           <a class="button primary" href="s1-questionnaire-prototype.html">從 S1 開始</a>
-          <a class="button secondary" href="s6-output-prototype.html">查看最終輸出</a>
+          <a class="button secondary" href="s7-publish-prototype.html">查看最終發布</a>
         </div>
       </section>
 
@@ -169,6 +169,7 @@
           <li>`S4 Validation`：自動檢查 + 人工處理，匯出 `S5 review packet`。</li>
           <li>`S5 Review`：架構師與 PM 簽核，鎖定版本，匯出 `S6 output handoff`。</li>
           <li>`S6 Output`：生成正式輸出檔，供 repo 與 AI 工具使用。</li>
+          <li>`S7 Publish`：整理 PR、AI 使用揭露、變更摘要與發布 manifest。</li>
         </ul>
       </section>
 
@@ -206,6 +207,11 @@
             <div class="hint">Output</div>
             <span class="badge ok">已建立</span>
           </div>
+          <div class="flow-step">
+            <strong>S7</strong>
+            <div class="hint">Publish</div>
+            <span class="badge ok">已建立</span>
+          </div>
         </div>
       </section>
 
@@ -229,8 +235,8 @@
               <span class="badge ok">已建立</span>
             </div>
             <div class="stage-card">
-              <strong>S4-S5-S6</strong>
-              <div class="hint">驗證、審核、產出</div>
+              <strong>S4-S5-S6-S7</strong>
+              <div class="hint">驗證、審核、產出、發布</div>
               <span class="badge ok">已建立</span>
             </div>
             <div class="stage-card">
@@ -356,6 +362,25 @@
             </div>
             <div class="actions">
               <a class="button primary" href="s6-output-prototype.html">前往 S6</a>
+            </div>
+          </article>
+
+          <article class="stage-card">
+            <div class="stage-head">
+              <h3>S7 Publish</h3>
+              <span class="badge info">DevOps + Architect</span>
+            </div>
+            <div class="hint">整理發布資料、PR 描述、AI 使用揭露、reviewer 指派與發布 manifest。</div>
+            <ul class="check-list">
+              <li>主要輸入：S6 handoff / `project-context.json`</li>
+              <li>主要輸出：publish packet / `pr-body.md` / `ai-disclosure.md` / `publish-manifest.json`</li>
+            </ul>
+            <div class="stage-status">
+              <strong>目前狀態：</strong>已建立，可作為 repo / PR 前的最後整理頁。<br />
+              <strong>建議下一步：</strong>確認 reviewer、變更摘要與 AI 揭露後，進入實際發布流程。
+            </div>
+            <div class="actions">
+              <a class="button primary" href="s7-publish-prototype.html">前往 S7</a>
             </div>
           </article>
         </div>

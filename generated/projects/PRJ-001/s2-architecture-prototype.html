@@ -219,7 +219,7 @@
 
       <section class="card">
         <h2>匯入上階段 JSON</h2>
-        <label for="importJsonFile">選擇專案背景 / S1 / 前階段 JSON</label>
+        <label for="importJsonFile">選擇專案背景 / `S1 handoff` / `project-context.json` / 前階段 JSON</label>
         <input id="importJsonFile" type="file" accept=".json,application/json" />
         <div class="actions mt8">
           <button class="secondary" type="button" id="importBtn">匯入並預填</button>
@@ -227,6 +227,7 @@
           <button class="primary" type="button" id="suggestBtn">產生連動建議</button>
           <button class="secondary" type="button" id="exportContextBtn">匯出 S2 Context JSON</button>
           <button class="secondary" type="button" id="exportDecisionBtn">匯出 S3 決策清單 JSON</button>
+          <button class="secondary" type="button" id="exportHandoffBtn">匯出 S3 Handoff JSON</button>
           <button class="secondary" type="button" id="exportMergedContextBtn">回存 project-context.json</button>
         </div>
         <div id="importStatus" class="status"></div>
@@ -897,6 +898,11 @@
         if (raw.stages && raw.stages.s1 && raw.stages.s1.answers) {
           normalized.prefill = { ...normalized.prefill, ...raw.stages.s1.answers };
         }
+        if (raw.stages && raw.stages.s1 && raw.stages.s1.s2_handoff) {
+          const handoff = raw.stages.s1.s2_handoff;
+          if (handoff.questionnaire_prefill) normalized.prefill = { ...normalized.prefill, ...handoff.questionnaire_prefill };
+          if (!normalized.stage) normalized.stage = handoff.from_stage || normalized.stage;
+        }
         if (!normalized.project_id && raw.project && raw.project.id) {
           normalized.project_id = raw.project.id;
         }
@@ -1175,9 +1181,34 @@
         });
       }
 
+      function buildS3Handoff(values) {
+        s3DecisionList = buildS3DecisionList(values);
+        return {
+          project_id: importedContext.project_id || "PRJ-001",
+          project_name: values["project_basic.profile.name"] || "未命名專案",
+          from_stage: "S2",
+          to_stage: "S3",
+          current_stage: "S2",
+          generated_at: new Date().toISOString(),
+          questionnaire_prefill: values,
+          answers: values,
+          s2_context: toS2Context(values),
+          s3_decisions: s3DecisionList,
+          handoff: {
+            next_stage: "S3",
+            source_stage: "S2"
+          }
+        };
+      }
+
+      function exportS3Handoff() {
+        exportJsonFile("prj001-s3-handoff.json", buildS3Handoff(collectValues()));
+      }
+
       function exportMergedProjectContext() {
         const values = collectValues();
         const base = importedContext.raw && typeof importedContext.raw === "object" ? { ...importedContext.raw } : {};
+        const handoff = buildS3Handoff(values);
         const merged = {
           ...base,
           project_id: importedContext.project_id || base.project_id || "PRJ-001",
@@ -1191,12 +1222,14 @@
             s2: {
               completed_at: new Date().toISOString(),
               answers: values,
-              s3_decisions: s3DecisionList
+              s3_decisions: s3DecisionList,
+              s3_handoff: handoff
             }
           },
           handoff: {
             next_stage: "S3",
-            generated_at: new Date().toISOString()
+            generated_at: new Date().toISOString(),
+            source_stage: "S2"
           }
         };
         exportJsonFile("prj001-project-context.json", merged);
@@ -1207,6 +1240,7 @@
       document.getElementById("suggestBtn").addEventListener("click", refreshAll);
       document.getElementById("exportContextBtn").addEventListener("click", exportS2Context);
       document.getElementById("exportDecisionBtn").addEventListener("click", exportS3Decisions);
+      document.getElementById("exportHandoffBtn").addEventListener("click", exportS3Handoff);
       document.getElementById("exportMergedContextBtn").addEventListener("click", exportMergedProjectContext);
       document.addEventListener("input", refreshAll);
       document.addEventListener("click", (event) => {

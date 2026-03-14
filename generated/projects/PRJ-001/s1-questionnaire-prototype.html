@@ -242,8 +242,9 @@
             <button class="secondary" type="button" id="importBtn">匯入並套用</button>
             <button class="secondary" type="button" id="generateDecisionBtn">產生 S2 決策清單</button>
             <button class="secondary" type="button" id="exportDecisionBtn">匯出決策清單 JSON</button>
-          <button class="secondary" type="button" id="exportProjectContextBtn">匯出 project-context.json</button>
-          <button class="secondary" type="button" id="openS2Btn">前往 S2 Prototype</button>
+            <button class="secondary" type="button" id="exportHandoffBtn">匯出 S2 Handoff JSON</button>
+            <button class="secondary" type="button" id="exportProjectContextBtn">匯出 project-context.json</button>
+            <button class="secondary" type="button" id="openS2Btn">前往 S2 Prototype</button>
           </div>
           <div id="importStatus" class="status"></div>
           <div class="inline-meta">支援格式：`questionnaire_prefill`、`answers`（`question_id -> value`）或純 key-value prefill。</div>
@@ -870,10 +871,8 @@
 
       function exportDecisionList() {
         const values = collectFormValues();
-        if (!currentDecisionList.length) {
-          currentDecisionList = createS2DecisionList(values);
-          renderDecisionList(currentDecisionList);
-        }
+        currentDecisionList = createS2DecisionList(values);
+        renderDecisionList(currentDecisionList);
         const payload = {
           project_id: importedContext && importedContext.project_id ? importedContext.project_id : "PRJ-001",
           from_stage: "S1",
@@ -890,6 +889,28 @@
         URL.revokeObjectURL(url);
       }
 
+      function buildS2Handoff(values) {
+        const decisions = createS2DecisionList(values);
+        currentDecisionList = decisions;
+        renderDecisionList(currentDecisionList);
+        return {
+          project_id: importedContext && importedContext.project_id ? importedContext.project_id : "PRJ-001",
+          project_name: values["project_basic.profile.name"] || "未命名專案",
+          from_stage: "S1",
+          to_stage: "S2",
+          current_stage: "S1",
+          generated_at: new Date().toISOString(),
+          questionnaire_prefill: values,
+          answers: values,
+          s2_decisions: decisions,
+          handoff: {
+            next_stage: "S2",
+            next_file: "s2-architecture-prototype.html",
+            source_stage: "S1"
+          }
+        };
+      }
+
       function buildProjectContext(values) {
         return {
           project_id: importedContext && importedContext.project_id ? importedContext.project_id : "PRJ-001",
@@ -899,7 +920,8 @@
           stages: {
             s1: {
               completed_at: new Date().toISOString(),
-              answers: values
+              answers: values,
+              s2_handoff: buildS2Handoff(values)
             }
           },
           handoff: {
@@ -917,6 +939,18 @@
         const a = document.createElement("a");
         a.href = url;
         a.download = "prj001-project-context.json";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function exportS2Handoff() {
+        const values = collectFormValues();
+        const payload = buildS2Handoff(values);
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "prj001-s2-handoff.json";
         a.click();
         URL.revokeObjectURL(url);
       }
@@ -960,6 +994,7 @@
       document.getElementById("importBtn").addEventListener("click", importProjectJson);
       document.getElementById("generateDecisionBtn").addEventListener("click", generateDecisionListFromCurrent);
       document.getElementById("exportDecisionBtn").addEventListener("click", exportDecisionList);
+      document.getElementById("exportHandoffBtn").addEventListener("click", exportS2Handoff);
       document.getElementById("exportProjectContextBtn").addEventListener("click", exportProjectContext);
       document.getElementById("openS2Btn").addEventListener("click", openS2Prototype);
 
