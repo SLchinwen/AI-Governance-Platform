@@ -1,0 +1,102 @@
+name: Governance PR Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  governance-pr-check:
+    runs-on: ubuntu-latest
+    name: 檢查治理 PR 欄位與變更一致性
+    steps:
+      - name: Validate PR governance fields
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || "";
+
+            const files = await github.paginate(
+              github.rest.pulls.listFiles,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                per_page: 100
+              }
+            );
+            const changed = files.map(f => f.filename);
+
+            const hasChecked = (labelRegex) => {
+              const re = new RegExp(`-\\s*\\[[xX]\\]\\s*${labelRegex}`, "m");
+              return re.test(body);
+            };
+
+            const hasUnchecked = (labelRegex) => {
+              const re = new RegExp(`-\\s*\\[\\s\\]\\s*${labelRegex}`, "m");
+              return re.test(body);
+            };
+
+            const majorChecked = hasChecked("\\*\\*Major\\*\\*");
+            const minorChecked = hasChecked("\\*\\*Minor\\*\\*");
+            const patchChecked = hasChecked("\\*\\*Patch\\*\\*");
+            const versionCheckedCount = [majorChecked, minorChecked, patchChecked].filter(Boolean).length;
+
+            if (versionCheckedCount !== 1) {
+              core.setFailed("請在 PR 模板中且僅勾選一個版本升級類型：Major / Minor / Patch。");
+              return;
+            }
+
+            const ssotPrefixes = [
+              "question-bank/",
+              "rules/",
+              "docs/schemas/"
+            ];
+            const ssotExactFiles = new Set([
+              "docs/governance/ai-usage-policy.md",
+              "docs/governance/ssot-boundary.md"
+            ]);
+
+            const hasSsotChanges = changed.some((f) =>
+              ssotPrefixes.some((prefix) => f.startsWith(prefix)) || ssotExactFiles.has(f)
+            );
+
+            if (hasSsotChanges) {
+              const includeSsotChecked = hasChecked("本 PR \\*\\*包含\\*\\* SSOT 文件（Level 1）變更");
+              const excludeSsotChecked = hasChecked("本 PR \\*\\*不包含\\*\\* SSOT 文件變更");
+              if (!includeSsotChecked || excludeSsotChecked) {
+                core.setFailed("偵測到 SSOT 檔案變更，請在 PR 模板勾選「本 PR 包含 SSOT 文件變更」，且不可同時勾選不包含。");
+                return;
+              }
+
+              const hasImpactedSsotList = /受影響的 SSOT 文件：[\s\S]*?\n\s*-\s*(?!<!--)/m.test(body);
+              const hasDownstreamList = /下游需同步更新的文件：[\s\S]*?\n\s*-\s*(?!<!--)/m.test(body);
+              if (!hasImpactedSsotList || !hasDownstreamList) {
+                core.setFailed("有 SSOT 變更時，請填寫「受影響的 SSOT 文件」與「下游需同步更新的文件」。");
+                return;
+              }
+            }
+
+            const governanceChanged = changed.some((f) =>
+              f.startsWith("docs/governance/") ||
+              f.startsWith("docs/charter/") ||
+              f === ".github/PULL_REQUEST_TEMPLATE.md"
+            );
+            const changelogUpdated = changed.includes("docs/governance/CHANGELOG.md");
+
+            if (governanceChanged && !changelogUpdated) {
+              core.setFailed("偵測到治理文件變更，請同步更新 docs/governance/CHANGELOG.md。");
+              return;
+            }
+
+            const changelogChecked = hasChecked("已更新 `docs/governance/CHANGELOG\\.md`");
+            if (governanceChanged && !changelogChecked) {
+              core.setFailed("偵測到治理文件變更，請在 PR 模板勾選「已更新 docs/governance/CHANGELOG.md」。");
+              return;
+            }
+
+            core.info("Governance PR checks passed.");

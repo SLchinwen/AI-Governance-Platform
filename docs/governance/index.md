@@ -1,7 +1,7 @@
 # 專案技術治理與 AI 協作知識庫 — 文件總索引
 
 > Project Tech Governance & AI Collaboration Hub — Document Index
-> 最後更新：2026-03-13 | 版本：v1.0
+> 最後更新：2026-03-13 | 版本：v1.1
 
 ---
 
@@ -27,6 +27,8 @@
 |------|------|----------|
 | [project-charter.md](../charter/project-charter.md) | 專案背景、願景、目標、範圍、組織 | Level 2 |
 | [implementation-plan.md](../charter/implementation-plan.md) | 實施計畫、技術棧、API 設計、時程 | Level 3 |
+| [company-development-baseline.md](../charter/company-development-baseline.md) | 公司團隊基線、產品範圍、技術現況、導入限制 | Level 2 |
+| [project-intake-checklist.md](../charter/project-intake-checklist.md) | 專案啟動資料收集表（需求/技術/資安/AI 邊界） | Level 2 |
 
 ---
 
@@ -39,6 +41,9 @@
 | [contribution-policy.md](contribution-policy.md) | 貢獻流程、分支規範、Commit 規範、PR 要求 | Level 2 |
 | [review-policy.md](review-policy.md) | 審核流程、審核矩陣、品質門檻（Gate 0-4） | Level 2 |
 | [questionnaire-flow.md](questionnaire-flow.md) | 問卷生命週期、狀態流轉、版本控管 | Level 2 |
+| [engineering-rollout-plan.md](engineering-rollout-plan.md) | 12 週工程推進、KPI、風險應對、角色分工 | Level 2 |
+| [governance-versioning-policy.md](governance-versioning-policy.md) | 治理文件 SemVer、分級審核、Tag/Release、稽核回溯 | **Level 1** |
+| [CHANGELOG.md](CHANGELOG.md) | 治理文件版本變更紀錄 | Level 2 |
 
 ---
 
@@ -108,6 +113,7 @@
 |------|------|
 | [PULL_REQUEST_TEMPLATE.md](../../.github/PULL_REQUEST_TEMPLATE.md) | PR 模板（含 AI 揭露、SSOT 影響） |
 | [validate-question-bank.yml](../../.github/workflows/validate-question-bank.yml) | CI 自動驗證 workflow |
+| [governance-pr-check.yml](../../.github/workflows/governance-pr-check.yml) | PR 治理檢查（版本勾選、SSOT 填寫、CHANGELOG 同步） |
 
 ---
 
@@ -137,7 +143,16 @@ Step 7: MVP 前端介面開發                          ⬜ 待規劃
 Step 8: 試跑 1-2 個專案                           ⬜ 待規劃
 ```
 
+### 實作清單（Scenario -> Program）
+
+- [scenario-program-checklist-v1.md](../architecture/scenario-program-checklist-v1.md) - 情境需求分析後的程式清單（API、資料表、檔案路徑、兩週任務）
+
+## 十一、專案清單
+
+- [projects/index.md](../projects/index.md) - 專案啟動索引與優先順序
+- [01-questionnaire-system-requirements.md](../projects/01-questionnaire-system-requirements.md) - 第一個專案需求總表（P0）
+
 ---
 
 > 📋 本索引為受控文件，變更需經 PR 審核。
-> 最後更新：2026-03-13 | 維護者：架構師
+> 最後更新：2026-03-13 | 維護者：架構師 | 版本：v1.1
