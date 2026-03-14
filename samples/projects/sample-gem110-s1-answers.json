@@ -1,0 +1,94 @@
+{
+  "project_id": "PRJ-TEST-GEM110-S1",
+  "project_name": "JUSTLEE 珠寶營運管理系統 - GEM110 商品建檔與編輯（S1範例）",
+  "questionnaire_version": "1.0.0",
+  "created_at": "2026-03-14T09:00:00Z",
+  "updated_at": "2026-03-14T09:30:00Z",
+  "status": "submitted",
+  "answers": [
+    {
+      "question_id": "project_basic.profile.name",
+      "value": "JUSTLEE 珠寶營運管理系統 - GEM110 商品建檔與編輯",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "PM 範例" },
+      "answered_at": "2026-03-14T09:05:00Z",
+      "review_status": "pending",
+      "confidence": "confirmed",
+      "notes": "來源：交付包 PRD 與程式代號 GEM110。"
+    },
+    {
+      "question_id": "project_basic.profile.type",
+      "value": "web_application",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "PM 範例" },
+      "answered_at": "2026-03-14T09:08:00Z",
+      "review_status": "pending",
+      "confidence": "confirmed",
+      "notes": "來源：雛形為 HTML+JS，且含多角色操作畫面。"
+    },
+    {
+      "question_id": "project_basic.profile.scope",
+      "value": "medium",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "PM 範例" },
+      "answered_at": "2026-03-14T09:10:00Z",
+      "review_status": "pending",
+      "confidence": "tentative",
+      "notes": "目前範圍僅 GEM110 主程式與子程式，實際人月待確認。"
+    },
+    {
+      "question_id": "project_basic.profile.is_new",
+      "value": "extension",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "PM 範例" },
+      "answered_at": "2026-03-14T09:12:00Z",
+      "review_status": "pending",
+      "confidence": "confirmed",
+      "notes": "依賴既有 SYS/INV/TXN 模組，屬既有系統擴充。"
+    },
+    {
+      "question_id": "project_basic.profile.timeline",
+      "value": "Phase 1（詳細起迄日期待確認）",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "PM 範例" },
+      "answered_at": "2026-03-14T09:15:00Z",
+      "review_status": "pending",
+      "confidence": "tentative",
+      "notes": "來源有 Phase 標示，但未提供完整日期。"
+    },
+    {
+      "question_id": "project_basic.profile.team_size",
+      "value": 4,
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "PM 範例" },
+      "answered_at": "2026-03-14T09:18:00Z",
+      "review_status": "pending",
+      "confidence": "unknown",
+      "notes": "暫估值，需依實際分工確認。"
+    },
+    {
+      "question_id": "project_basic.profile.stakeholders",
+      "value": "管理者、營運人員、業務人員；最終決策者待確認",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "PM 範例" },
+      "answered_at": "2026-03-14T09:20:00Z",
+      "review_status": "pending",
+      "confidence": "tentative",
+      "notes": "角色來源於權限矩陣，決策者資訊待補。"
+    },
+    {
+      "question_id": "project_basic.compliance.data_sensitivity",
+      "value": "internal",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "PM 範例" },
+      "answered_at": "2026-03-14T09:25:00Z",
+      "review_status": "pending",
+      "confidence": "tentative",
+      "notes": "目前未明確含個資欄位；若含客戶個資應上調為 confidential。"
+    }
+  ],
+  "readiness_score": {
+    "overall": 55,
+    "by_category": {
+      "project_basic": 55
+    },
+    "blockers": [],
+    "warnings": [
+      "時程未具體日期",
+      "團隊規模為暫估值",
+      "資料敏感度需與資安共同確認"
+    ]
+  }
+}

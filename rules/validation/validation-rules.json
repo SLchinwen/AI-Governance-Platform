@@ -238,6 +238,54 @@
         "then_required": ["architecture.communication.style"]
       },
       "message": "微服務或事件驅動架構必須定義服務間的通訊方式"
+    },
+    {
+      "rule_id": "VAL-021",
+      "name": "ai_boundary_required_for_sensitive_data",
+      "description": "機密等級專案需定義 AI 執行邊界",
+      "type": "required_if",
+      "severity": "warning",
+      "condition": {
+        "when": { "question_id": "project_basic.compliance.data_sensitivity", "in": ["confidential", "restricted"] },
+        "then_required": ["project_basic.governance.ai_execution_boundary"]
+      },
+      "message": "資料為機密或高度機密時，建議在 S1 先定義 AI 執行邊界策略"
+    },
+    {
+      "rule_id": "VAL-022",
+      "name": "change_risk_required_for_non_greenfield",
+      "description": "非全新專案需評估變更風險",
+      "type": "required_if",
+      "severity": "warning",
+      "condition": {
+        "when": { "question_id": "project_basic.profile.is_new", "in": ["extension", "migration", "refactor"] },
+        "then_required": ["project_basic.lifecycle.change_risk"]
+      },
+      "message": "既有系統擴充/遷移/重構時，建議在 S1 先填寫變更風險等級"
+    },
+    {
+      "rule_id": "VAL-023",
+      "name": "critical_external_dependency_required",
+      "description": "整合型或 API 平台需評估外部依賴關鍵性",
+      "type": "required_if",
+      "severity": "warning",
+      "condition": {
+        "when": { "question_id": "project_basic.profile.type", "in": ["integration", "api_platform"] },
+        "then_required": ["project_basic.dependency.critical_external"]
+      },
+      "message": "整合型或 API 平台專案，建議在 S1 先確認外部依賴是否關鍵"
+    },
+    {
+      "rule_id": "VAL-024",
+      "name": "minimal_artifact_should_limit_codegen",
+      "description": "前置文件不足時不建議直接啟動程式碼生成",
+      "type": "cross_field",
+      "severity": "warning",
+      "condition": {
+        "when": { "question_id": "project_basic.artifact.readiness", "equals": "minimal" },
+        "check": { "question_id": "ai_collaboration.scope.allowed", "not_contains": "code_generation" }
+      },
+      "message": "當前置文件完整度為 minimal，建議僅使用分析模式，不直接啟動 AI 程式碼生成"
     }
   ]
 }

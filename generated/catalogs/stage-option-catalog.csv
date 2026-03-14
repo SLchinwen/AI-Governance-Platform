@@ -1,0 +1,77 @@
+stage_id,stage_name,category_id,question_id,option_value,option_label,option_description,option_mapping,help_summary,help_use_case,help_example,sort_order,source_file
+S1,Discovery,project_basic,project_basic.profile.type,web_application,Web 應用系統,包含前後端的完整 Web 應用,,選擇專案主要交付型態，會影響後續題組載入,若主要交付是畫面與系統操作流程，通常選 Web,例如含前端畫面與後端 API 的完整系統,1,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.profile.type,api_platform,API 服務平台,以 API 為主的後端服務,,選擇專案主要交付型態，會影響後續題組載入,若主要交付是服務介面與串接能力，通常選 API 平台,例如提供外部系統串接的統一 API 服務,2,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.profile.type,integration,系統整合專案,串接多個既有系統,,選擇專案主要交付型態，會影響後續題組載入,若重點是串 ERP、第三方或既有系統，通常選整合,例如整合 ERP、電子發票與內部系統,3,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.profile.type,internal_tool,內部工具,公司內部使用的工具或管理系統,,選擇專案主要交付型態，會影響後續題組載入,若主要是公司內部人員使用，通常選內部工具,例如內部治理平台與後台工具,4,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.profile.type,maintenance,維運改善專案,既有系統的維護與優化,,選擇專案主要交付型態，會影響後續題組載入,若目標是修補、優化、升級既有系統，通常選維運改善,例如老系統效能優化與功能修補,5,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.profile.type,data_pipeline,資料處理管線,ETL、資料分析或報表系統,,選擇專案主要交付型態，會影響後續題組載入,若重點是資料轉換與報表流，通常選資料處理管線,例如 ETL 與彙整報表服務,6,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.profile.scope,small,小型（1-3 人月）,功能單純，1-2 位開發者,,用來估算治理重量與開發投入,範圍小且流程簡單可選 small,例如單一管理頁或簡易工具,1,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.profile.scope,medium,中型（3-12 人月）,多個模組，3-5 位開發者,,用來估算治理重量與開發投入,多模組但仍在單一團隊可控範圍通常選 medium,例如含 S1-S6 流程的治理問券系統,2,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.profile.scope,large,大型（12+ 人月）,跨團隊協作，6+ 位開發者,,用來估算治理重量與開發投入,若已涉及跨團隊與高整合複雜度可選 large,例如大型平台型系統,3,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.profile.scope,enterprise,企業級（24+ 人月）,多系統整合，跨部門,,用來估算治理重量與開發投入,若含跨部門治理與企業級合規需求可選 enterprise,例如企業級多系統整合平台,4,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.profile.is_new,greenfield,全新專案（Greenfield）,從零開始建立,,判斷是否需考慮舊系統相容與回滾,若不需沿用既有模組或資料可選 greenfield,例如全新建立問券治理平台,1,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.profile.is_new,extension,既有系統擴充,在既有系統上新增功能模組,,判斷是否需考慮舊系統相容與回滾,若要沿用現有系統並新增功能可選 extension,例如在既有 ERP 加問券模組,2,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.profile.is_new,migration,系統遷移/改版,將既有系統遷移至新技術棧,,判斷是否需考慮舊系統相容與回滾,若要搬移系統或大版本改造可選 migration,例如地端移轉雲端,3,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.profile.is_new,refactor,重構改善,重構既有系統的架構或程式碼,,判斷是否需考慮舊系統相容與回滾,若不改主要功能但要改善品質可選 refactor,例如重構舊系統程式結構,4,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.delivery.channel,internal_only,僅內部使用,僅公司內部團隊使用,,決定後續 auth/API/security 基準,若不開放外部客戶或夥伴可選 internal_only,例如內部治理平台,1,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.delivery.channel,customer_facing,客戶可直接使用,外部客戶可直接操作,,決定後續 auth/API/security 基準,若客戶會直接登入使用系統應選 customer_facing,例如客戶入口網站,2,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.delivery.channel,partner_facing,夥伴/供應商串接,以合作夥伴或供應商為主,,決定後續 auth/API/security 基準,若主要由夥伴或供應商串接使用應選 partner_facing,例如供應商 API 串接服務,3,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.delivery.channel,mixed,混合型,同時含內外部使用情境,,決定後續 auth/API/security 基準,若同時有內部與外部對象需選 mixed,例如內部後台+客戶前台,4,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.integration.level,standalone,獨立運作,幾乎不依賴外部系統,,判斷整合風險與契約治理需求,若系統可獨立運作可選 standalone,例如不需串第三方的內部工具,1,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.integration.level,internal_systems,依賴內部系統,需串接公司內部服務,,判斷整合風險與契約治理需求,若要串接內部既有服務應選 internal_systems,例如串接內部 AD/ERP,2,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.integration.level,external_partners,依賴外部夥伴,需串接外部合作夥伴或第三方,,判斷整合風險與契約治理需求,若要接第三方或夥伴平台應選 external_partners,例如第三方支付 API,3,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.integration.level,mixed,內外部混合,同時含內部與外部依賴,,判斷整合風險與契約治理需求,若同時有內外部依賴需選 mixed,例如 ERP + 第三方服務混合,4,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.artifact.readiness,minimal,最低限度,僅需求摘要，細節不足,,用來判定 AI 可生成程度,若只有簡單需求說明應選 minimal,例如只有會議摘要與口頭需求,1,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.artifact.readiness,standard,標準,有 PRD、流程與角色資訊,,用來判定 AI 可生成程度,若已有 PRD/流程/角色可選 standard,例如已有需求摘要與角色矩陣,2,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.artifact.readiness,ready_for_codegen,可直接生成,含 API/schema/欄位字典/驗收條件,,用來判定 AI 可生成程度,若文件已足夠支撐骨架生成可選 ready_for_codegen,例如已有 API 規格與驗收條件,3,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.governance.ai_execution_boundary,cloud_model_masked_data,雲端模型 + 遮罩資料,可用雲端 AI，但需先遮罩敏感內容,,決定敏感資料專案的 AI 邊界,若可遮罩資料且仍需雲端模型可選此項,例如移除客戶識別資訊後再送 AI,1,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.governance.ai_execution_boundary,private_model_only,僅私有模型,僅使用企業私有或封閉環境模型,,決定敏感資料專案的 AI 邊界,若專案屬機密且需嚴格控管可選 private_model_only,例如治理知識與內部技術標準專案,2,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.governance.ai_execution_boundary,no_code_generation_only_analysis,僅分析不生成,AI 只做分析建議，不直接生成程式碼,,決定敏感資料專案的 AI 邊界,若風險較高但仍想用 AI 輔助可選僅分析,例如先做風險分析與文件整理,3,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.lifecycle.change_risk,low,低,改動範圍小，回歸風險低,,用來估算非新案的回滾與相容性需求,若只是小幅擴充或優化可選 low,例如小功能修補,1,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.lifecycle.change_risk,medium,中,有部分相容性與回歸風險,,用來估算非新案的回滾與相容性需求,若有模組級改動可選 medium,例如局部重構,2,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.lifecycle.change_risk,high,高,涉及核心流程或資料結構變更,,用來估算非新案的回滾與相容性需求,若涉及核心流程或資料結構應選 high,例如主表結構搬遷,3,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.dependency.critical_external,none,無外部依賴,不依賴外部服務即可運作,,用來判定整合型專案的 fallback 需求,若外部依賴不存在可選 none,例如純內部資料流,1,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.dependency.critical_external,has_non_critical,有非關鍵依賴,依賴失效不會中斷核心流程,,用來判定整合型專案的 fallback 需求,若外部依賴可降級可選 has_non_critical,例如通知服務失效但核心功能仍可運作,2,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.dependency.critical_external,has_critical,有關鍵依賴,依賴失效會影響核心流程或交付,,用來判定整合型專案的 fallback 需求,若外部依賴壞掉會卡主要流程應選 has_critical,例如支付或 ERP 主資料來源,3,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.compliance.data_sensitivity,public,公開資料,不含任何敏感資訊,,決定 AI 可接觸資料範圍,若內容不含敏感資料可選 public,例如公開說明頁資料,1,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.compliance.data_sensitivity,internal,內部資料,僅限公司內部使用,,決定 AI 可接觸資料範圍,若資料僅內部流通可選 internal,例如內部流程說明,2,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.compliance.data_sensitivity,confidential,機密資料,含客戶個資或商業機密,,決定 AI 可接觸資料範圍,若含內部方法或商業機密通常選 confidential,例如治理知識與客戶資料,3,question-bank/categories/01-project-basic.json
+S1,Discovery,project_basic,project_basic.compliance.data_sensitivity,restricted,高度機密,受法規管制（如金融、醫療）,,決定 AI 可接觸資料範圍,若受強法遵或高敏感規範約束可選 restricted,例如醫療或金融法遵資料,4,question-bank/categories/01-project-basic.json
+S2,Planning,architecture,architecture.pattern.style,monolith,單體式架構（Monolith）,單一部署單元，適合中小型專案,,這題在決定系統要用哪種大方向來組織程式與模組,若系統單純且先求快速上線可考慮 monolith,例如小型後台工具,1,question-bank/categories/02-architecture.json
+S2,Planning,architecture,architecture.pattern.style,modular_monolith,模組化單體（Modular Monolith）,單體內部模組化，保留未來拆分彈性,中小型團隊優先，演進成本低,這題在決定系統要用哪種大方向來組織程式與模組,團隊 3-5 人且先求穩定落地時優先考慮 modular_monolith,例如問券系統以同一套程式分 S1/S2/驗證模組,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,architecture.pattern.style,clean_architecture,Clean Architecture,依賴反轉為核心的洋蔥式架構,可維護性高，需較高工程紀律,這題在決定系統要用哪種大方向來組織程式與模組,若很重視長期維護與測試隔離可考慮 clean_architecture,例如長期演進的核心平台,3,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,architecture.pattern.style,layered,分層式 N-Tier,傳統的前端/業務邏輯/資料層分離,導入快，適合穩定需求,這題在決定系統要用哪種大方向來組織程式與模組,若需求穩定且想快速導入可考慮 layered,例如穩定流程的內部系統,4,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,architecture.pattern.style,microservices,微服務,獨立部署的多個服務,需高運維能力與契約治理,這題在決定系統要用哪種大方向來組織程式與模組,只有多團隊與高擴展需求時才建議考慮 microservices,例如大型平台或高流量多服務系統,5,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,architecture.pattern.layers,presentation,Presentation,展示層（Presentation）,,這題在決定程式責任如何分層,若需清楚區分 UI/API 入口應選 presentation,例如 Controller 或畫面層,1,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,architecture.pattern.layers,application,Application,應用層（Application / Use Case）,,這題在決定程式責任如何分層,若需獨立整理流程協調應選 application,例如 use case/service orchestration,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,architecture.pattern.layers,domain,Domain,領域層（Domain / Business Logic）,,這題在決定程式責任如何分層,若業務規則明確且需獨立維護應選 domain,例如問券驗證核心規則,3,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,architecture.pattern.layers,infrastructure,Infrastructure,基礎設施層（Infrastructure）,,這題在決定程式責任如何分層,若需明確切開外部系統與資料庫應選 infrastructure,例如 Azure 與資料庫連線層,4,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,architecture.pattern.layers,data_access,Data Access,資料存取層（Data Access / Repository）,,這題在決定程式責任如何分層,若需清楚區分資料存取責任應選 data_access,例如 repository 層,5,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,backend.runtime.platform,dotnet,.NET 8 Web API,,與現有團隊能力一致,這題在決定後端主要用哪個技術棧,若現有團隊主力為 .NET 且在 Azure 上運作可優先選 dotnet,例如內部治理平台後端,1,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,backend.runtime.platform,nodejs,Node.js / NestJS,,前後端同語言，迭代快,這題在決定後端主要用哪個技術棧,若希望前後端同語言且團隊熟悉 Node 可選 nodejs,例如快速迭代型產品,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,frontend.framework.choice,react,React,,現行專案已使用，學習成本低,這題在決定前端畫面要用什麼框架,若希望 AI 穩定產生元件與表單通常先選 react,例如問券流程頁與輸出頁,1,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,frontend.framework.choice,vue,Vue,,上手快，需確認團隊熟悉度,這題在決定前端畫面要用什麼框架,若團隊較熟悉 Vue 且想快速上手可選 vue,例如內部管理頁面,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,database.primary.engine,azure_sql,Azure SQL,,與公司既有基礎設施一致,這題決定資料要存在哪種資料庫,若公司已有 Azure SQL 基線通常先選 azure_sql,例如問券答案與決策清單資料庫,1,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,database.primary.engine,postgresql,PostgreSQL,,開源彈性高,這題決定資料要存在哪種資料庫,若希望開源彈性且團隊熟悉 Postgres 可選 postgresql,例如開源導向系統,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,api.style.type,restful,REST,,標準化高，易治理,這題決定前後端交換資料的方式,多數治理系統優先採 REST,例如 GET/POST 問券 API,1,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,api.style.type,graphql,GraphQL,,前端彈性高，治理成本較高,這題決定前後端交換資料的方式,若前端查詢彈性需求很高才考慮 GraphQL,例如複雜查詢聚合平台,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,backend.auth.method,jwt,JWT,,,這題決定怎麼登入,一般 Web/API 系統常用 JWT,例如前後端分離管理系統,1,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,backend.auth.method,azure_ad,Azure AD,,,這題決定怎麼登入,若是內部系統且有組織帳號體系可選 Azure AD,例如公司內部問券平台,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,backend.auth.method,oauth2,OAuth2,,,這題決定怎麼登入,若要支援標準授權流程或第三方登入可選 OAuth2,例如平台對外授權,3,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,security.auth.authorization,rbac,Role-Based (RBAC),,,這題決定登入後可以做什麼,第一版若角色清楚通常優先 RBAC,例如 PM/架構師/DevOps 權限區分,1,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,security.auth.authorization,permission_based,Permission-Based,,,這題決定登入後可以做什麼,若權限細到功能與操作級別才考慮 permission_based,例如細粒度企業系統,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,architecture.hosting.platform,azure,Azure,,,這題決定系統主要運行在哪裡,若現有環境已在 Azure 通常先選 azure,例如 Azure App Service + Azure SQL,1,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,architecture.hosting.platform,on_premise,On-Premise,,,這題決定系統主要運行在哪裡,若有特殊資安或設備限制才考慮 on_premise,例如地端專用環境,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,ai_collaboration,ai_collaboration.boundary_summary,analysis_and_code_with_review,可分析與產碼，但需強制人工覆核,,,這題在決定 AI 可以幫到哪裡,若文件完整且有審查流程到位可選此項,例如 AI 協助產生 API 與測試但需人工 review,1,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,ai_collaboration,ai_collaboration.boundary_summary,analysis_only,僅分析建議，不直接產碼,,,這題在決定 AI 可以幫到哪裡,若文件不足或風險高時應先選 analysis_only,例如只用 AI 做架構分析與風險整理,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,ai_collaboration,ai_collaboration.boundary_summary,private_model_only,僅私有模型可使用,,,這題在決定 AI 可以幫到哪裡,若專案屬機密可優先選 private_model_only,例如內部治理方法與客戶機密資料專案,3,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,architecture.communication.style,rest_api,REST API,,,只有在微服務等多服務架構下才需回答這題,若服務間通訊希望易懂易除錯可選 rest_api,例如兩個內部服務以 HTTP API 溝通,1,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,architecture.communication.style,message_queue,Message Queue,,,只有在微服務等多服務架構下才需回答這題,若流程可非同步且需解耦可選 message_queue,例如通知或背景作業,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,architecture,architecture.communication.style,grpc,gRPC,,,只有在微服務等多服務架構下才需回答這題,若需高效能內部通訊可選 grpc,例如高頻服務間溝通,3,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,security,backend.auth.token_strategy,access_refresh,Access + Refresh Token,,,當用 JWT/OAuth2 時需決定 token 策略,一般 Web/API 系統多選 access_refresh,例如後台系統長時間操作,1,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,security,backend.auth.token_strategy,short_lived_only,短效 Token Only,,,當用 JWT/OAuth2 時需決定 token 策略,若流程短且想簡化可選 short_lived_only,例如簡單內部工具,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,api,api.response.format,standard_envelope,統一 envelope 格式,,,這題決定 API 回應是否統一格式,若想讓 AI/前後端/文件都一致建議選 standard_envelope,例如 success/data/error 固定格式,1,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,api,api.response.format,resource_oriented,資源導向原生格式,,,這題決定 API 回應是否統一格式,若想要較簡潔回應可選 resource_oriented,例如直接回傳資源物件,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,api,api.external.integrations,none,無,,,這題在判斷外部依賴是否會影響核心流程,若沒有外部依賴可選 none,例如純內部運作的服務,1,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,api,api.external.integrations,non_critical,非關鍵,,,這題在判斷外部依賴是否會影響核心流程,若依賴失效仍可降級服務可選 non_critical,例如通知 API 壞掉不影響主流程,2,generated/projects/PRJ-001/s2-architecture-prototype.html
+S2,Planning,api,api.external.integrations,critical,關鍵,,,這題在判斷外部依賴是否會影響核心流程,若依賴失效會直接卡住核心流程可選 critical,例如 ERP 主資料同步或付款授權,3,generated/projects/PRJ-001/s2-architecture-prototype.html

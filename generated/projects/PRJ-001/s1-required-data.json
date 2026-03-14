@@ -1,0 +1,94 @@
+{
+  "meta": {
+    "project_id": "PRJ-001",
+    "project_name": "技術棧問券與 AI 協作知識庫系統",
+    "stage": "S1",
+    "generated_at": "2026-03-14T12:00:00Z",
+    "generator": "prompt-calibration-v2"
+  },
+  "fact_base": [
+    {
+      "key": "project_basic.profile.name",
+      "value": "技術棧問券與 AI 協作知識庫系統",
+      "confidence": "high",
+      "evidence": [
+        {
+          "source": "docs/projects/01-questionnaire-system-requirements.md",
+          "snippet": "專案代號：PRJ-001；專案名稱：技術棧問券與 AI 協作知識庫系統"
+        }
+      ]
+    },
+    {
+      "key": "project_basic.profile.type",
+      "value": "web_application",
+      "confidence": "high",
+      "evidence": [
+        {
+          "source": "docs/charter/implementation-plan.md",
+          "snippet": "前端 React + TypeScript；後端 .NET 8 Web API"
+        }
+      ]
+    },
+    {
+      "key": "project_basic.profile.scope",
+      "value": "medium",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "source": "docs/charter/implementation-plan.md",
+          "snippet": "MVP 與分階段推進，先完成核心流程再擴充"
+        }
+      ]
+    },
+    {
+      "key": "project_basic.profile.is_new",
+      "value": "greenfield",
+      "confidence": "high",
+      "evidence": [
+        {
+          "source": "docs/projects/index.md",
+          "snippet": "第一個專案需求總表（P0）"
+        }
+      ]
+    },
+    {
+      "key": "project_basic.profile.team_size",
+      "value": 4,
+      "confidence": "high",
+      "evidence": [
+        {
+          "source": "user_confirmed_input",
+          "snippet": "實際投入人數 4 人：規劃與決策者 1 位、系統工程師 1 位、工程師 2 位"
+        }
+      ]
+    },
+    {
+      "key": "project_basic.compliance.data_sensitivity",
+      "value": "confidential",
+      "confidence": "high",
+      "evidence": [
+        {
+          "source": "user_confirmed_input",
+          "snippet": "公司方法與專屬知識，為機密等級"
+        }
+      ]
+    }
+  ],
+  "questionnaire_prefill": {
+    "project_basic.profile.name": "技術棧問券與 AI 協作知識庫系統",
+    "project_basic.profile.type": "web_application",
+    "project_basic.profile.scope": "medium",
+    "project_basic.profile.is_new": "greenfield",
+    "project_basic.profile.timeline": "開工日: 2026-03-16；MVP 目標日: 2026-05-08；上線目標日: 2026-06-12",
+    "project_basic.profile.team_size": 4,
+    "project_basic.profile.stakeholders": "規劃與決策者（最終拍板）；系統工程師（環境與資安）；工程師 2 位（實作與交付）",
+    "project_basic.compliance.data_sensitivity": "confidential"
+  },
+  "pending_fields": [],
+  "gate0_check": {
+    "required_questions_completed": true,
+    "project_type_confirmed": true,
+    "data_sensitivity_confirmed": true,
+    "owner_and_due_defined_for_pending": true
+  }
+}

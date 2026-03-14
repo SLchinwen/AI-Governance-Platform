@@ -1,0 +1,102 @@
+{
+  "proposal_version": "1.0.0",
+  "stage": "S1",
+  "goal": "最小必要進階選項，確保後續 AI 生成治理程式可正確展開",
+  "additions": [
+    {
+      "question_id": "project_basic.delivery.channel",
+      "type": "single_select",
+      "required": true,
+      "options": ["internal_only", "customer_facing", "partner_facing", "mixed"],
+      "reason": "決定對外程度，影響 auth/api/security 治理基線"
+    },
+    {
+      "question_id": "project_basic.integration.level",
+      "type": "single_select",
+      "required": true,
+      "options": ["standalone", "internal_systems", "external_partners", "mixed"],
+      "reason": "決定整合風險與契約治理深度"
+    },
+    {
+      "question_id": "project_basic.artifact.readiness",
+      "type": "single_select",
+      "required": true,
+      "options": ["minimal", "standard", "ready_for_codegen"],
+      "reason": "決定 AI 可生成範圍與 prompt 品質"
+    },
+    {
+      "question_id": "project_basic.governance.ai_execution_boundary",
+      "type": "single_select",
+      "required_if": {
+        "question_id": "project_basic.compliance.data_sensitivity",
+        "in": ["confidential", "restricted"]
+      },
+      "options": ["cloud_model_masked_data", "private_model_only", "no_code_generation_only_analysis"],
+      "reason": "高敏感資料需先定義 AI 執行邊界"
+    },
+    {
+      "question_id": "project_basic.lifecycle.change_risk",
+      "type": "single_select",
+      "required_if": {
+        "question_id": "project_basic.profile.is_new",
+        "in": ["extension", "migration", "refactor"]
+      },
+      "options": ["low", "medium", "high"],
+      "reason": "非新案需提早定義回滾與相容風險"
+    },
+    {
+      "question_id": "project_basic.dependency.critical_external",
+      "type": "single_select",
+      "required_if": {
+        "question_id": "project_basic.profile.type",
+        "in": ["integration", "api_platform"]
+      },
+      "options": ["none", "has_non_critical", "has_critical"],
+      "reason": "整合型專案需先判斷外部依賴關鍵性"
+    }
+  ],
+  "by_project_type": {
+    "web_application": [
+      "project_basic.delivery.channel",
+      "project_basic.integration.level",
+      "project_basic.artifact.readiness"
+    ],
+    "api_platform": [
+      "project_basic.delivery.channel",
+      "project_basic.integration.level",
+      "project_basic.artifact.readiness",
+      "project_basic.dependency.critical_external"
+    ],
+    "integration": [
+      "project_basic.delivery.channel",
+      "project_basic.integration.level",
+      "project_basic.artifact.readiness",
+      "project_basic.dependency.critical_external"
+    ],
+    "internal_tool": [
+      "project_basic.delivery.channel",
+      "project_basic.integration.level",
+      "project_basic.artifact.readiness"
+    ],
+    "maintenance": [
+      "project_basic.delivery.channel",
+      "project_basic.integration.level",
+      "project_basic.artifact.readiness",
+      "project_basic.lifecycle.change_risk"
+    ],
+    "data_pipeline": [
+      "project_basic.delivery.channel",
+      "project_basic.integration.level",
+      "project_basic.artifact.readiness",
+      "project_basic.governance.ai_execution_boundary"
+    ]
+  },
+  "recommended_values_for_prj001": {
+    "project_basic.delivery.channel": "internal_only",
+    "project_basic.integration.level": "internal_systems",
+    "project_basic.artifact.readiness": "standard",
+    "project_basic.governance.ai_execution_boundary": "private_model_only",
+    "project_basic.lifecycle.change_risk": "low",
+    "project_basic.dependency.critical_external": "none"
+  }
+}

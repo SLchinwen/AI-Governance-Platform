@@ -54,6 +54,7 @@
 | [question-design-principles.md](../questionnaires/question-design-principles.md) | 題庫設計哲學、結構規範、品質檢查、分類規則 | Level 2 |
 | [role-matrix.md](../questionnaires/role-matrix.md) | RACI 矩陣、各角色填答指引、跨角色協作點 | Level 2 |
 | [stage-flow.md](../questionnaires/stage-flow.md) | 7 階段流程、品質門檻、退回機制、持續優化 | Level 2 |
+| [s1-discovery-plain-guide.md](../questionnaires/s1-discovery-plain-guide.md) | S1 探索期白話引導（PM 可直接問客戶） | Level 2 |
 
 ---
 
@@ -151,6 +152,7 @@ Step 8: 試跑 1-2 個專案                           ⬜ 待規劃
 
 - [projects/index.md](../projects/index.md) - 專案啟動索引與優先順序
 - [01-questionnaire-system-requirements.md](../projects/01-questionnaire-system-requirements.md) - 第一個專案需求總表（P0）
+- [01c-ai-prefill-and-architecture-recommender.md](../projects/01c-ai-prefill-and-architecture-recommender.md) - AI 預填、技術棧推論層與跨階段 context 需求
 
 ---
 

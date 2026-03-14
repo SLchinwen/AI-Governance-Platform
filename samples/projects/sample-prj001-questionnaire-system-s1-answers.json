@@ -1,0 +1,89 @@
+{
+  "project_id": "PRJ-001",
+  "project_name": "技術棧問券與 AI 協作知識庫系統",
+  "questionnaire_version": "1.0.0",
+  "created_at": "2026-03-14T10:00:00Z",
+  "updated_at": "2026-03-14T11:10:00Z",
+  "status": "submitted",
+  "answers": [
+    {
+      "question_id": "project_basic.profile.name",
+      "value": "技術棧問券與 AI 協作知識庫系統",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "規劃與決策者" },
+      "answered_at": "2026-03-14T10:05:00Z",
+      "review_status": "pending",
+      "confidence": "confirmed"
+    },
+    {
+      "question_id": "project_basic.profile.type",
+      "value": "web_application",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "規劃與決策者" },
+      "answered_at": "2026-03-14T10:06:00Z",
+      "review_status": "pending",
+      "confidence": "confirmed",
+      "notes": "含前端介面、後端 API 與流程管理。"
+    },
+    {
+      "question_id": "project_basic.profile.scope",
+      "value": "medium",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "規劃與決策者" },
+      "answered_at": "2026-03-14T10:08:00Z",
+      "review_status": "pending",
+      "confidence": "confirmed",
+      "notes": "目前以 MVP 中型規模執行；Owner: 規劃與決策者；Due: 2026-03-21 進行一次範圍校準。"
+    },
+    {
+      "question_id": "project_basic.profile.is_new",
+      "value": "greenfield",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "規劃與決策者" },
+      "answered_at": "2026-03-14T10:09:00Z",
+      "review_status": "pending",
+      "confidence": "confirmed"
+    },
+    {
+      "question_id": "project_basic.profile.timeline",
+      "value": "開工日: 2026-03-16；MVP 目標日: 2026-05-08；上線目標日: 2026-06-12",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "規劃與決策者" },
+      "answered_at": "2026-03-14T10:11:00Z",
+      "review_status": "pending",
+      "confidence": "confirmed",
+      "notes": "已定義三個關鍵日期，若有調整由規劃與決策者在每週檢視會議更新。"
+    },
+    {
+      "question_id": "project_basic.profile.team_size",
+      "value": 4,
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "規劃與決策者" },
+      "answered_at": "2026-03-14T10:13:00Z",
+      "review_status": "pending",
+      "confidence": "confirmed",
+      "notes": "1 位規劃/決策者 + 1 位系統工程師 + 2 位工程師。"
+    },
+    {
+      "question_id": "project_basic.profile.stakeholders",
+      "value": "規劃與決策者（最終拍板）；系統工程師（環境與資安）；工程師 2 位（實作與交付）",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "規劃與決策者" },
+      "answered_at": "2026-03-14T10:15:00Z",
+      "review_status": "pending",
+      "confidence": "confirmed"
+    },
+    {
+      "question_id": "project_basic.compliance.data_sensitivity",
+      "value": "confidential",
+      "answered_by": { "user_id": "PM-001", "role": "pm", "name": "規劃與決策者" },
+      "answered_at": "2026-03-14T10:17:00Z",
+      "review_status": "pending",
+      "confidence": "confirmed",
+      "notes": "本案屬公司方法與專屬知識，列為機密等級。"
+    }
+  ],
+  "readiness_score": {
+    "overall": 78,
+    "by_category": {
+      "project_basic": 78
+    },
+    "blockers": [],
+    "warnings": [
+      "範圍等級可於 S2 後再校準"
+    ]
+  }
+}

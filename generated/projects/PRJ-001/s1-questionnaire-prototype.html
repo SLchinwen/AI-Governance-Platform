@@ -1,0 +1,972 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRJ-001 S1 問券 Prototype</title>
+    <style>
+      :root {
+        --bg: #f6f8fb;
+        --card: #ffffff;
+        --line: #dde3ec;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --brand: #0f62fe;
+        --ok: #137333;
+        --warn: #b26a00;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", "Noto Sans TC", Arial, sans-serif;
+      }
+      .wrap {
+        max-width: 980px;
+        margin: 24px auto;
+        padding: 0 16px 40px;
+      }
+      .header, .panel, .question, .result {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+      .header {
+        padding: 18px;
+        margin-bottom: 14px;
+      }
+      .title {
+        margin: 0 0 8px;
+        font-size: 24px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .panel {
+        padding: 16px;
+        margin-bottom: 14px;
+      }
+      .panel h2 {
+        margin: 0 0 10px;
+        font-size: 18px;
+      }
+      .panel h3 {
+        margin: 12px 0 6px;
+        font-size: 15px;
+      }
+      .hint {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .governance-list {
+        margin: 8px 0 0;
+        padding-left: 18px;
+      }
+      .governance-list li {
+        margin: 4px 0;
+        font-size: 14px;
+      }
+      .badge {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 12px;
+        margin-left: 6px;
+      }
+      .badge.ok { background: #e7f6eb; color: #1d6f3a; }
+      .badge.warn { background: #fff3df; color: #915a00; }
+      .question {
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .q-title {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+      .required {
+        color: #c81e1e;
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .desc {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .suggest {
+        margin: 0 0 10px;
+        color: #0b4bb3;
+        font-size: 13px;
+        background: #edf4ff;
+        border: 1px dashed #9dbcf5;
+        border-radius: 8px;
+        padding: 8px 10px;
+      }
+      input[type="text"], input[type="number"], select, textarea {
+        width: 100%;
+        border: 1px solid #c9d3e0;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+      }
+      textarea { min-height: 74px; resize: vertical; }
+      .options {
+        margin-top: 8px;
+        display: grid;
+        gap: 8px;
+      }
+      .option {
+        border: 1px solid #d6deea;
+        border-radius: 8px;
+        padding: 9px 10px;
+      }
+      .option label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+      .option small {
+        display: block;
+        color: var(--muted);
+        margin-left: 24px;
+      }
+      .mapping {
+        margin: 6px 0 0 24px;
+        color: #334155;
+        font-size: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 6px 8px;
+      }
+      .discussion {
+        margin: 8px 0 0;
+        border-left: 3px solid #9dbcf5;
+        padding: 8px 10px;
+        background: #f7faff;
+        color: #1e3a5f;
+        font-size: 13px;
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+      button {
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 14px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .primary { background: var(--brand); color: #fff; }
+      .secondary { background: #eaf0fb; color: #13346e; }
+      .result {
+        padding: 14px;
+        margin-top: 14px;
+      }
+      .result pre {
+        margin: 8px 0 0;
+        padding: 10px;
+        background: #0b1220;
+        color: #ecf2ff;
+        border-radius: 8px;
+        overflow: auto;
+      }
+      .status {
+        margin-top: 10px;
+        font-size: 14px;
+      }
+      .status.ok { color: var(--ok); }
+      .status.warn { color: var(--warn); }
+      .import-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .inline-meta {
+        margin-top: 6px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .list {
+        margin: 8px 0 0;
+        padding-left: 18px;
+      }
+      .list li {
+        margin: 6px 0;
+        line-height: 1.5;
+      }
+      .decision-title {
+        font-weight: 600;
+      }
+      .decision-meta {
+        color: var(--muted);
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <section class="header">
+        <h1 class="title">S1 問券 Prototype（PRJ-001）</h1>
+        <div class="meta">
+          適用階段：S1 Discovery | 類型：project_basic<br />
+          已套用建議預填與標準選項，可直接做 PM 試填展示。
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>填寫說明</h2>
+        <div class="hint">
+          必填共 10 題（另有 3 題條件必填）。按「驗證 S1」可檢查是否達 Gate 0 最低要求。
+        </div>
+        <h3>治理條件要求（S1）</h3>
+        <ul id="governanceChecklist" class="governance-list"></ul>
+        <div class="hint">
+          說明：此區會依你目前填答即時顯示符合/待補狀態，協助會議中快速確認是否可進入 S2。
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>匯入專案背景 JSON（含驗證）</h2>
+        <div class="import-grid">
+          <label for="importFile">請選擇專案背景 JSON 檔</label>
+          <input type="file" id="importFile" accept=".json,application/json" />
+          <div class="actions">
+            <button class="secondary" type="button" id="importBtn">匯入並套用</button>
+            <button class="secondary" type="button" id="generateDecisionBtn">產生 S2 決策清單</button>
+            <button class="secondary" type="button" id="exportDecisionBtn">匯出決策清單 JSON</button>
+          <button class="secondary" type="button" id="exportProjectContextBtn">匯出 project-context.json</button>
+          <button class="secondary" type="button" id="openS2Btn">前往 S2 Prototype</button>
+          </div>
+          <div id="importStatus" class="status"></div>
+          <div class="inline-meta">支援格式：`questionnaire_prefill`、`answers`（`question_id -> value`）或純 key-value prefill。</div>
+          <ul id="importValidationList" class="list"></ul>
+        </div>
+      </section>
+
+      <form id="s1Form"></form>
+
+      <section class="panel">
+        <div class="actions">
+          <button class="primary" type="button" id="validateBtn">驗證 S1</button>
+          <button class="secondary" type="button" id="prefillBtn">套用建議預填</button>
+          <button class="secondary" type="button" id="exportBtn">匯出 JSON</button>
+        </div>
+        <div id="status" class="status"></div>
+      </section>
+
+      <section class="result">
+        <strong>即時結果預覽</strong>
+        <pre id="preview">{}</pre>
+      </section>
+
+      <section class="result">
+        <strong>下一階段（S2）決策清單</strong>
+        <ul id="decisionList" class="list"></ul>
+        <pre id="decisionPreview">[]</pre>
+      </section>
+    </div>
+
+    <script>
+      const schema = {
+        questions: [
+          {
+            question_id: "project_basic.profile.name",
+            title: "專案名稱",
+            description: "請輸入正式專案名稱，將用於所有產出文件與 Repo 命名。",
+            question_type: "text",
+            required: true
+          },
+          {
+            question_id: "project_basic.profile.type",
+            title: "專案類型",
+            description: "依主要交付型態選擇，決定後續載入的題組。",
+            question_type: "single_select",
+            required: true,
+            options: [
+              { value: "web_application", label: "Web 應用系統", description: "含前後端完整 Web 應用", mapping: "對應後續題組：architecture/backend/frontend/database/api/security/deployment" },
+              { value: "api_platform", label: "API 服務平台", description: "以 API 為主的後端服務", mapping: "對應後續題組：architecture/backend/database/api/security/deployment" },
+              { value: "integration", label: "系統整合專案", description: "串接多個既有系統", mapping: "對應後續題組：architecture/backend/api/security/deployment" },
+              { value: "internal_tool", label: "內部工具", description: "公司內部管理工具", mapping: "對應後續題組：architecture/backend/frontend/database/deployment" },
+              { value: "maintenance", label: "維運改善專案", description: "既有系統維護與優化", mapping: "對應後續題組：architecture/backend/deployment" },
+              { value: "data_pipeline", label: "資料處理管線", description: "ETL/資料分析/報表流程", mapping: "對應後續題組：architecture/backend/database/deployment" }
+            ]
+          },
+          {
+            question_id: "project_basic.profile.scope",
+            title: "專案範圍等級",
+            description: "評估規模與複雜度。",
+            question_type: "single_select",
+            required: true,
+            options: [
+              { value: "small", label: "小型（1-3 人月）", description: "功能單純，1-2 位開發者", mapping: "治理建議：可先採輕量審核與單一里程碑" },
+              { value: "medium", label: "中型（3-12 人月）", description: "多模組，3-5 位開發者", mapping: "治理建議：維持標準 Gate，建議每週校準一次" },
+              { value: "large", label: "大型（12+ 人月）", description: "跨團隊，6+ 位開發者", mapping: "治理建議：需強化風險追蹤與跨角色審核節點" },
+              { value: "enterprise", label: "企業級（24+ 人月）", description: "多系統整合，跨部門", mapping: "治理建議：需建立正式變更管控與法遵聯審" }
+            ]
+          },
+          {
+            question_id: "project_basic.profile.is_new",
+            title: "是否為全新專案",
+            description: "確認是新建、擴充、遷移或重構。",
+            question_type: "single_select",
+            required: true,
+            options: [
+              { value: "greenfield", label: "全新專案（Greenfield）", description: "從零開始", mapping: "討論重點：技術棧可最佳化，但需先定義基礎標準" },
+              { value: "extension", label: "既有系統擴充", description: "在既有系統新增功能", mapping: "討論重點：相容性與回歸風險必須先盤點" },
+              { value: "migration", label: "系統遷移/改版", description: "搬遷到新技術棧", mapping: "討論重點：資料搬遷、切換與回滾策略" },
+              { value: "refactor", label: "重構改善", description: "改善架構與程式品質", mapping: "討論重點：不改功能前提下的品質指標與驗證方式" }
+            ]
+          },
+          {
+            question_id: "project_basic.delivery.channel",
+            title: "交付對象範圍",
+            description: "確認是內部使用或對外交付，會影響後續治理與安全基線。",
+            question_type: "single_select",
+            required: true,
+            options: [
+              { value: "internal_only", label: "僅內部使用", description: "僅公司內部團隊使用", mapping: "治理參考：可用內部標準流程，仍需版本與權限控管" },
+              { value: "customer_facing", label: "客戶可直接使用", description: "外部客戶可直接操作", mapping: "治理參考：需強化 auth、資安與對外品質門檻" },
+              { value: "partner_facing", label: "夥伴/供應商串接", description: "以合作夥伴或供應商為主", mapping: "治理參考：需優先定義 API 契約與整合 SLA" },
+              { value: "mixed", label: "混合型", description: "同時含內外部使用情境", mapping: "治理參考：需同時管理內外部風險與審核節點" }
+            ]
+          },
+          {
+            question_id: "project_basic.integration.level",
+            title: "整合依賴程度",
+            description: "判斷專案對既有或外部系統依賴程度。",
+            question_type: "single_select",
+            required: true,
+            options: [
+              { value: "standalone", label: "獨立運作", description: "幾乎不依賴外部系統", mapping: "治理參考：可先優先內部交付節奏" },
+              { value: "internal_systems", label: "依賴內部系統", description: "需串接公司內部服務", mapping: "治理參考：需補內部契約與相容性檢查" },
+              { value: "external_partners", label: "依賴外部夥伴", description: "需串接外部合作夥伴或第三方", mapping: "治理參考：需補第三方風險與 fallback 設計" },
+              { value: "mixed", label: "內外部混合", description: "同時含內部與外部依賴", mapping: "治理參考：整合風險最高，需提早定義里程碑" }
+            ]
+          },
+          {
+            question_id: "project_basic.artifact.readiness",
+            title: "前置文件完整度",
+            description: "評估目前可提供給 AI 的資料完整程度。",
+            question_type: "single_select",
+            required: true,
+            options: [
+              { value: "minimal", label: "最低限度", description: "僅需求摘要，細節不足", mapping: "治理參考：AI 先做分析，不建議直接生成程式碼" },
+              { value: "standard", label: "標準", description: "有 PRD、流程與角色資訊", mapping: "治理參考：可進入 S2，程式碼生成需人工覆核" },
+              { value: "ready_for_codegen", label: "可直接生成", description: "含 API/schema/欄位字典/驗收條件", mapping: "治理參考：可啟動模板生成與規則自動化" }
+            ]
+          },
+          {
+            question_id: "project_basic.profile.timeline",
+            title: "預計時程",
+            description: "建議至少寫開工日、MVP 目標日、上線目標日。",
+            question_type: "text",
+            required: true
+          },
+          {
+            question_id: "project_basic.profile.team_size",
+            title: "開發團隊規模",
+            description: "預計投入人數（含 AI 協作）。",
+            question_type: "number",
+            required: true
+          },
+          {
+            question_id: "project_basic.profile.stakeholders",
+            title: "主要利害關係人（選填）",
+            description: "列出決策者、主要執行與驗收角色。",
+            question_type: "textarea",
+            required: false
+          },
+          {
+            question_id: "project_basic.governance.ai_execution_boundary",
+            title: "AI 執行邊界策略（條件必填）",
+            description: "資料為機密/高度機密時，需定義可用模型與資料處理邊界。",
+            question_type: "single_select",
+            required: false,
+            options: [
+              { value: "cloud_model_masked_data", label: "雲端模型 + 遮罩資料", description: "可用雲端 AI，但需先遮罩敏感內容", mapping: "治理參考：需有遮罩與審查機制" },
+              { value: "private_model_only", label: "僅私有模型", description: "僅使用企業私有或封閉環境模型", mapping: "治理參考：適合機密專案與內控要求" },
+              { value: "no_code_generation_only_analysis", label: "僅分析不生成", description: "AI 只做分析建議，不直接生成程式碼", mapping: "治理參考：高風險階段可採此策略" }
+            ]
+          },
+          {
+            question_id: "project_basic.lifecycle.change_risk",
+            title: "既有系統變更風險（條件必填）",
+            description: "非全新專案時，評估變更對相容性與回歸測試風險。",
+            question_type: "single_select",
+            required: false,
+            options: [
+              { value: "low", label: "低", description: "改動範圍小，回歸風險低", mapping: "治理參考：一般回歸策略即可" },
+              { value: "medium", label: "中", description: "有部分相容性與回歸風險", mapping: "治理參考：需安排分段驗收" },
+              { value: "high", label: "高", description: "涉及核心流程或資料結構變更", mapping: "治理參考：需回滾方案與雙軌驗證" }
+            ]
+          },
+          {
+            question_id: "project_basic.dependency.critical_external",
+            title: "外部依賴關鍵性（條件必填）",
+            description: "整合型/API 平台專案需先判斷外部依賴是否關鍵。",
+            question_type: "single_select",
+            required: false,
+            options: [
+              { value: "none", label: "無外部依賴", description: "不依賴外部服務即可運作", mapping: "治理參考：可聚焦內部交付" },
+              { value: "has_non_critical", label: "有非關鍵依賴", description: "依賴失效不會中斷核心流程", mapping: "治理參考：需有降級策略" },
+              { value: "has_critical", label: "有關鍵依賴", description: "依賴失效會影響核心流程或交付", mapping: "治理參考：需 mock 契約與切換方案" }
+            ]
+          },
+          {
+            question_id: "project_basic.compliance.data_sensitivity",
+            title: "資料敏感度等級",
+            description: "影響資安要求與 AI 協作邊界。",
+            question_type: "single_select",
+            required: true,
+            options: [
+              { value: "public", label: "公開資料", description: "不含敏感資訊", mapping: "AI 邊界：可用一般雲端工具，但仍需版本管控" },
+              { value: "internal", label: "內部資料", description: "公司內部可用", mapping: "AI 邊界：需限制資料外流並保留審查記錄" },
+              { value: "confidential", label: "機密資料", description: "含專屬知識或個資/商業機密", mapping: "AI 邊界：必須人工覆核、禁止敏感原文外送、強制權限控管" },
+              { value: "restricted", label: "高度機密", description: "受嚴格法規管制", mapping: "AI 邊界：需法遵核可，建議使用隔離環境與更嚴格日誌" }
+            ]
+          }
+        ]
+      };
+
+      const guidanceByQuestion = {
+        "project_basic.profile.type": "先看主要交付成果：以 UI 為主通常選 Web；僅提供服務介面通常選 API。",
+        "project_basic.profile.scope": "先用目前可承諾範圍選擇，避免高估；S2 再校準一次即可。",
+        "project_basic.profile.is_new": "若要沿用既有模組或資料，通常不是 Greenfield。",
+        "project_basic.delivery.channel": "若會讓客戶或夥伴直接使用，請避免選 internal_only。",
+        "project_basic.integration.level": "只要要串既有服務或第三方，就不是 standalone。",
+        "project_basic.artifact.readiness": "若缺 API/schema/驗收，通常不建議選 ready_for_codegen。",
+        "project_basic.profile.timeline": "建議固定格式：開工日 / MVP 目標日 / 上線目標日。",
+        "project_basic.governance.ai_execution_boundary": "機密資料建議優先選 private_model_only 或分析模式。",
+        "project_basic.lifecycle.change_risk": "不是新案時請先估風險，避免後續回滾規劃缺漏。",
+        "project_basic.dependency.critical_external": "若外部依賴中斷會卡核心流程，請選 has_critical。",
+        "project_basic.compliance.data_sensitivity": "不確定時採較高等級，避免低估造成治理缺口。"
+      };
+
+      const governanceRules = [
+        { id: "required", label: "S1 必填 10 題需完成", check: (v) => schema.questions.filter((q) => q.required).every((q) => String(v[q.question_id] ?? "").trim() !== "") },
+        { id: "type", label: "專案類型需確認（影響後續題組）", check: (v) => String(v["project_basic.profile.type"] || "").trim() !== "" },
+        { id: "sensitivity", label: "資料敏感度需確認（影響 AI 邊界）", check: (v) => String(v["project_basic.compliance.data_sensitivity"] || "").trim() !== "" },
+        { id: "delivery", label: "交付對象範圍需確認（影響 auth/API/security）", check: (v) => String(v["project_basic.delivery.channel"] || "").trim() !== "" },
+        { id: "integration", label: "整合依賴程度需確認（影響契約與風險）", check: (v) => String(v["project_basic.integration.level"] || "").trim() !== "" },
+        { id: "artifact", label: "前置文件完整度需確認（影響 AI 可生成範圍）", check: (v) => String(v["project_basic.artifact.readiness"] || "").trim() !== "" },
+        { id: "timeline", label: "時程需具體到三個關鍵日期", check: (v) => {
+          const t = String(v["project_basic.profile.timeline"] || "");
+          return t.includes("開工") && t.includes("MVP") && t.includes("上線");
+        }},
+        { id: "aiBoundary", label: "機密/高度機密時需設定 AI 執行邊界", check: (v) => {
+          const level = v["project_basic.compliance.data_sensitivity"];
+          if (level !== "confidential" && level !== "restricted") return true;
+          return String(v["project_basic.governance.ai_execution_boundary"] || "").trim() !== "";
+        }},
+        { id: "changeRisk", label: "非 Greenfield 時需評估變更風險", check: (v) => {
+          const mode = v["project_basic.profile.is_new"];
+          if (!["extension", "migration", "refactor"].includes(mode)) return true;
+          return String(v["project_basic.lifecycle.change_risk"] || "").trim() !== "";
+        }},
+        { id: "externalDependency", label: "Integration/API 平台需評估外部依賴關鍵性", check: (v) => {
+          const type = v["project_basic.profile.type"];
+          if (!["integration", "api_platform"].includes(type)) return true;
+          return String(v["project_basic.dependency.critical_external"] || "").trim() !== "";
+        }},
+        { id: "confidential", label: "機密/高度機密需填利害關係人以利責任追蹤", check: (v) => {
+          const level = v["project_basic.compliance.data_sensitivity"];
+          if (level !== "confidential" && level !== "restricted") return true;
+          return String(v["project_basic.profile.stakeholders"] || "").trim() !== "";
+        }}
+      ];
+
+      const suggestedPrefill = {
+        "project_basic.profile.name": "技術棧問券與 AI 協作知識庫系統",
+        "project_basic.profile.type": "web_application",
+        "project_basic.profile.scope": "medium",
+        "project_basic.profile.is_new": "greenfield",
+        "project_basic.delivery.channel": "internal_only",
+        "project_basic.integration.level": "internal_systems",
+        "project_basic.artifact.readiness": "standard",
+        "project_basic.profile.timeline": "開工日: 2026-03-16；MVP 目標日: 2026-05-08；上線目標日: 2026-06-12",
+        "project_basic.profile.team_size": 4,
+        "project_basic.profile.stakeholders": "規劃與決策者（最終拍板）；系統工程師（環境與資安）；工程師 2 位（實作與交付）",
+        "project_basic.governance.ai_execution_boundary": "private_model_only",
+        "project_basic.lifecycle.change_risk": "low",
+        "project_basic.dependency.critical_external": "none",
+        "project_basic.compliance.data_sensitivity": "confidential"
+      };
+
+      const formEl = document.getElementById("s1Form");
+      const previewEl = document.getElementById("preview");
+      const statusEl = document.getElementById("status");
+      const governanceChecklistEl = document.getElementById("governanceChecklist");
+      const importFileEl = document.getElementById("importFile");
+      const importStatusEl = document.getElementById("importStatus");
+      const importValidationListEl = document.getElementById("importValidationList");
+      const decisionListEl = document.getElementById("decisionList");
+      const decisionPreviewEl = document.getElementById("decisionPreview");
+      let importedContext = null;
+      let currentDecisionList = [];
+
+      function renderForm() {
+        formEl.innerHTML = "";
+        schema.questions.forEach((q) => {
+          const box = document.createElement("section");
+          box.className = "question";
+          box.dataset.id = q.question_id;
+
+          const requiredText = q.required ? '<span class="required">必填</span>' : "";
+          box.innerHTML = `
+            <h3 class="q-title">${q.title} ${requiredText}</h3>
+            <p class="desc">${q.description}</p>
+            <div class="suggest">建議值：${String(suggestedPrefill[q.question_id] ?? "尚未提供")}</div>
+          `;
+
+          if (q.question_type === "single_select") {
+            const optionsWrap = document.createElement("div");
+            optionsWrap.className = "options";
+            q.options.forEach((op) => {
+              const item = document.createElement("div");
+              item.className = "option";
+              item.innerHTML = `
+                <label>
+                  <input type="radio" name="${q.question_id}" value="${op.value}" />
+                  <span>${op.label}</span>
+                </label>
+                <small>${op.description}</small>
+                <div class="mapping">對應參考：${op.mapping || "依治理規範補充"}</div>
+              `;
+              optionsWrap.appendChild(item);
+            });
+            box.appendChild(optionsWrap);
+          } else if (q.question_type === "textarea") {
+            const ta = document.createElement("textarea");
+            ta.name = q.question_id;
+            ta.placeholder = "請輸入內容";
+            box.appendChild(ta);
+          } else {
+            const input = document.createElement("input");
+            input.name = q.question_id;
+            input.type = q.question_type === "number" ? "number" : "text";
+            input.placeholder = "請輸入內容";
+            if (q.question_type === "number") {
+              input.min = "1";
+            }
+            box.appendChild(input);
+          }
+
+          if (guidanceByQuestion[q.question_id]) {
+            const guide = document.createElement("div");
+            guide.className = "discussion";
+            guide.textContent = `引導討論：${guidanceByQuestion[q.question_id]}`;
+            box.appendChild(guide);
+          }
+
+          formEl.appendChild(box);
+        });
+      }
+
+      function setFieldValue(questionId, value) {
+        const radios = formEl.querySelectorAll(`input[type="radio"][name="${questionId}"]`);
+        if (radios.length) {
+          radios.forEach((r) => {
+            r.checked = r.value === String(value);
+          });
+          return;
+        }
+        const field = formEl.querySelector(`[name="${questionId}"]`);
+        if (field) {
+          field.value = value;
+        }
+      }
+
+      function applyPrefill() {
+        Object.entries(suggestedPrefill).forEach(([k, v]) => setFieldValue(k, v));
+        renderPreview();
+      }
+
+      function collectFormValues() {
+        const data = {};
+        schema.questions.forEach((q) => {
+          if (q.question_type === "single_select") {
+            const checked = formEl.querySelector(`input[name="${q.question_id}"]:checked`);
+            data[q.question_id] = checked ? checked.value : "";
+          } else {
+            const field = formEl.querySelector(`[name="${q.question_id}"]`);
+            let value = field ? field.value : "";
+            if (q.question_type === "number" && value !== "") {
+              value = Number(value);
+            }
+            data[q.question_id] = value;
+          }
+        });
+        return data;
+      }
+
+      function validateGate0(values) {
+        const missing = schema.questions
+          .filter((q) => q.required)
+          .filter((q) => values[q.question_id] === "" || values[q.question_id] === null || Number.isNaN(values[q.question_id]))
+          .map((q) => q.title);
+
+        if (typeof values["project_basic.profile.team_size"] === "number" && values["project_basic.profile.team_size"] < 1) {
+          missing.push("開發團隊規模至少為 1");
+        }
+
+        const failedGovernance = governanceRules.filter((rule) => !rule.check(values)).map((rule) => rule.label);
+        if (missing.length || failedGovernance.length) {
+          statusEl.className = "status warn";
+          const msgA = missing.length ? `缺少/錯誤：${missing.join("、")}` : "";
+          const msgB = failedGovernance.length ? `治理條件待補：${failedGovernance.join("、")}` : "";
+          statusEl.textContent = `Gate 0 未通過。${[msgA, msgB].filter(Boolean).join("；")}`;
+        } else {
+          statusEl.className = "status ok";
+          statusEl.textContent = "Gate 0 通過：S1 必填完整且治理條件符合，可進入 S2。";
+        }
+        renderGovernanceChecklist(values);
+      }
+
+      function renderPreview() {
+        const values = collectFormValues();
+        const output = {
+          project_id: "PRJ-001",
+          stage: "S1",
+          answers: values
+        };
+        previewEl.textContent = JSON.stringify(output, null, 2);
+        renderGovernanceChecklist(values);
+      }
+
+      function normalizeImportedData(raw) {
+        const normalized = {
+          project_id: "",
+          stage: "",
+          prefill: {}
+        };
+
+        if (raw && typeof raw === "object") {
+          normalized.project_id = raw.project_id || (raw.meta && raw.meta.project_id) || "";
+          normalized.stage = raw.stage || (raw.meta && raw.meta.stage) || "";
+
+          if (raw.questionnaire_prefill && typeof raw.questionnaire_prefill === "object") {
+            normalized.prefill = { ...raw.questionnaire_prefill };
+          } else if (raw.answers && typeof raw.answers === "object" && !Array.isArray(raw.answers)) {
+            normalized.prefill = { ...raw.answers };
+          } else if (Array.isArray(raw.answers)) {
+            raw.answers.forEach((a) => {
+              if (a && a.question_id) {
+                normalized.prefill[a.question_id] = a.value;
+              }
+            });
+          } else {
+            schema.questions.forEach((q) => {
+              if (Object.prototype.hasOwnProperty.call(raw, q.question_id)) {
+                normalized.prefill[q.question_id] = raw[q.question_id];
+              }
+            });
+          }
+        }
+        return normalized;
+      }
+
+      function validateImportedData(normalized) {
+        const findings = [];
+        const hasProjectId = String(normalized.project_id || "").trim() !== "";
+        findings.push({ pass: hasProjectId, label: "包含 project_id / meta.project_id" });
+
+        const hasStage = String(normalized.stage || "").trim() !== "";
+        findings.push({ pass: hasStage, label: "包含 stage / meta.stage" });
+
+        const prefillKeys = Object.keys(normalized.prefill || {});
+        findings.push({ pass: prefillKeys.length > 0, label: "可解析的預填欄位至少 1 筆" });
+
+        const criticalKeys = [
+          "project_basic.profile.name",
+          "project_basic.profile.type",
+          "project_basic.compliance.data_sensitivity"
+        ];
+        const missingCritical = criticalKeys.filter((k) => !String(normalized.prefill[k] || "").trim());
+        findings.push({
+          pass: missingCritical.length === 0,
+          label: missingCritical.length === 0
+            ? "S1 關鍵欄位完整（名稱/類型/敏感度）"
+            : `缺少 S1 關鍵欄位：${missingCritical.join("、")}`
+        });
+
+        const supportedStage = normalized.stage === "" || normalized.stage === "S1" || normalized.stage === "discovery";
+        findings.push({
+          pass: supportedStage,
+          label: supportedStage ? "階段可相容（S1/discovery）" : `目前匯入階段為 ${normalized.stage}，請確認是否適用 S1`
+        });
+
+        return findings;
+      }
+
+      function renderImportValidation(findings) {
+        importValidationListEl.innerHTML = "";
+        findings.forEach((f) => {
+          const li = document.createElement("li");
+          li.innerHTML = `${f.label} <span class="badge ${f.pass ? "ok" : "warn"}">${f.pass ? "通過" : "待補"}</span>`;
+          importValidationListEl.appendChild(li);
+        });
+      }
+
+      function applyImportedPrefill(prefill) {
+        Object.entries(prefill || {}).forEach(([k, v]) => {
+          setFieldValue(k, v);
+        });
+        renderPreview();
+      }
+
+      function createS2DecisionList(values) {
+        const decisions = [];
+        const add = (id, topic, why, owner, requiredInputs, recommended) => {
+          decisions.push({
+            id,
+            topic,
+            why,
+            owner,
+            due_stage: "S2",
+            required_inputs: requiredInputs,
+            recommended_options: recommended
+          });
+        };
+
+        add(
+          "S2-DEC-001",
+          "架構風格與部署平台",
+          "S2 必須先定義 architecture 基線，避免後續 AI 生成程式不一致",
+          "Architect",
+          ["project_basic.profile.type", "project_basic.integration.level", "project_basic.profile.scope"],
+          ["architecture.pattern.style", "architecture.hosting.platform"]
+        );
+
+        add(
+          "S2-DEC-002",
+          "AI 協作範圍與審查流程",
+          "需決定 AI 可做哪些事與誰負責審查，才能進入治理式開發",
+          "Architect + PM",
+          ["project_basic.artifact.readiness", "project_basic.compliance.data_sensitivity"],
+          ["ai_collaboration.scope.allowed", "ai_collaboration.scope.prohibited", "ai_collaboration.review.process"]
+        );
+
+        if (["customer_facing", "partner_facing", "mixed"].includes(values["project_basic.delivery.channel"])) {
+          add(
+            "S2-DEC-003",
+            "對外服務安全與 API 文件策略",
+            "對外交付需提早確認認證授權與文件標準，降低整合與資安風險",
+            "Architect + Security + Backend Lead",
+            ["project_basic.delivery.channel", "project_basic.profile.type"],
+            ["backend.auth.method", "api.documentation.openapi", "security.auth.authorization"]
+          );
+        }
+
+        if (["internal_systems", "external_partners", "mixed"].includes(values["project_basic.integration.level"])) {
+          add(
+            "S2-DEC-004",
+            "整合契約與依賴治理",
+            "有整合依賴時需先定義契約與失效處理，避免後續交付中斷",
+            "Architect + PM",
+            ["project_basic.integration.level", "project_basic.dependency.critical_external"],
+            ["api.external.integrations", "api.response.format", "fallback 策略"]
+          );
+        }
+
+        if (values["project_basic.artifact.readiness"] === "minimal") {
+          add(
+            "S2-DEC-005",
+            "補齊前置文件後再啟動程式碼生成",
+            "文件不足時直接生成程式風險高，先補齊規格能提升 AI 可用率",
+            "PM + Architect",
+            ["project_basic.artifact.readiness"],
+            ["先完成 PRD/API/schema 欄位字典，再開啟 code_generation"]
+          );
+        }
+
+        if (["confidential", "restricted"].includes(values["project_basic.compliance.data_sensitivity"])) {
+          add(
+            "S2-DEC-006",
+            "機密專案 AI 執行邊界",
+            "機密資料需先鎖定模型與資料處理邊界，避免治理違規",
+            "PM + Security + Architect",
+            ["project_basic.compliance.data_sensitivity", "project_basic.governance.ai_execution_boundary"],
+            ["private_model_only 或 no_code_generation_only_analysis"]
+          );
+        }
+
+        if (["extension", "migration", "refactor"].includes(values["project_basic.profile.is_new"])) {
+          add(
+            "S2-DEC-007",
+            "既有系統相容與回滾策略",
+            "非 greenfield 專案需在 S2 先定義變更風險對策",
+            "Architect + Backend Lead",
+            ["project_basic.profile.is_new", "project_basic.lifecycle.change_risk"],
+            ["兼容策略", "資料遷移策略", "回滾方案"]
+          );
+        }
+
+        return decisions;
+      }
+
+      function renderDecisionList(decisions) {
+        decisionListEl.innerHTML = "";
+        decisions.forEach((d) => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <div class="decision-title">${d.id}｜${d.topic}</div>
+            <div>${d.why}</div>
+            <div class="decision-meta">Owner: ${d.owner}｜Due Stage: ${d.due_stage}</div>
+          `;
+          decisionListEl.appendChild(li);
+        });
+        decisionPreviewEl.textContent = JSON.stringify(decisions, null, 2);
+      }
+
+      async function importProjectJson() {
+        const file = importFileEl.files && importFileEl.files[0];
+        if (!file) {
+          importStatusEl.className = "status warn";
+          importStatusEl.textContent = "請先選擇 JSON 檔案。";
+          return;
+        }
+        try {
+          const text = await file.text();
+          const raw = JSON.parse(text);
+          const normalized = normalizeImportedData(raw);
+          const findings = validateImportedData(normalized);
+          renderImportValidation(findings);
+          applyImportedPrefill(normalized.prefill);
+          importedContext = normalized;
+          const failCount = findings.filter((f) => !f.pass).length;
+          if (failCount === 0) {
+            importStatusEl.className = "status ok";
+            importStatusEl.textContent = `匯入成功：${file.name}，已完成欄位套用與驗證。`;
+          } else {
+            importStatusEl.className = "status warn";
+            importStatusEl.textContent = `匯入完成：${file.name}，但有 ${failCount} 項待補。`;
+          }
+        } catch (err) {
+          importStatusEl.className = "status warn";
+          importStatusEl.textContent = `匯入失敗：${err.message}`;
+        }
+      }
+
+      function generateDecisionListFromCurrent() {
+        const values = collectFormValues();
+        currentDecisionList = createS2DecisionList(values);
+        renderDecisionList(currentDecisionList);
+        if (!currentDecisionList.length) {
+          importStatusEl.className = "status warn";
+          importStatusEl.textContent = "尚未產生決策清單，請先補齊關鍵欄位。";
+          return;
+        }
+        importStatusEl.className = "status ok";
+        importStatusEl.textContent = `已產生 ${currentDecisionList.length} 筆 S2 決策清單。`;
+      }
+
+      function exportDecisionList() {
+        const values = collectFormValues();
+        if (!currentDecisionList.length) {
+          currentDecisionList = createS2DecisionList(values);
+          renderDecisionList(currentDecisionList);
+        }
+        const payload = {
+          project_id: importedContext && importedContext.project_id ? importedContext.project_id : "PRJ-001",
+          from_stage: "S1",
+          to_stage: "S2",
+          generated_at: new Date().toISOString(),
+          decisions: currentDecisionList
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "prj001-s2-decision-list.json";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function buildProjectContext(values) {
+        return {
+          project_id: importedContext && importedContext.project_id ? importedContext.project_id : "PRJ-001",
+          project_name: values["project_basic.profile.name"] || "未命名專案",
+          current_stage: "S1",
+          questionnaire_prefill: values,
+          stages: {
+            s1: {
+              completed_at: new Date().toISOString(),
+              answers: values
+            }
+          },
+          handoff: {
+            next_stage: "S2",
+            next_file: "s2-architecture-prototype.html"
+          }
+        };
+      }
+
+      function exportProjectContext() {
+        const values = collectFormValues();
+        const payload = buildProjectContext(values);
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "prj001-project-context.json";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function openS2Prototype() {
+        const s2Url = "s2-architecture-prototype.html";
+        window.open(s2Url, "_blank");
+      }
+
+      function renderGovernanceChecklist(values) {
+        governanceChecklistEl.innerHTML = "";
+        governanceRules.forEach((rule) => {
+          const li = document.createElement("li");
+          const pass = rule.check(values);
+          li.innerHTML = `${rule.label} <span class="badge ${pass ? "ok" : "warn"}">${pass ? "符合" : "待補"}</span>`;
+          governanceChecklistEl.appendChild(li);
+        });
+      }
+
+      function exportJson() {
+        const values = collectFormValues();
+        const payload = {
+          project_id: "PRJ-001",
+          project_name: values["project_basic.profile.name"] || "未命名專案",
+          stage: "S1",
+          answers: values
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "prj001-s1-prototype-answers.json";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      formEl.addEventListener("input", renderPreview);
+      document.getElementById("validateBtn").addEventListener("click", () => validateGate0(collectFormValues()));
+      document.getElementById("prefillBtn").addEventListener("click", applyPrefill);
+      document.getElementById("exportBtn").addEventListener("click", exportJson);
+      document.getElementById("importBtn").addEventListener("click", importProjectJson);
+      document.getElementById("generateDecisionBtn").addEventListener("click", generateDecisionListFromCurrent);
+      document.getElementById("exportDecisionBtn").addEventListener("click", exportDecisionList);
+      document.getElementById("exportProjectContextBtn").addEventListener("click", exportProjectContext);
+      document.getElementById("openS2Btn").addEventListener("click", openS2Prototype);
+
+      renderForm();
+      applyPrefill();
+      currentDecisionList = createS2DecisionList(collectFormValues());
+      renderDecisionList(currentDecisionList);
+    </script>
+  </body>
+</html>

@@ -111,6 +111,116 @@
       "version": "1.0.0"
     },
     {
+      "question_id": "project_basic.delivery.channel",
+      "title": "交付對象範圍",
+      "description": "此專案主要服務對象是誰，會影響後續 auth/API/security 治理基準",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["pm"],
+      "quality_impact": "critical",
+      "options": [
+        { "value": "internal_only", "label": "僅內部使用", "description": "僅公司內部團隊使用" },
+        { "value": "customer_facing", "label": "客戶可直接使用", "description": "外部客戶可直接操作" },
+        { "value": "partner_facing", "label": "夥伴/供應商串接", "description": "以合作夥伴或供應商為主" },
+        { "value": "mixed", "label": "混合型", "description": "同時含內外部使用情境" }
+      ],
+      "ai_risk_note": "未定義對象範圍，AI 可能低估認證、授權與安全需求",
+      "version": "1.1.0"
+    },
+    {
+      "question_id": "project_basic.integration.level",
+      "title": "整合依賴程度",
+      "description": "此專案是否依賴既有系統或外部系統，會影響契約與風險控管",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["pm"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "standalone", "label": "獨立運作", "description": "幾乎不依賴外部系統" },
+        { "value": "internal_systems", "label": "依賴內部系統", "description": "需串接公司內部服務" },
+        { "value": "external_partners", "label": "依賴外部夥伴", "description": "需串接外部合作夥伴或第三方" },
+        { "value": "mixed", "label": "內外部混合", "description": "同時含內部與外部依賴" }
+      ],
+      "ai_risk_note": "未定義整合層級，AI 可能忽略契約、錯誤處理與版本相容需求",
+      "version": "1.1.0"
+    },
+    {
+      "question_id": "project_basic.artifact.readiness",
+      "title": "前置文件完整度",
+      "description": "評估目前可提供給 AI 的前置文件品質，決定可生成範圍",
+      "question_type": "single_select",
+      "required": true,
+      "owner_role": ["pm"],
+      "quality_impact": "high",
+      "options": [
+        { "value": "minimal", "label": "最低限度", "description": "僅需求摘要，細節不足" },
+        { "value": "standard", "label": "標準", "description": "有 PRD、流程與角色資訊" },
+        { "value": "ready_for_codegen", "label": "可直接生成", "description": "含 API/schema/欄位字典/驗收條件" }
+      ],
+      "ai_risk_note": "文件完整度不足時，AI 生成內容易偏差，需限制在分析模式",
+      "version": "1.1.0"
+    },
+    {
+      "question_id": "project_basic.governance.ai_execution_boundary",
+      "title": "AI 執行邊界策略",
+      "description": "敏感資料專案需明確設定 AI 可用模型與資料處理邊界",
+      "question_type": "single_select",
+      "required": false,
+      "owner_role": ["pm"],
+      "quality_impact": "critical",
+      "depends_on": {
+        "question_id": "project_basic.compliance.data_sensitivity",
+        "in": ["confidential", "restricted"]
+      },
+      "options": [
+        { "value": "cloud_model_masked_data", "label": "雲端模型 + 遮罩資料", "description": "可用雲端 AI，但需先遮罩敏感內容" },
+        { "value": "private_model_only", "label": "僅私有模型", "description": "僅使用企業私有或封閉環境模型" },
+        { "value": "no_code_generation_only_analysis", "label": "僅分析不生成", "description": "AI 只做分析建議，不直接生成程式碼" }
+      ],
+      "ai_risk_note": "未定義 AI 邊界將造成合規與機密外洩風險",
+      "version": "1.1.0"
+    },
+    {
+      "question_id": "project_basic.lifecycle.change_risk",
+      "title": "既有系統變更風險",
+      "description": "非全新專案時，評估變更對既有流程/資料/相容性的風險",
+      "question_type": "single_select",
+      "required": false,
+      "owner_role": ["pm"],
+      "quality_impact": "high",
+      "depends_on": {
+        "question_id": "project_basic.profile.is_new",
+        "in": ["extension", "migration", "refactor"]
+      },
+      "options": [
+        { "value": "low", "label": "低", "description": "改動範圍小，回歸風險低" },
+        { "value": "medium", "label": "中", "description": "有部分相容性與回歸風險" },
+        { "value": "high", "label": "高", "description": "涉及核心流程或資料結構變更" }
+      ],
+      "ai_risk_note": "未評估變更風險會導致 AI 生成方案缺乏回滾與相容策略",
+      "version": "1.1.0"
+    },
+    {
+      "question_id": "project_basic.dependency.critical_external",
+      "title": "外部依賴關鍵性",
+      "description": "整合型或 API 型專案需先判斷外部依賴是否關鍵",
+      "question_type": "single_select",
+      "required": false,
+      "owner_role": ["pm"],
+      "quality_impact": "high",
+      "depends_on": {
+        "question_id": "project_basic.profile.type",
+        "in": ["integration", "api_platform"]
+      },
+      "options": [
+        { "value": "none", "label": "無外部依賴", "description": "不依賴外部服務即可運作" },
+        { "value": "has_non_critical", "label": "有非關鍵依賴", "description": "依賴失效不會中斷核心流程" },
+        { "value": "has_critical", "label": "有關鍵依賴", "description": "依賴失效會影響核心流程或交付" }
+      ],
+      "ai_risk_note": "未識別關鍵依賴會使 AI 低估整合風險與 fallback 設計需求",
+      "version": "1.1.0"
+    },
+    {
       "question_id": "project_basic.profile.timeline",
       "title": "預計時程",
       "description": "專案的預計起迄時間",

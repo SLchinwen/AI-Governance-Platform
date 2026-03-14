@@ -1,0 +1,1231 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRJ-001 S2 Architecture Prototype</title>
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --card: #fff;
+        --line: #d9e0ea;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --brand: #0f62fe;
+        --ok: #166534;
+        --warn: #92400e;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", "Noto Sans TC", Arial, sans-serif;
+      }
+      .wrap {
+        max-width: 1080px;
+        margin: 20px auto;
+        padding: 0 14px 36px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      h1 { margin: 0 0 8px; font-size: 24px; }
+      h2 { margin: 0 0 8px; font-size: 18px; }
+      h3 { margin: 10px 0 6px; font-size: 15px; }
+      .meta, .hint { color: var(--muted); font-size: 13px; line-height: 1.5; }
+      .grid { display: grid; gap: 10px; }
+      .two-col { grid-template-columns: 1fr 1fr; }
+      .question {
+        border: 1px solid #e6ebf3;
+        border-radius: 10px;
+        padding: 10px;
+      }
+      .question-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+      label { display: block; font-size: 14px; margin-bottom: 6px; }
+      .required { color: #b91c1c; font-size: 12px; margin-left: 4px; }
+      input[type="text"], textarea, select {
+        width: 100%;
+        border: 1px solid #c8d2e2;
+        border-radius: 8px;
+        padding: 9px;
+        font-size: 14px;
+      }
+      textarea { min-height: 72px; resize: vertical; }
+      .options { display: grid; gap: 6px; margin-top: 6px; }
+      .option {
+        border: 1px solid #dbe3f0;
+        border-radius: 8px;
+        padding: 8px;
+      }
+      .option label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        cursor: pointer;
+      }
+      .small {
+        font-size: 12px;
+        color: var(--muted);
+        margin-left: 24px;
+      }
+      .mapping {
+        margin-top: 4px;
+        font-size: 12px;
+        color: #334155;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 6px;
+      }
+      .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+      .mt8 { margin-top: 8px; }
+      button {
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 12px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .primary { background: var(--brand); color: #fff; }
+      .secondary { background: #e9efff; color: #13346e; }
+      .status { margin-top: 8px; font-size: 14px; }
+      .ok { color: var(--ok); }
+      .warn { color: var(--warn); }
+      .check-list { margin: 8px 0 0; padding-left: 18px; }
+      .check-list li { margin: 5px 0; }
+      .badge {
+        display: inline-block;
+        margin-left: 6px;
+        font-size: 12px;
+        border-radius: 999px;
+        padding: 2px 8px;
+      }
+      .badge.ok { background: #e7f7ec; color: #166534; }
+      .badge.warn { background: #fff4e6; color: #92400e; }
+      .badge.info { background: #edf4ff; color: #0f62fe; }
+      pre {
+        margin: 8px 0 0;
+        background: #0b1220;
+        color: #eaf1ff;
+        border-radius: 8px;
+        padding: 10px;
+        overflow: auto;
+      }
+      table { width: 100%; border-collapse: collapse; }
+      th, td {
+        border: 1px solid #d8dfeb;
+        padding: 8px;
+        text-align: left;
+        font-size: 13px;
+        vertical-align: top;
+      }
+      th { background: #f4f7ff; }
+      .hidden { display: none; }
+      .help-btn {
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        border: 1px solid #bcd0fb;
+        background: #eef4ff;
+        color: #0f62fe;
+        font-weight: 700;
+        padding: 0;
+        line-height: 1;
+      }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .modal-backdrop.open { display: flex; }
+      .modal {
+        width: min(760px, 100%);
+        max-height: 85vh;
+        overflow: auto;
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #dbe3f0;
+        padding: 16px;
+      }
+      .modal-header {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .modal-title {
+        margin: 0;
+        font-size: 20px;
+      }
+      .close-btn {
+        background: #eef2f7;
+        color: #334155;
+      }
+      .help-section-title {
+        margin: 14px 0 6px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .help-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .summary-list {
+        margin: 8px 0 0;
+        padding-left: 18px;
+      }
+      .summary-list li {
+        margin: 8px 0;
+        line-height: 1.6;
+      }
+      .summary-title {
+        font-weight: 700;
+      }
+      .summary-reason {
+        color: #334155;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <section class="card">
+        <h1>S2 Architecture 智慧問券 Prototype</h1>
+        <div class="meta">
+          目標：完整題庫但不繁瑣。先收核心決策，再用條件題展開；同時提供連動建議與技術確認流程。<br />
+          適用：S1 完成後，進入技術棧定義與 AI 協作執行邊界設定。
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>匯入上階段 JSON</h2>
+        <label for="importJsonFile">選擇專案背景 / S1 / 前階段 JSON</label>
+        <input id="importJsonFile" type="file" accept=".json,application/json" />
+        <div class="actions mt8">
+          <button class="secondary" type="button" id="importBtn">匯入並預填</button>
+          <button class="secondary" type="button" id="validateBtn">驗證 S2</button>
+          <button class="primary" type="button" id="suggestBtn">產生連動建議</button>
+          <button class="secondary" type="button" id="exportContextBtn">匯出 S2 Context JSON</button>
+          <button class="secondary" type="button" id="exportDecisionBtn">匯出 S3 決策清單 JSON</button>
+          <button class="secondary" type="button" id="exportMergedContextBtn">回存 project-context.json</button>
+        </div>
+        <div id="importStatus" class="status"></div>
+        <ul id="validationList" class="check-list"></ul>
+      </section>
+
+      <section class="card">
+        <h2>S2 核心題（必填，最小可行）</h2>
+        <form id="s2Form" class="grid two-col"></form>
+      </section>
+
+      <section class="card">
+        <h2>條件題（依專案類型/風險展開）</h2>
+        <div class="hint">只有符合條件時才需要填，避免表單過重。</div>
+        <div id="conditionalArea" class="grid two-col"></div>
+      </section>
+
+      <section class="card">
+        <h2>連動建議（可討論）</h2>
+        <ul id="suggestionList" class="check-list"></ul>
+      </section>
+
+      <section class="card">
+        <h2>目前選項推薦摘要</h2>
+        <div class="hint">系統會根據你目前已選內容，解釋為什麼這個方向合理，方便你和技術人員一起確認。</div>
+        <ul id="recommendationSummaryList" class="summary-list"></ul>
+      </section>
+
+      <section class="card">
+        <h2>技術人員逐項確認</h2>
+        <div class="hint">每個關鍵決策都可由技術角色勾選確認，避免 PM 單方判定。</div>
+        <table>
+          <thead>
+            <tr>
+              <th>決策項目</th>
+              <th>建議負責角色</th>
+              <th>已確認</th>
+              <th>備註</th>
+            </tr>
+          </thead>
+          <tbody id="confirmTableBody"></tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>輸出預覽</h2>
+        <h3>S2 Context</h3>
+        <pre id="contextPreview">{}</pre>
+        <h3>S3 決策清單</h3>
+        <pre id="decisionPreview">[]</pre>
+      </section>
+    </div>
+
+    <div id="helpModalBackdrop" class="modal-backdrop" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+        <div class="modal-header">
+          <div>
+            <h2 id="helpModalTitle" class="modal-title">選項說明</h2>
+            <div id="helpModalSummary" class="meta"></div>
+          </div>
+          <button type="button" id="closeHelpBtn" class="close-btn">關閉</button>
+        </div>
+        <div class="help-section-title">差異說明</div>
+        <div id="helpModalDiffs" class="help-box"></div>
+        <div class="help-section-title">快速比較</div>
+        <div id="helpModalCompare" class="help-box"></div>
+        <div class="help-section-title">適用情境</div>
+        <div id="helpModalUseCase" class="help-box"></div>
+        <div class="help-section-title">簡單範例</div>
+        <div id="helpModalExample" class="help-box"></div>
+      </div>
+    </div>
+
+    <script>
+      const questionHelp = {
+        "architecture.pattern.style": {
+          title: "架構風格怎麼選？",
+          summary: "這題在決定系統要用哪種大方向來組織程式與模組。",
+          diffs: [
+            "模組化單體：一個系統、一套部署，但內部先分模組，最適合中小團隊。",
+            "Clean Architecture：分層更清楚，可維護性高，但規則較多、實作較嚴謹。",
+            "分層式 N-Tier：最容易理解與上手，適合穩定需求。",
+            "微服務：可拆成多個服務獨立部署，但開發、監控、整合都更複雜。"
+          ],
+          compare: [
+            ["選項", "適合情境", "代價"],
+            ["模組化單體", "中小團隊、先求落地", "未來拆分需再規劃"],
+            ["Clean Architecture", "重視長期維護", "設計與實作門檻較高"],
+            ["分層式 N-Tier", "需求穩定、導入快", "大型專案易漸漸耦合"],
+            ["微服務", "多團隊、高擴展", "運維與治理成本最高"]
+          ],
+          useCase: "如果團隊 3-5 人、希望先穩定落地，通常優先考慮模組化單體。只有在確定需要獨立部署、多團隊協作、或高擴展需求時才考慮微服務。",
+          example: "例如你們的問券系統，現階段較適合『模組化單體』：同一套系統內分 S1、S2、驗證、輸出模組，之後再視需要拆分。"
+        },
+        "architecture.pattern.layers": {
+          title: "系統分層是什麼？",
+          summary: "這題在決定程式要切成哪些責任層，避免所有邏輯都混在一起。",
+          diffs: [
+            "Presentation：畫面/API 接收輸入。",
+            "Application：流程協調與 use case。",
+            "Domain：業務規則核心。",
+            "Infrastructure：外部系統、資料庫、雲端服務。",
+            "Data Access：資料存取與 repository。"
+          ],
+          compare: [
+            ["層級", "主要責任", "簡單理解"],
+            ["Presentation", "接收輸入/回傳畫面", "門面"],
+            ["Application", "串流程", "流程管理者"],
+            ["Domain", "業務規則", "真正的核心邏輯"],
+            ["Infrastructure", "接外部服務", "對外連線區"],
+            ["Data Access", "存取資料", "資料進出口"]
+          ],
+          useCase: "如果你想讓 AI 生成的程式碼不要亂放位置，這題很重要，因為它直接決定目錄結構與類別責任。",
+          example: "例如『建立問券』可拆成：API 收到請求 -> Application 執行流程 -> Domain 檢查規則 -> Data Access 存資料。"
+        },
+        "backend.runtime.platform": {
+          title: "Backend Framework 怎麼選？",
+          summary: "這題在決定後端主要用哪個技術棧，會直接影響 AI 產生的專案骨架。",
+          diffs: [
+            ".NET 8 Web API：適合你們現有工程師與 Azure 環境。",
+            "Node.js / NestJS：同語言全端開發速度快，但需確認團隊熟悉度。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            [".NET 8 Web API", "符合現有團隊與 Azure", "前期樣板較完整"],
+            ["Node.js / NestJS", "迭代快、同語言全端", "需確認維運與後端熟悉度"]
+          ],
+          useCase: "若公司現有後端主力是 .NET，就先選 .NET，能降低導入阻力與維運風險。",
+          example: "例如你們內部系統工程師與後端工程師已用 Visual Studio 與 Azure，通常先選 .NET 8 Web API。"
+        },
+        "frontend.framework.choice": {
+          title: "Frontend Framework 怎麼選？",
+          summary: "這題在決定前端畫面要用什麼框架，會影響元件、路由與 AI 生成方式。",
+          diffs: [
+            "React：生態成熟、範例多，適合與現有 prototype 銜接。",
+            "Vue：上手較快，但要看團隊是否熟悉。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["React", "元件生態成熟、AI 範例多", "需較清楚狀態管理觀念"],
+            ["Vue", "上手快、模板直觀", "需確認團隊長期維護能力"]
+          ],
+          useCase: "如果你希望未來 AI 能穩定產生前端元件與表單，React 通常是較穩定的第一選擇。",
+          example: "例如問券流程頁、驗證頁、輸出頁，都很適合用 React 元件化處理。"
+        },
+        "database.primary.engine": {
+          title: "主要資料庫怎麼選？",
+          summary: "這題決定資料要存在哪種資料庫，會影響 schema、查詢與部署方式。",
+          diffs: [
+            "Azure SQL：和你們現有 Azure 環境相容最好。",
+            "PostgreSQL：彈性高、開源，但維運與既有環境需再確認。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["Azure SQL", "和 Azure/現有團隊最一致", "成本與雲端綁定需評估"],
+            ["PostgreSQL", "彈性高、開源", "需補環境與維運標準"]
+          ],
+          useCase: "如果公司已有 Azure SQL 經驗或標準，通常先沿用，比較能快速啟動治理系統。",
+          example: "例如問券答案、驗證紀錄、決策清單都可直接落在 Azure SQL。"
+        },
+        "api.style.type": {
+          title: "API Style 差在哪？",
+          summary: "這題決定前後端交換資料的方式，會影響 API 文件與回應格式。",
+          diffs: [
+            "REST：路徑清楚、文件成熟、最容易治理。",
+            "GraphQL：前端取資料彈性高，但治理與權限控制較複雜。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["REST", "容易標準化與文件化", "欄位彈性較低"],
+            ["GraphQL", "前端取資料彈性高", "治理與權限較複雜"]
+          ],
+          useCase: "多數內部系統或治理系統，REST 已足夠且最容易和 Swagger/OpenAPI 搭配。",
+          example: "例如 `GET /projects`、`POST /questionnaires` 這種就很適合 REST。"
+        },
+        "backend.auth.method": {
+          title: "Authentication 是在決定什麼？",
+          summary: "這題決定『怎麼登入』，也就是系統確認使用者身份的方法。",
+          diffs: [
+            "JWT：適合 API 與前後端分離系統。",
+            "Azure AD：適合公司內部帳號整合。",
+            "OAuth2：適合需要第三方登入或標準授權流程。"
+          ],
+          compare: [
+            ["選項", "適合情境", "注意事項"],
+            ["JWT", "一般 Web/API 系統", "需補 token 策略"],
+            ["Azure AD", "公司內部帳號整合", "需依賴組織帳號體系"],
+            ["OAuth2", "第三方登入/授權", "流程設計較完整"]
+          ],
+          useCase: "若是內部系統，可優先考慮 Azure AD；若是通用 Web/API 系統，JWT 常見且容易落地。",
+          example: "例如內部問券系統若想直接用公司帳號登入，就可考慮 Azure AD。"
+        },
+        "security.auth.authorization": {
+          title: "Authorization 是在決定什麼？",
+          summary: "這題決定『登入後可以做什麼』，也就是權限模型。",
+          diffs: [
+            "RBAC：依角色控管，例如 PM、架構師、後端。",
+            "Permission-Based：細到單一功能與單一操作權限。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["RBAC", "簡單清楚、容易導入", "細粒度控制較弱"],
+            ["Permission-Based", "可精細控權", "設定與維護成本較高"]
+          ],
+          useCase: "第一版系統若角色清楚，先用 RBAC 會比較簡單；若未來權限非常細，再往 Permission-Based 發展。",
+          example: "例如 PM 可填 S1、架構師可填 S2、DevOps 可確認部署。"
+        },
+        "architecture.hosting.platform": {
+          title: "部署平台怎麼選？",
+          summary: "這題決定系統主要運行在哪裡，會影響部署、自動化與監控。",
+          diffs: [
+            "Azure：與你們現有雲端環境一致。",
+            "On-Premise：適合有內部資安限制，但維運負擔較重。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["Azure", "和現有環境一致、整合快", "需控制雲端成本"],
+            ["On-Premise", "可自行掌控環境", "維運與擴展負擔較大"]
+          ],
+          useCase: "若現有系統與治理都已建立在 Azure，優先 Azure 可降低整合成本。",
+          example: "例如使用 Azure App Service、Azure SQL、Application Insights 串成一套。"
+        },
+        "ai_collaboration.boundary_summary": {
+          title: "AI 邊界摘要在決定什麼？",
+          summary: "這題不是在決定技術，而是在決定 AI 可以幫到哪裡、哪些必須人工確認。",
+          diffs: [
+            "可分析與產碼，但需人工覆核：效率高，但需審查流程。",
+            "僅分析建議：風險低，適合文件不足或高風險專案。",
+            "僅私有模型可使用：適合機密資料與內控要求高的情境。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["分析+產碼+覆核", "效率最高", "需明確審查流程"],
+            ["僅分析", "風險最低", "生成速度較慢"],
+            ["僅私有模型", "符合機密治理", "模型與成本限制較多"]
+          ],
+          useCase: "若資料為機密，通常不建議讓一般雲端模型直接產碼，至少要先做私有模型或分析模式。",
+          example: "例如你們的治理知識與方法屬機密，可先採『private_model_only』。"
+        },
+        "architecture.communication.style": {
+          title: "服務間通訊方式是什麼？",
+          summary: "只有在微服務等需要多個服務互相溝通時，才需要回答這題。",
+          diffs: [
+            "REST API：最容易理解與除錯。",
+            "Message Queue：適合非同步、解耦。",
+            "gRPC：速度快，但技術門檻較高。"
+          ],
+          compare: [
+            ["選項", "適合情境", "注意事項"],
+            ["REST API", "大多數服務互通", "同步依賴較明顯"],
+            ["Message Queue", "非同步、排程、解耦", "需補訊息治理"],
+            ["gRPC", "高效能內部通訊", "學習與除錯成本較高"]
+          ],
+          useCase: "如果系統不是微服務，通常不需要提早回答這題。",
+          example: "例如訂單系統與通知系統分開部署，才需要定義它們怎麼互相溝通。"
+        },
+        "backend.auth.token_strategy": {
+          title: "Token Strategy 為什麼要選？",
+          summary: "當你用 JWT/OAuth2 時，還要決定 token 怎麼發、多久失效、要不要 refresh。",
+          diffs: [
+            "Access + Refresh Token：安全與體驗較平衡。",
+            "短效 Token Only：較簡單，但使用者可能要更常重新登入。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["Access + Refresh", "使用體驗與安全平衡", "需設 refresh 管理"],
+            ["短效 Only", "簡單", "需要較頻繁重登"]
+          ],
+          useCase: "一般 Web/API 系統多用 Access + Refresh；內部短流程工具才可能只用短效 token。",
+          example: "例如管理後台若需長時間操作，可選 Access + Refresh。"
+        },
+        "api.response.format": {
+          title: "Response Format 在比什麼？",
+          summary: "這題決定 API 回傳資料格式要不要統一。",
+          diffs: [
+            "統一 envelope：例如 success/data/error 固定格式，最利於治理。",
+            "資源導向原生格式：回應較簡潔，但各 API 可能長得不一樣。"
+          ],
+          compare: [
+            ["選項", "優勢", "注意事項"],
+            ["統一 envelope", "最利於 AI 與治理一致", "payload 稍多一層"],
+            ["資源導向原生格式", "較簡潔", "各 API 風格可能不一致"]
+          ],
+          useCase: "如果希望 AI 產生 API、前端與文件都一致，建議用統一 envelope。",
+          example: "例如 `{ success: true, data: {...}, error: null }`。"
+        },
+        "api.external.integrations": {
+          title: "外部整合關鍵性是什麼？",
+          summary: "這題在判斷外部 API 或第三方服務掛掉時，會不會影響核心流程。",
+          diffs: [
+            "無：沒有外部依賴。",
+            "非關鍵：壞掉了系統還能運作。",
+            "關鍵：壞掉會影響主要功能或交付。"
+          ],
+          compare: [
+            ["選項", "代表意思", "注意事項"],
+            ["無", "不靠外部系統", "可聚焦內部架構"],
+            ["非關鍵", "失效可降級", "需先定義 fallback"],
+            ["關鍵", "失效會卡核心流程", "需 mock、監控、切換方案"]
+          ],
+          useCase: "只要專案會依賴第三方或既有系統，就應先確認是不是關鍵依賴。",
+          example: "例如登入、付款、ERP 串接若掛掉會讓主要流程中斷，就屬關鍵。"
+        }
+      };
+
+      const coreQuestions = [
+        {
+          id: "architecture.pattern.style",
+          title: "架構風格",
+          required: true,
+          type: "single",
+          options: [
+            { value: "modular_monolith", label: "模組化單體", mapping: "中小型團隊優先，演進成本低" },
+            { value: "clean_architecture", label: "Clean Architecture", mapping: "可維護性高，需較高工程紀律" },
+            { value: "layered", label: "分層式 N-Tier", mapping: "導入快，適合穩定需求" },
+            { value: "microservices", label: "微服務", mapping: "需高運維能力與契約治理" }
+          ]
+        },
+        {
+          id: "architecture.pattern.layers",
+          title: "系統分層",
+          required: true,
+          type: "multi",
+          options: [
+            { value: "presentation", label: "Presentation" },
+            { value: "application", label: "Application" },
+            { value: "domain", label: "Domain" },
+            { value: "infrastructure", label: "Infrastructure" },
+            { value: "data_access", label: "Data Access" }
+          ]
+        },
+        {
+          id: "backend.runtime.platform",
+          title: "Backend Framework",
+          required: true,
+          type: "single",
+          options: [
+            { value: "dotnet", label: ".NET 8 Web API", mapping: "與現有團隊能力一致" },
+            { value: "nodejs", label: "Node.js / NestJS", mapping: "前後端同語言，迭代快" }
+          ]
+        },
+        {
+          id: "frontend.framework.choice",
+          title: "Frontend Framework",
+          required: true,
+          type: "single",
+          options: [
+            { value: "react", label: "React", mapping: "現行專案已使用，學習成本低" },
+            { value: "vue", label: "Vue", mapping: "上手快，需確認團隊熟悉度" }
+          ]
+        },
+        {
+          id: "database.primary.engine",
+          title: "主要資料庫",
+          required: true,
+          type: "single",
+          options: [
+            { value: "azure_sql", label: "Azure SQL", mapping: "與公司既有基礎設施一致" },
+            { value: "postgresql", label: "PostgreSQL", mapping: "開源彈性高" }
+          ]
+        },
+        {
+          id: "api.style.type",
+          title: "API Style",
+          required: true,
+          type: "single",
+          options: [
+            { value: "restful", label: "REST", mapping: "標準化高，易治理" },
+            { value: "graphql", label: "GraphQL", mapping: "前端彈性高，治理成本較高" }
+          ]
+        },
+        {
+          id: "backend.auth.method",
+          title: "Authentication",
+          required: true,
+          type: "single",
+          options: [
+            { value: "jwt", label: "JWT" },
+            { value: "azure_ad", label: "Azure AD" },
+            { value: "oauth2", label: "OAuth2" }
+          ]
+        },
+        {
+          id: "security.auth.authorization",
+          title: "Authorization",
+          required: true,
+          type: "single",
+          options: [
+            { value: "rbac", label: "Role-Based (RBAC)" },
+            { value: "permission_based", label: "Permission-Based" }
+          ]
+        },
+        {
+          id: "architecture.hosting.platform",
+          title: "部署平台",
+          required: true,
+          type: "single",
+          options: [
+            { value: "azure", label: "Azure" },
+            { value: "on_premise", label: "On-Premise" }
+          ]
+        },
+        {
+          id: "ai_collaboration.boundary_summary",
+          title: "AI 邊界摘要",
+          required: true,
+          type: "single",
+          options: [
+            { value: "analysis_and_code_with_review", label: "可分析與產碼，但需強制人工覆核" },
+            { value: "analysis_only", label: "僅分析建議，不直接產碼" },
+            { value: "private_model_only", label: "僅私有模型可使用" }
+          ]
+        }
+      ];
+
+      const conditionalQuestions = [
+        {
+          id: "architecture.communication.style",
+          title: "服務間通訊方式",
+          type: "single",
+          options: [
+            { value: "rest_api", label: "REST API" },
+            { value: "message_queue", label: "Message Queue" },
+            { value: "grpc", label: "gRPC" }
+          ],
+          when: (v) => ["microservices"].includes(v["architecture.pattern.style"])
+        },
+        {
+          id: "backend.auth.token_strategy",
+          title: "Token Strategy",
+          type: "single",
+          options: [
+            { value: "access_refresh", label: "Access + Refresh Token" },
+            { value: "short_lived_only", label: "短效 Token Only" }
+          ],
+          when: (v) => ["jwt", "oauth2"].includes(v["backend.auth.method"])
+        },
+        {
+          id: "api.response.format",
+          title: "Response Format",
+          type: "single",
+          options: [
+            { value: "standard_envelope", label: "統一 envelope 格式" },
+            { value: "resource_oriented", label: "資源導向原生格式" }
+          ],
+          when: (v) => ["restful", "graphql"].includes(v["api.style.type"])
+        },
+        {
+          id: "api.external.integrations",
+          title: "外部整合關鍵性",
+          type: "single",
+          options: [
+            { value: "none", label: "無" },
+            { value: "non_critical", label: "非關鍵" },
+            { value: "critical", label: "關鍵" }
+          ],
+          when: (_, imported) => {
+            const t = imported.prefill["project_basic.profile.type"];
+            return ["integration", "api_platform"].includes(t);
+          }
+        }
+      ];
+
+      const suggestedPrefill = {
+        "architecture.pattern.style": "modular_monolith",
+        "architecture.pattern.layers": ["presentation", "application", "domain", "infrastructure", "data_access"],
+        "backend.runtime.platform": "dotnet",
+        "frontend.framework.choice": "react",
+        "database.primary.engine": "azure_sql",
+        "api.style.type": "restful",
+        "backend.auth.method": "jwt",
+        "security.auth.authorization": "rbac",
+        "architecture.hosting.platform": "azure",
+        "ai_collaboration.boundary_summary": "private_model_only"
+      };
+
+      const confirmationItems = [
+        { id: "confirm_arch_style", label: "架構風格與分層", owner: "Architect" },
+        { id: "confirm_stack_choice", label: "前後端與資料庫選型", owner: "Architect + Tech Leads" },
+        { id: "confirm_api_security", label: "API 與認證授權策略", owner: "Backend + Security" },
+        { id: "confirm_ai_boundary", label: "AI 執行邊界", owner: "PM + Architect + Security" },
+        { id: "confirm_deploy", label: "部署與運維策略", owner: "DevOps + Architect" }
+      ];
+
+      const formEl = document.getElementById("s2Form");
+      const conditionalAreaEl = document.getElementById("conditionalArea");
+      const importFileEl = document.getElementById("importJsonFile");
+      const importStatusEl = document.getElementById("importStatus");
+      const validationListEl = document.getElementById("validationList");
+      const suggestionListEl = document.getElementById("suggestionList");
+      const recommendationSummaryListEl = document.getElementById("recommendationSummaryList");
+      const confirmTableBodyEl = document.getElementById("confirmTableBody");
+      const contextPreviewEl = document.getElementById("contextPreview");
+      const decisionPreviewEl = document.getElementById("decisionPreview");
+      const helpModalBackdropEl = document.getElementById("helpModalBackdrop");
+      const helpModalTitleEl = document.getElementById("helpModalTitle");
+      const helpModalSummaryEl = document.getElementById("helpModalSummary");
+      const helpModalDiffsEl = document.getElementById("helpModalDiffs");
+      const helpModalCompareEl = document.getElementById("helpModalCompare");
+      const helpModalUseCaseEl = document.getElementById("helpModalUseCase");
+      const helpModalExampleEl = document.getElementById("helpModalExample");
+
+      let importedContext = { project_id: "PRJ-001", stage: "S1", prefill: {}, raw: null };
+      let s3DecisionList = [];
+
+      function renderQuestion(container, q, isConditional = false) {
+        const box = document.createElement("section");
+        box.className = "question";
+        box.dataset.questionId = q.id;
+        box.dataset.conditional = isConditional ? "true" : "false";
+        const hasHelp = Boolean(questionHelp[q.id]);
+        box.innerHTML = `
+          <div class="question-head">
+            <label>${q.title}${!isConditional ? '<span class="required">必填</span>' : ''}</label>
+            ${hasHelp ? `<button type="button" class="help-btn" data-help-id="${q.id}" aria-label="查看 ${q.title} 說明">?</button>` : ""}
+          </div>
+        `;
+
+        if (q.type === "single") {
+          const options = document.createElement("div");
+          options.className = "options";
+          q.options.forEach((op) => {
+            const row = document.createElement("div");
+            row.className = "option";
+            row.innerHTML = `
+              <label>
+                <input type="radio" name="${q.id}" value="${op.value}" />
+                <span>${op.label}</span>
+              </label>
+              ${op.mapping ? `<div class="mapping">建議：${op.mapping}</div>` : ""}
+            `;
+            options.appendChild(row);
+          });
+          box.appendChild(options);
+        } else if (q.type === "multi") {
+          const options = document.createElement("div");
+          options.className = "options";
+          q.options.forEach((op) => {
+            const row = document.createElement("div");
+            row.className = "option";
+            row.innerHTML = `
+              <label>
+                <input type="checkbox" name="${q.id}" value="${op.value}" />
+                <span>${op.label}</span>
+              </label>
+            `;
+            options.appendChild(row);
+          });
+          box.appendChild(options);
+        } else {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.name = q.id;
+          input.placeholder = "請輸入";
+          box.appendChild(input);
+        }
+        container.appendChild(box);
+      }
+
+      function openHelpModal(helpId) {
+        const item = questionHelp[helpId];
+        if (!item) return;
+        helpModalTitleEl.textContent = item.title;
+        helpModalSummaryEl.textContent = item.summary;
+        helpModalDiffsEl.innerHTML = `<ul class="check-list">${item.diffs.map((d) => `<li>${d}</li>`).join("")}</ul>`;
+        if (item.compare && item.compare.length) {
+          const [header, ...rows] = item.compare;
+          helpModalCompareEl.innerHTML = `
+            <table>
+              <thead>
+                <tr>${header.map((h) => `<th>${h}</th>`).join("")}</tr>
+              </thead>
+              <tbody>
+                ${rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("")}
+              </tbody>
+            </table>
+          `;
+        } else {
+          helpModalCompareEl.textContent = "目前無比較表。";
+        }
+        helpModalUseCaseEl.textContent = item.useCase;
+        helpModalExampleEl.textContent = item.example;
+        helpModalBackdropEl.classList.add("open");
+        helpModalBackdropEl.setAttribute("aria-hidden", "false");
+      }
+
+      function closeHelpModal() {
+        helpModalBackdropEl.classList.remove("open");
+        helpModalBackdropEl.setAttribute("aria-hidden", "true");
+      }
+
+      function renderCoreQuestions() {
+        formEl.innerHTML = "";
+        coreQuestions.forEach((q) => renderQuestion(formEl, q, false));
+      }
+
+      function renderConditionalQuestions(values) {
+        conditionalAreaEl.innerHTML = "";
+        conditionalQuestions.forEach((q) => {
+          if (q.when(values, importedContext)) {
+            renderQuestion(conditionalAreaEl, q, true);
+          }
+        });
+      }
+
+      function collectValues() {
+        const values = {};
+        coreQuestions.forEach((q) => {
+          if (q.type === "single") {
+            const el = document.querySelector(`input[name="${q.id}"]:checked`);
+            values[q.id] = el ? el.value : "";
+          } else if (q.type === "multi") {
+            const els = document.querySelectorAll(`input[name="${q.id}"]:checked`);
+            values[q.id] = Array.from(els).map((e) => e.value);
+          } else {
+            const el = document.querySelector(`[name="${q.id}"]`);
+            values[q.id] = el ? el.value : "";
+          }
+        });
+
+        conditionalQuestions.forEach((q) => {
+          if (!q.when(values, importedContext)) return;
+          if (q.type === "single") {
+            const el = document.querySelector(`input[name="${q.id}"]:checked`);
+            values[q.id] = el ? el.value : "";
+          }
+        });
+        return values;
+      }
+
+      function setValue(id, value) {
+        if (Array.isArray(value)) {
+          value.forEach((v) => {
+            const c = document.querySelector(`input[type="checkbox"][name="${id}"][value="${v}"]`);
+            if (c) c.checked = true;
+          });
+          return;
+        }
+        const r = document.querySelector(`input[type="radio"][name="${id}"][value="${value}"]`);
+        if (r) { r.checked = true; return; }
+        const t = document.querySelector(`[name="${id}"]`);
+        if (t) t.value = value;
+      }
+
+      function applyPrefill(prefill) {
+        Object.entries(prefill).forEach(([k, v]) => setValue(k, v));
+        const v = collectValues();
+        renderConditionalQuestions(v);
+        Object.entries(prefill).forEach(([k, val]) => setValue(k, val));
+        refreshAll();
+      }
+
+      function normalizeImportedData(raw) {
+        const normalized = { project_id: "", stage: "", prefill: {}, raw };
+        normalized.project_id = raw.project_id || (raw.meta && raw.meta.project_id) || "";
+        normalized.stage = raw.stage || raw.current_stage || (raw.meta && raw.meta.stage) || "";
+        if (raw.questionnaire_prefill) {
+          normalized.prefill = { ...raw.questionnaire_prefill };
+        } else if (raw.answers && !Array.isArray(raw.answers)) {
+          normalized.prefill = { ...raw.answers };
+        } else if (Array.isArray(raw.answers)) {
+          raw.answers.forEach((a) => {
+            if (a && a.question_id) normalized.prefill[a.question_id] = a.value;
+          });
+        } else if (raw.prefill) {
+          normalized.prefill = { ...raw.prefill };
+        }
+        if (raw.stages && raw.stages.s1 && raw.stages.s1.answers) {
+          normalized.prefill = { ...normalized.prefill, ...raw.stages.s1.answers };
+        }
+        if (!normalized.project_id && raw.project && raw.project.id) {
+          normalized.project_id = raw.project.id;
+        }
+        return normalized;
+      }
+
+      function validateS2(values) {
+        const checks = [];
+        const missing = coreQuestions
+          .filter((q) => {
+            const v = values[q.id];
+            if (q.type === "multi") return !Array.isArray(v) || v.length === 0;
+            return String(v || "").trim() === "";
+          })
+          .map((q) => q.title);
+
+        checks.push({
+          pass: missing.length === 0,
+          label: missing.length ? `核心必填未完成：${missing.join("、")}` : "核心必填 10 題完成"
+        });
+
+        if (["confidential", "restricted"].includes(importedContext.prefill["project_basic.compliance.data_sensitivity"])) {
+          checks.push({
+            pass: String(values["ai_collaboration.boundary_summary"] || "").trim() !== "",
+            label: "機密專案已設定 AI 邊界策略"
+          });
+        }
+
+        if (["microservices"].includes(values["architecture.pattern.style"])) {
+          checks.push({
+            pass: String(values["architecture.communication.style"] || "").trim() !== "",
+            label: "微服務已設定通訊方式"
+          });
+        }
+
+        const confirmedCount = confirmationItems.filter((item) => {
+          const c = document.querySelector(`#${item.id}`);
+          return c && c.checked;
+        }).length;
+        checks.push({
+          pass: confirmedCount >= 3,
+          label: `技術確認至少 3 項（目前 ${confirmedCount} 項）`
+        });
+
+        validationListEl.innerHTML = "";
+        checks.forEach((c) => {
+          const li = document.createElement("li");
+          li.innerHTML = `${c.label}<span class="badge ${c.pass ? "ok" : "warn"}">${c.pass ? "通過" : "待補"}</span>`;
+          validationListEl.appendChild(li);
+        });
+
+        const fail = checks.filter((c) => !c.pass).length;
+        importStatusEl.className = `status ${fail ? "warn" : "ok"}`;
+        importStatusEl.textContent = fail ? `S2 驗證未通過：${fail} 項待補` : "S2 驗證通過，可進入 S3。";
+      }
+
+      function buildSuggestions(values) {
+        const list = [];
+        const push = (msg) => list.push(msg);
+        if (values["architecture.pattern.style"] === "microservices" && values["project_basic.profile.team_size"] <= 4) {
+          push("目前團隊較小，微服務治理成本高，建議先評估 modular_monolith。");
+        }
+        if (values["database.primary.engine"] === "azure_sql" && values["architecture.hosting.platform"] !== "azure") {
+          push("資料庫與部署平台不一致，建議評估跨雲連線成本與維運責任。");
+        }
+        if (values["backend.auth.method"] === "jwt" && !values["backend.auth.token_strategy"]) {
+          push("已選 JWT，建議補上 Token Strategy（Access/Refresh）。");
+        }
+        if (values["api.style.type"] === "restful" && !values["api.response.format"]) {
+          push("REST 建議定義統一 response envelope，減少前後端溝通成本。");
+        }
+        if (["analysis_only", "private_model_only"].includes(values["ai_collaboration.boundary_summary"])) {
+          push("AI 邊界偏保守，請確認是否仍符合交付時程。");
+        }
+        return list;
+      }
+
+      function buildRecommendationSummary(values) {
+        const summaries = [];
+        const push = (title, reason) => summaries.push({ title, reason });
+
+        if (values["architecture.pattern.style"] === "modular_monolith") {
+          push("目前推薦：模組化單體", "因為你們現階段是小到中型團隊，且需要先快速落地、保留後續擴充彈性。");
+        } else if (values["architecture.pattern.style"] === "microservices") {
+          push("目前推薦摘要：微服務需再確認", "若沒有多團隊與高擴展需求，微服務可能會增加治理與維運成本。");
+        }
+
+        if (values["backend.runtime.platform"] === "dotnet") {
+          push("目前推薦：.NET 後端", "和你們現有 Visual Studio、Azure 與後端工程能力較一致，導入風險較低。");
+        }
+
+        if (values["frontend.framework.choice"] === "react") {
+          push("目前推薦：React 前端", "對表單、流程頁與元件化需求相容性高，也利於 AI 生成前端元件。");
+        }
+
+        if (values["database.primary.engine"] === "azure_sql") {
+          push("目前推薦：Azure SQL", "和公司既有基礎設施一致，後續部署與維運最直接。");
+        }
+
+        if (values["api.style.type"] === "restful") {
+          push("目前推薦：REST API", "對治理、文件化與前後端協作最直覺，適合作為第一版標準。");
+        }
+
+        if (values["backend.auth.method"] === "azure_ad") {
+          push("目前推薦：Azure AD 登入", "如果此系統主要是內部使用，Azure AD 可降低帳號管理成本。");
+        } else if (values["backend.auth.method"] === "jwt") {
+          push("目前推薦：JWT", "適合前後端分離與 API 服務，但需補上 token 策略。");
+        }
+
+        if (values["security.auth.authorization"] === "rbac") {
+          push("目前推薦：RBAC 權限模型", "第一版角色明確時最容易落地，也比較利於 PM 與技術共同理解。");
+        }
+
+        if (values["architecture.hosting.platform"] === "azure") {
+          push("目前推薦：Azure 部署", "和既有環境一致，可直接銜接資料庫、監控與後續 DevOps 規劃。");
+        }
+
+        if (values["ai_collaboration.boundary_summary"] === "private_model_only") {
+          push("目前推薦：僅私有模型可用", "因為專案涉及機密知識，這是較穩妥的 AI 邊界策略。");
+        } else if (values["ai_collaboration.boundary_summary"] === "analysis_and_code_with_review") {
+          push("目前推薦：AI 可產碼但需覆核", "若文件完整且審查流程到位，這能兼顧效率與風險控制。");
+        }
+
+        return summaries;
+      }
+
+      function renderSuggestions(values) {
+        const suggestions = buildSuggestions(values);
+        suggestionListEl.innerHTML = "";
+        if (!suggestions.length) {
+          const li = document.createElement("li");
+          li.textContent = "目前無明顯衝突，建議進入技術確認流程。";
+          suggestionListEl.appendChild(li);
+          return;
+        }
+        suggestions.forEach((s) => {
+          const li = document.createElement("li");
+          li.textContent = s;
+          suggestionListEl.appendChild(li);
+        });
+      }
+
+      function renderRecommendationSummary(values) {
+        const summaries = buildRecommendationSummary(values);
+        recommendationSummaryListEl.innerHTML = "";
+        if (!summaries.length) {
+          const li = document.createElement("li");
+          li.textContent = "尚未形成明確推薦摘要，請先完成更多核心題。";
+          recommendationSummaryListEl.appendChild(li);
+          return;
+        }
+        summaries.forEach((item) => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <div class="summary-title">${item.title} <span class="badge info">系統判讀</span></div>
+            <div class="summary-reason">${item.reason}</div>
+          `;
+          recommendationSummaryListEl.appendChild(li);
+        });
+      }
+
+      function buildS3DecisionList(values) {
+        const out = [];
+        const add = (id, topic, owner, why, inputs) => {
+          out.push({ id, topic, owner, due_stage: "S3", why, required_inputs: inputs });
+        };
+        add("S3-ARCH-001", "確立專案骨架與資料夾結構", "Architect + Backend Lead", "避免 AI 生成結構不一致", ["architecture.pattern.style", "architecture.pattern.layers"]);
+        add("S3-ARCH-002", "定義 API 與錯誤格式規範", "Backend Lead", "確保前後端契約一致", ["api.style.type", "api.response.format"]);
+        add("S3-ARCH-003", "設定認證授權與安全控制", "Backend + Security", "避免敏感資料與權限風險", ["backend.auth.method", "security.auth.authorization", "ai_collaboration.boundary_summary"]);
+        add("S3-ARCH-004", "建立部署與可觀測性基線", "DevOps", "降低上線後維運風險", ["architecture.hosting.platform", "database.primary.engine"]);
+        if (values["architecture.pattern.style"] === "microservices") {
+          add("S3-ARCH-005", "定義服務拆分與通訊契約", "Architect", "微服務需先確立界線與通訊方式", ["architecture.communication.style"]);
+        }
+        return out;
+      }
+
+      function toS2Context(values) {
+        return {
+          project_id: importedContext.project_id || "PRJ-001",
+          from_stage: importedContext.stage || "S1",
+          stage: "S2",
+          architecture: {
+            style: values["architecture.pattern.style"],
+            layers: values["architecture.pattern.layers"] || [],
+            communication: values["architecture.communication.style"] || "n/a"
+          },
+          stack: {
+            backend: values["backend.runtime.platform"],
+            frontend: values["frontend.framework.choice"],
+            database: values["database.primary.engine"],
+            api_style: values["api.style.type"]
+          },
+          security: {
+            authn: values["backend.auth.method"],
+            authz: values["security.auth.authorization"],
+            ai_boundary: values["ai_collaboration.boundary_summary"]
+          },
+          deployment: {
+            platform: values["architecture.hosting.platform"]
+          },
+          confirmation: confirmationItems.map((item) => ({
+            item: item.label,
+            owner: item.owner,
+            confirmed: !!document.querySelector(`#${item.id}`)?.checked,
+            note: document.querySelector(`#${item.id}_note`)?.value || ""
+          }))
+        };
+      }
+
+      function renderConfirmTable() {
+        confirmTableBodyEl.innerHTML = "";
+        confirmationItems.forEach((item) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${item.label}</td>
+            <td>${item.owner}</td>
+            <td><label><input id="${item.id}" type="checkbox" /> 已確認</label></td>
+            <td><input id="${item.id}_note" type="text" placeholder="可填確認重點或風險" /></td>
+          `;
+          confirmTableBodyEl.appendChild(tr);
+        });
+      }
+
+      function refreshAll() {
+        const values = collectValues();
+        renderConditionalQuestions(values);
+        renderSuggestions(values);
+        renderRecommendationSummary(values);
+        const context = toS2Context(collectValues());
+        contextPreviewEl.textContent = JSON.stringify(context, null, 2);
+        s3DecisionList = buildS3DecisionList(collectValues());
+        decisionPreviewEl.textContent = JSON.stringify(s3DecisionList, null, 2);
+      }
+
+      async function importJson() {
+        const file = importFileEl.files && importFileEl.files[0];
+        if (!file) {
+          importStatusEl.className = "status warn";
+          importStatusEl.textContent = "請先選擇 JSON。";
+          return;
+        }
+        try {
+          const raw = JSON.parse(await file.text());
+          importedContext = normalizeImportedData(raw);
+          applyPrefill(importedContext.prefill);
+          importStatusEl.className = "status ok";
+          importStatusEl.textContent = `匯入成功：${file.name}`;
+          validateS2(collectValues());
+        } catch (err) {
+          importStatusEl.className = "status warn";
+          importStatusEl.textContent = `匯入失敗：${err.message}`;
+        }
+      }
+
+      function exportJsonFile(filename, payload) {
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function exportS2Context() {
+        exportJsonFile("prj001-s2-architecture-context.json", toS2Context(collectValues()));
+      }
+
+      function exportS3Decisions() {
+        exportJsonFile("prj001-s3-decision-list.json", {
+          project_id: importedContext.project_id || "PRJ-001",
+          from_stage: "S2",
+          to_stage: "S3",
+          generated_at: new Date().toISOString(),
+          decisions: s3DecisionList
+        });
+      }
+
+      function exportMergedProjectContext() {
+        const values = collectValues();
+        const base = importedContext.raw && typeof importedContext.raw === "object" ? { ...importedContext.raw } : {};
+        const merged = {
+          ...base,
+          project_id: importedContext.project_id || base.project_id || "PRJ-001",
+          current_stage: "S2",
+          questionnaire_prefill: {
+            ...(base.questionnaire_prefill || {}),
+            ...values
+          },
+          stages: {
+            ...(base.stages || {}),
+            s2: {
+              completed_at: new Date().toISOString(),
+              answers: values,
+              s3_decisions: s3DecisionList
+            }
+          },
+          handoff: {
+            next_stage: "S3",
+            generated_at: new Date().toISOString()
+          }
+        };
+        exportJsonFile("prj001-project-context.json", merged);
+      }
+
+      document.getElementById("importBtn").addEventListener("click", importJson);
+      document.getElementById("validateBtn").addEventListener("click", () => validateS2(collectValues()));
+      document.getElementById("suggestBtn").addEventListener("click", refreshAll);
+      document.getElementById("exportContextBtn").addEventListener("click", exportS2Context);
+      document.getElementById("exportDecisionBtn").addEventListener("click", exportS3Decisions);
+      document.getElementById("exportMergedContextBtn").addEventListener("click", exportMergedProjectContext);
+      document.addEventListener("input", refreshAll);
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target instanceof HTMLElement && target.dataset.helpId) {
+          openHelpModal(target.dataset.helpId);
+        }
+      });
+      document.getElementById("closeHelpBtn").addEventListener("click", closeHelpModal);
+      helpModalBackdropEl.addEventListener("click", (event) => {
+        if (event.target === helpModalBackdropEl) {
+          closeHelpModal();
+        }
+      });
+
+      renderCoreQuestions();
+      renderConfirmTable();
+      applyPrefill(suggestedPrefill);
+      validateS2(collectValues());
+    </script>
+  </body>
+</html>
