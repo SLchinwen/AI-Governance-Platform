@@ -24,6 +24,7 @@ describe('questionnaireEngine', () => {
       'frontend.framework.choice': 'react',
       'database.primary.engine': 'postgresql',
       'api.style.type': 'restful',
+      'security.authentication.pattern': 'jwt_bearer',
       'deployment.model': 'paas',
       'architecture.hosting.platform': 'azure',
       'integration.strategy': 'sync_api',

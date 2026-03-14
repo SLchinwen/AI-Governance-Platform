@@ -103,4 +103,64 @@ export const governanceRules: GovernanceRule[] = [
       return null;
     },
   },
+  {
+    id: 'VAL-NEW-007',
+    title: '對外整合情境需定義 authentication pattern',
+    evaluate: (context) => {
+      const integrationLevel = context.stages.s1.answers['project_basic.integration.level'];
+      const authPattern = context.stages.s2.answers['security.authentication.pattern'];
+      if ((integrationLevel === 'external_partners' || integrationLevel === 'mixed') && !authPattern) {
+        return {
+          id: 'VAL-NEW-007',
+          level: 'warning',
+          stage: 's2',
+          title: '缺少 security.authentication.pattern',
+          message: '若涉及外部或混合整合，S2 應先定義主要身份驗證模式。',
+        };
+      }
+      return null;
+    },
+  },
+  {
+    id: 'VAL-NEW-008',
+    title: 'S3 需定義 CI/CD workflow',
+    evaluate: (context) =>
+      context.stages.s3.answers['ci_cd.workflow']
+        ? null
+        : {
+            id: 'VAL-NEW-008',
+            level: 'warning',
+            stage: 's3',
+            title: '缺少 ci_cd.workflow',
+            message: 'S3 尚未定義 CI/CD workflow，AI code generation 與 repo baseline 會缺少交付流程依據。',
+          },
+  },
+  {
+    id: 'VAL-NEW-009',
+    title: 'S3 需定義 logging strategy',
+    evaluate: (context) =>
+      context.stages.s3.answers['logging.strategy']
+        ? null
+        : {
+            id: 'VAL-NEW-009',
+            level: 'warning',
+            stage: 's3',
+            title: '缺少 logging.strategy',
+            message: 'S3 尚未定義 logging strategy，後續監控、稽核與問題追蹤會缺乏一致基線。',
+          },
+  },
+  {
+    id: 'VAL-NEW-010',
+    title: 'S3 需定義 monitoring strategy',
+    evaluate: (context) =>
+      context.stages.s3.answers['monitoring.strategy']
+        ? null
+        : {
+            id: 'VAL-NEW-010',
+            level: 'warning',
+            stage: 's3',
+            title: '缺少 monitoring.strategy',
+            message: 'S3 尚未定義 monitoring strategy，readiness 與 production observability 會缺乏依據。',
+          },
+  },
 ];

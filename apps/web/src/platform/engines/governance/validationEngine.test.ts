@@ -34,6 +34,7 @@ describe('validationEngine', () => {
       'frontend.framework.choice': 'react',
       'database.primary.engine': 'postgresql',
       'api.style.type': 'restful',
+      'security.authentication.pattern': 'oauth_oidc',
       'architecture.communication.style': 'rest',
       'deployment.model': 'containerized',
       'architecture.hosting.platform': 'azure',
@@ -45,6 +46,9 @@ describe('validationEngine', () => {
       repo_structure: 'polyrepo',
       code_structure: 'feature_first',
       module_boundary_definition: 'service-a handles ingestion, service-b handles orchestration',
+      'ci_cd.workflow': 'manual_with_checks',
+      'logging.strategy': 'text_logs',
+      'monitoring.strategy': 'health_checks_only',
       test_coverage_target: 65,
     });
 

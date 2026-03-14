@@ -352,6 +352,7 @@ function App() {
                 <li>前端框架：{architectureSummary.frontendFramework}</li>
                 <li>資料庫：{architectureSummary.databaseEngine}</li>
                 <li>API 風格：{architectureSummary.apiStyle}</li>
+                <li>Authentication：{architectureSummary.authenticationPattern}</li>
                 <li>部署平台：{architectureSummary.hostingPlatform}</li>
                 <li>部署模型：{architectureSummary.deploymentModel}</li>
                 <li>整合策略：{architectureSummary.integrationStrategy}</li>
@@ -363,6 +364,9 @@ function App() {
                 <li>Repo 結構：{designSummary.repoStructure}</li>
                 <li>程式碼結構：{designSummary.codeStructure}</li>
                 <li>模組邊界：{designSummary.moduleBoundaryDefinition}</li>
+                <li>CI/CD：{designSummary.ciCdWorkflow}</li>
+                <li>Logging：{designSummary.loggingStrategy}</li>
+                <li>Monitoring：{designSummary.monitoringStrategy}</li>
                 <li>測試覆蓋率目標：{designSummary.testCoverageTarget}</li>
                 <li>架構風格：{designSummary.architectureStyle}</li>
                 <li>整合策略：{designSummary.integrationStrategy}</li>

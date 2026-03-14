@@ -4,6 +4,9 @@ export interface DesignSummary {
   repoStructure: string;
   codeStructure: string;
   moduleBoundaryDefinition: string;
+  ciCdWorkflow: string;
+  loggingStrategy: string;
+  monitoringStrategy: string;
   testCoverageTarget: string;
   architectureStyle: string;
   integrationStrategy: string;
@@ -17,6 +20,9 @@ export function buildDesignSummary(context: ProjectContext): DesignSummary {
     repoStructure: String(s3['repo_structure'] ?? '-'),
     codeStructure: String(s3['code_structure'] ?? '-'),
     moduleBoundaryDefinition: String(s3['module_boundary_definition'] ?? '-'),
+    ciCdWorkflow: String(s3['ci_cd.workflow'] ?? '-'),
+    loggingStrategy: String(s3['logging.strategy'] ?? '-'),
+    monitoringStrategy: String(s3['monitoring.strategy'] ?? '-'),
     testCoverageTarget: String(s3['test_coverage_target'] ?? '-'),
     architectureStyle: String(s2['architecture.pattern.style'] ?? '-'),
     integrationStrategy: String(s2['integration.strategy'] ?? '-'),
@@ -32,6 +38,9 @@ export function buildDesignRecommendations(context: ProjectContext): Recommendat
   const integrationStrategy = String(s2['integration.strategy'] ?? '');
   const repoStructure = String(s3['repo_structure'] ?? '');
   const codeStructure = String(s3['code_structure'] ?? '');
+  const ciCdWorkflow = String(s3['ci_cd.workflow'] ?? '');
+  const loggingStrategy = String(s3['logging.strategy'] ?? '');
+  const monitoringStrategy = String(s3['monitoring.strategy'] ?? '');
   const testCoverageTarget = Number(s3['test_coverage_target'] ?? 0);
   const moduleBoundaryDefinition = String(s3['module_boundary_definition'] ?? '');
 
@@ -76,6 +85,39 @@ export function buildDesignRecommendations(context: ProjectContext): Recommendat
       rationale: '若目標低於 70%，後續 validation 與 review 階段通常會增加風險與補件機率。',
       confidence: 0.88,
       targets: ['test_coverage_target'],
+    });
+  }
+
+  if (architectureStyle === 'microservices' && ciCdWorkflow === 'manual_with_checks') {
+    recommendations.push({
+      id: 'REC-S3-005',
+      stage: 's3',
+      title: '微服務架構建議採自動化 CI/CD workflow',
+      rationale: '若系統採 microservices，但仍使用 manual workflow，發布與契約同步成本會顯著增加。',
+      confidence: 0.86,
+      targets: ['ci_cd.workflow'],
+    });
+  }
+
+  if (loggingStrategy === 'text_logs') {
+    recommendations.push({
+      id: 'REC-S3-006',
+      stage: 's3',
+      title: '建議改用 structured logging 以利治理與 AI 追蹤',
+      rationale: '結構化日誌更適合後續監控、稽核與 AI 協作時的問題追查。',
+      confidence: 0.79,
+      targets: ['logging.strategy'],
+    });
+  }
+
+  if (monitoringStrategy === 'health_checks_only' && (integrationStrategy === 'event_driven' || architectureStyle === 'microservices')) {
+    recommendations.push({
+      id: 'REC-S3-007',
+      stage: 's3',
+      title: '複雜整合或微服務建議補強 monitoring strategy',
+      rationale: '若只有 health checks，通常不足以支撐事件流或多模組系統的治理可觀測性。',
+      confidence: 0.88,
+      targets: ['monitoring.strategy'],
     });
   }
 

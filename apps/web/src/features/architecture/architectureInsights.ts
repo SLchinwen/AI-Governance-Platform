@@ -6,6 +6,7 @@ export interface ArchitectureSummary {
   frontendFramework: string;
   databaseEngine: string;
   apiStyle: string;
+  authenticationPattern: string;
   hostingPlatform: string;
   deploymentModel: string;
   integrationStrategy: string;
@@ -21,6 +22,7 @@ export function buildArchitectureSummary(context: ProjectContext): ArchitectureS
     frontendFramework: String(answers['frontend.framework.choice'] ?? '-'),
     databaseEngine: String(answers['database.primary.engine'] ?? '-'),
     apiStyle: String(answers['api.style.type'] ?? '-'),
+    authenticationPattern: String(answers['security.authentication.pattern'] ?? '-'),
     hostingPlatform: String(answers['architecture.hosting.platform'] ?? '-'),
     deploymentModel: String(answers['deployment.model'] ?? '-'),
     integrationStrategy: String(answers['integration.strategy'] ?? '-'),
@@ -43,6 +45,7 @@ export function buildArchitectureRecommendations(context: ProjectContext): Recom
   const hostingPlatform = String(s2['architecture.hosting.platform'] ?? '');
   const dbEngine = String(s2['database.primary.engine'] ?? '');
   const apiStyle = String(s2['api.style.type'] ?? '');
+  const authPattern = String(s2['security.authentication.pattern'] ?? '');
   const aiBoundary = String(s2['ai_collaboration.boundary_summary'] ?? '');
 
   if (architectureStyle === 'microservices' && teamSize > 0 && teamSize <= 4) {
@@ -97,6 +100,17 @@ export function buildArchitectureRecommendations(context: ProjectContext): Recom
       rationale: '若資料敏感度高，但 AI 仍允許產碼，需確保 review、稽核與模型管制已同步建立。',
       confidence: 0.91,
       targets: ['ai_collaboration.boundary_summary', 'validation.risk_score'],
+    });
+  }
+
+  if ((integrationLevel === 'external_partners' || dataSensitivity === 'restricted') && authPattern && authPattern !== 'oauth_oidc') {
+    recommendations.push({
+      id: 'REC-S2-006',
+      stage: 's2',
+      title: '高敏感或對外整合情境建議優先採 OAuth / OIDC',
+      rationale: '若涉及外部整合或較高資料敏感度，使用標準化身份驗證流程通常更容易治理與稽核。',
+      confidence: 0.83,
+      targets: ['security.authentication.pattern'],
     });
   }
 

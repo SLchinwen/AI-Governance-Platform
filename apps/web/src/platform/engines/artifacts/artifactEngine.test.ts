@@ -31,12 +31,16 @@ describe('artifactEngine', () => {
       'frontend.framework.choice': 'react',
       'database.primary.engine': 'postgresql',
       'api.style.type': 'restful',
+      'security.authentication.pattern': 'jwt_bearer',
       'architecture.pattern.style': 'modular_monolith',
       'integration.strategy': 'sync_api',
     });
     context = withStageAnswers(context, 's3', {
       repo_structure: 'monorepo',
       code_structure: 'feature_first',
+      'ci_cd.workflow': 'github_actions',
+      'logging.strategy': 'structured_json',
+      'monitoring.strategy': 'apm_dashboard_alerts',
       test_coverage_target: 80,
       module_boundary_definition: 'frontend consumes application services through typed contracts',
     });
@@ -49,6 +53,7 @@ describe('artifactEngine', () => {
 
     expect(techStack.generated_from_version).toBe('review-v2.1.0');
     expect(techStack.stack.frontend_framework).toBe('react');
+    expect(techStack.stack.authentication_pattern).toBe('jwt_bearer');
     expect(Object.keys(artifacts)).toEqual(['tech-stack.json', 'ai-context.md', 'readiness-report.md']);
     expect(artifacts['ai-context.md'].preview).toContain('# AI Development Governance Platform');
     expect(artifacts['readiness-report.md'].preview).toContain('## Summary');
@@ -81,7 +86,7 @@ describe('artifactEngine', () => {
       },
     };
     context = withStageAnswers(context, 's6', {
-      'output.assets.selected': ['tech-stack.json', 'project-architecture.md', 'implementation-checklist.md'],
+      'output.assets.selected': ['tech-stack.json', 'adr.md', 'cursor-rules.mdc'],
     });
 
     const handoff = buildS7Handoff(context);
@@ -91,8 +96,8 @@ describe('artifactEngine', () => {
     expect(handoff.validation_summary.warning_count).toBe(1);
     expect(handoff.output_targets).toEqual([
       'tech-stack.json',
-      'project-architecture.md',
-      'implementation-checklist.md',
+      'adr.md',
+      'cursor-rules.mdc',
     ]);
     expect(handoff.outputs['tech-stack.json']).toContain('"generated_from_version": "review-v2.1.0"');
   });

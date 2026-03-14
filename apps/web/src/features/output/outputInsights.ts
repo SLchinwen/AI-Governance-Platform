@@ -61,6 +61,17 @@ export function buildOutputRecommendations(context: ProjectContext): Recommendat
     });
   }
 
+  if (!context.artifacts['adr.md'] && !context.artifacts['cursor-rules.mdc']) {
+    recommendations.push({
+      id: 'REC-S6-004',
+      stage: 's6',
+      title: '建議一併產出 ADR 與 Cursor 規則草稿',
+      rationale: '這兩份輸出有助於把架構決策與 AI 協作規範落到實際工程開發流程中。',
+      confidence: 0.85,
+      targets: ['output.assets.selected'],
+    });
+  }
+
   if (!recommendations.length) {
     recommendations.push({
       id: 'REC-S6-000',

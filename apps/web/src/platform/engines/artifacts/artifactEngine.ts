@@ -23,10 +23,14 @@ export function buildTechStackArtifact(context: ProjectContext) {
       frontend_framework: s2['frontend.framework.choice'] ?? '',
       database_engine: s2['database.primary.engine'] ?? '',
       api_style: s2['api.style.type'] ?? '',
+      authentication_pattern: s2['security.authentication.pattern'] ?? '',
       architecture_style: s2['architecture.pattern.style'] ?? '',
       integration_strategy: s2['integration.strategy'] ?? '',
       repo_structure: s3['repo_structure'] ?? '',
       code_structure: s3['code_structure'] ?? '',
+      ci_cd_workflow: s3['ci_cd.workflow'] ?? '',
+      logging_strategy: s3['logging.strategy'] ?? '',
+      monitoring_strategy: s3['monitoring.strategy'] ?? '',
       test_coverage_target: s3['test_coverage_target'] ?? '',
     },
   };
@@ -58,12 +62,16 @@ export function buildAiContextArtifact(context: ProjectContext) {
 - Frontend: ${String(s2['frontend.framework.choice'] ?? '')}
 - Database: ${String(s2['database.primary.engine'] ?? '')}
 - API Style: ${String(s2['api.style.type'] ?? '')}
+- Authentication: ${String(s2['security.authentication.pattern'] ?? '')}
 - Hosting Platform: ${String(s2['architecture.hosting.platform'] ?? '')}
 
 ## Design Constraints
 - Repo Structure: ${String(s3['repo_structure'] ?? '')}
 - Code Structure: ${String(s3['code_structure'] ?? '')}
 - Module Boundaries: ${String(s3['module_boundary_definition'] ?? '')}
+- CI/CD Workflow: ${String(s3['ci_cd.workflow'] ?? '')}
+- Logging Strategy: ${String(s3['logging.strategy'] ?? '')}
+- Monitoring Strategy: ${String(s3['monitoring.strategy'] ?? '')}
 - Test Coverage Target: ${String(s3['test_coverage_target'] ?? '')}
 
 ## Governance Notes
@@ -111,6 +119,7 @@ export function buildProjectArchitectureArtifact(context: ProjectContext) {
 ## Architecture Decisions
 - Style: ${String(s2['architecture.pattern.style'] ?? '')}
 - Communication: ${String(s2['architecture.communication.style'] ?? '')}
+- Authentication: ${String(s2['security.authentication.pattern'] ?? '')}
 - Deployment Model: ${String(s2['deployment.model'] ?? '')}
 - Hosting Platform: ${String(s2['architecture.hosting.platform'] ?? '')}
 - Integration Strategy: ${String(s2['integration.strategy'] ?? '')}
@@ -119,9 +128,66 @@ export function buildProjectArchitectureArtifact(context: ProjectContext) {
 ## Implementation Design
 - Repo Structure: ${String(s3['repo_structure'] ?? '')}
 - Code Structure: ${String(s3['code_structure'] ?? '')}
+- CI/CD Workflow: ${String(s3['ci_cd.workflow'] ?? '')}
+- Logging Strategy: ${String(s3['logging.strategy'] ?? '')}
+- Monitoring Strategy: ${String(s3['monitoring.strategy'] ?? '')}
 
 ## Module Boundary Definition
 ${String(s3['module_boundary_definition'] ?? '')}
+`;
+}
+
+export function buildAdrArtifact(context: ProjectContext) {
+  const s2 = context.stages.s2.answers;
+  const s3 = context.stages.s3.answers;
+
+  return `# ADR: ${context.project_name} Governance Baseline
+
+## Status
+Accepted for ${context.review.review_version}
+
+## Context
+- Architecture Style: ${String(s2['architecture.pattern.style'] ?? '')}
+- Authentication: ${String(s2['security.authentication.pattern'] ?? '')}
+- Integration Strategy: ${String(s2['integration.strategy'] ?? '')}
+- Data Sensitivity: ${String(context.stages.s1.answers['project_basic.compliance.data_sensitivity'] ?? '')}
+
+## Decision
+- Repo Structure: ${String(s3['repo_structure'] ?? '')}
+- Code Structure: ${String(s3['code_structure'] ?? '')}
+- CI/CD Workflow: ${String(s3['ci_cd.workflow'] ?? '')}
+- Logging Strategy: ${String(s3['logging.strategy'] ?? '')}
+- Monitoring Strategy: ${String(s3['monitoring.strategy'] ?? '')}
+
+## Consequences
+- Readiness Score: ${context.validation.readiness_score}
+- Risk Score: ${context.validation.risk_score}
+- Confidence Score: ${context.validation.confidence_score}
+`;
+}
+
+export function buildCursorRulesArtifact(context: ProjectContext) {
+  const s2 = context.stages.s2.answers;
+  const s3 = context.stages.s3.answers;
+
+  return `---
+description: Project-specific AI coding rules for ${context.project_id}
+globs:
+alwaysApply: false
+---
+
+# ${context.project_name} AI Collaboration Rules
+
+- Respect approved architecture: ${String(s2['architecture.pattern.style'] ?? '')}
+- Do not override authentication pattern: ${String(s2['security.authentication.pattern'] ?? '')}
+- Follow integration strategy: ${String(s2['integration.strategy'] ?? '')}
+- Follow repo structure: ${String(s3['repo_structure'] ?? '')}
+- Follow code structure: ${String(s3['code_structure'] ?? '')}
+- Preserve module boundaries: ${String(s3['module_boundary_definition'] ?? '')}
+- Assume CI/CD workflow: ${String(s3['ci_cd.workflow'] ?? '')}
+- Use logging strategy: ${String(s3['logging.strategy'] ?? '')}
+- Use monitoring strategy: ${String(s3['monitoring.strategy'] ?? '')}
+- Keep changes consistent with review version: ${context.review.review_version}
 `;
 }
 
@@ -177,6 +243,18 @@ export function buildArtifacts(context: ProjectContext): Record<string, Artifact
       'readiness-report.md',
       'markdown',
       buildReadinessReportArtifact(context),
+      updatedAt,
+    );
+  }
+  if (selected.includes('adr.md')) {
+    artifacts['adr.md'] = toArtifactRecord('adr', 'adr.md', 'markdown', buildAdrArtifact(context), updatedAt);
+  }
+  if (selected.includes('cursor-rules.mdc')) {
+    artifacts['cursor-rules.mdc'] = toArtifactRecord(
+      'cursor-rules',
+      'cursor-rules.mdc',
+      'markdown',
+      buildCursorRulesArtifact(context),
       updatedAt,
     );
   }
