@@ -48,7 +48,10 @@ describe('artifactEngine', () => {
       'output.assets.selected': ['tech-stack.json', 'ai-context.md', 'readiness-report.md'],
     });
 
-    const techStack = buildTechStackArtifact(context);
+    const techStack = buildTechStackArtifact(context) as {
+      generated_from_version: string;
+      stack: { frontend_framework: string; authentication_pattern: string };
+    };
     const artifacts = buildArtifacts(context);
 
     expect(techStack.generated_from_version).toBe('review-v2.1.0');

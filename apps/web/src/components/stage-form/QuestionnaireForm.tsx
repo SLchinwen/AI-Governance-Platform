@@ -9,6 +9,11 @@ interface QuestionnaireFormProps {
   onChange: (stage: StageKey, fieldId: string, value: FieldValue) => void;
 }
 
+function getSectionOwnerSummary(fields: { ownerRoles: string[] }[]): string {
+  const roles = [...new Set(fields.flatMap((f) => f.ownerRoles))];
+  return roles.length > 0 ? roles.join('、') : '—';
+}
+
 export function QuestionnaireForm({ stage, stageSchema, answers, onChange }: QuestionnaireFormProps) {
   const sectionMap = groupFieldsBySection(stageSchema.fields);
 
@@ -18,7 +23,10 @@ export function QuestionnaireForm({ stage, stageSchema, answers, onChange }: Que
         <section key={sectionTitle} className="form-section">
           <div className="form-section-head">
             <h3>{sectionTitle}</h3>
-            <span>{fields.length} 題</span>
+            <span className="section-meta">
+              {fields.length} 題
+              <span className="section-owner" title="本區塊主要負責角色">負責：{getSectionOwnerSummary(fields)}</span>
+            </span>
           </div>
 
           <div className="workbench-grid">
@@ -35,11 +43,13 @@ export function QuestionnaireForm({ stage, stageSchema, answers, onChange }: Que
 
               return (
                 <article key={field.id} className="work-card">
-                  <h3>{field.label}</h3>
+                  <div className="work-card-head">
+                    <h3>{field.label}{field.required ? <span className="required-badge" aria-label="必填">*</span> : null}</h3>
+                    <span className="field-owner-tag">{field.ownerRoles.join(' / ')}</span>
+                  </div>
                   <p className="hint">{field.description}</p>
                   <div className="field-meta">
                     <span>{field.required ? '必填' : '選填'}</span>
-                    <span>{field.ownerRoles.join(' / ')}</span>
                   </div>
 
                   {field.type === 'textarea' ? (

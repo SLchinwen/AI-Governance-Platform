@@ -32,6 +32,7 @@ describe('projectContextStore helpers', () => {
       'project_basic.integration.level': 'mixed',
       'project_basic.artifact.readiness': 'ready_for_codegen',
       'project_basic.governance.ai_execution_boundary': 'approved_models_only',
+      'project_basic.tech_stack_adoption_mode': 'full_standard',
     });
 
     const progress = getStageProgress(context);

@@ -13,6 +13,8 @@ import type {
   ReviewState,
   StageAnswerSet,
   StageKey,
+  TechStackAdoptionMode,
+  TechStackDimensionId,
   ValidationState,
 } from '../types/projectContext';
 
@@ -25,6 +27,15 @@ type ProjectContextAction =
   | { type: 'set_phase'; phase: PhaseId }
   | { type: 'set_stage'; stage: StageKey }
   | { type: 'update_stage_field'; stage: StageKey; fieldId: string; value: FieldValue }
+  | {
+      type: 'apply_company_standard';
+      payload: {
+        s2: Record<string, FieldValue>;
+        s3: Record<string, FieldValue>;
+        fieldDimensionMap?: { s2: Record<string, string>; s3: Record<string, string> };
+      };
+    }
+  | { type: 'update_standard_exception_note'; stage: 's2' | 's3'; note: string }
   | { type: 'hydrate'; context: ProjectContext };
 
 const initialMeta: ContextMeta = {
@@ -183,6 +194,11 @@ export function createInitialProjectContext(): ProjectContext {
     current_phase: 'phase_a',
     current_stage: 's1',
     meta: initialMeta,
+    techStackAdoptionMode: null,
+    customDimensionIds: [],
+    stageTechSource: {},
+    companyStandardFieldDimensionMap: undefined,
+    standardExceptionNotes: undefined,
     fact_base: [],
     prefill: {},
     stages: {
@@ -238,12 +254,26 @@ function projectContextReducer(state: ProjectContext, action: ProjectContextActi
           },
         },
       };
-      const nextContext = {
+      let adoptionMode: TechStackAdoptionMode = state.techStackAdoptionMode;
+      let customIds: TechStackDimensionId[] = state.customDimensionIds;
+      if (action.stage === 's1') {
+        if (action.fieldId === 'project_basic.tech_stack_adoption_mode') {
+          adoptionMode = (action.value === 'full_standard' || action.value === 'partial_custom'
+            ? action.value
+            : null) as TechStackAdoptionMode;
+        }
+        if (action.fieldId === 'project_basic.tech_stack_custom_dimensions') {
+          customIds = Array.isArray(action.value) ? (action.value as TechStackDimensionId[]) : [];
+        }
+      }
+      const nextContext: ProjectContext = {
         ...state,
         project_name:
           action.fieldId === 'project_basic.profile.name' && typeof action.value === 'string' && action.value.trim() !== ''
             ? action.value
             : state.project_name,
+        techStackAdoptionMode: adoptionMode,
+        customDimensionIds: customIds,
         stages: nextStages,
         prefill: {
           ...state.prefill,
@@ -253,8 +283,55 @@ function projectContextReducer(state: ProjectContext, action: ProjectContextActi
       };
       return applyValidationState(nextContext);
     }
-    case 'hydrate':
-      return applyValidationState(action.context);
+    case 'apply_company_standard': {
+      const { s2, s3 } = action.payload;
+      const nextContext: ProjectContext = {
+        ...state,
+        stages: {
+          ...state.stages,
+          s2: {
+            ...state.stages.s2,
+            status: state.stages.s2.status === 'not_started' ? 'in_progress' : state.stages.s2.status,
+            answers: { ...state.stages.s2.answers, ...s2 },
+          },
+          s3: {
+            ...state.stages.s3,
+            status: state.stages.s3.status === 'not_started' ? 'in_progress' : state.stages.s3.status,
+            answers: { ...state.stages.s3.answers, ...s3 },
+          },
+        },
+        stageTechSource: {
+          ...state.stageTechSource,
+          s2: 'company_standard',
+          s3: 'company_standard',
+        },
+        companyStandardFieldDimensionMap: action.payload.fieldDimensionMap ?? state.companyStandardFieldDimensionMap,
+        meta: { ...state.meta, last_updated_at: new Date().toISOString() },
+      };
+      return applyValidationState(nextContext);
+    }
+    case 'update_standard_exception_note': {
+      return {
+        ...state,
+        standardExceptionNotes: {
+          ...state.standardExceptionNotes,
+          [action.stage]: action.note,
+        },
+        meta: { ...state.meta, last_updated_at: new Date().toISOString() },
+      };
+    }
+    case 'hydrate': {
+      const ctx = action.context;
+      const normalized: ProjectContext = {
+        ...ctx,
+        techStackAdoptionMode: ctx.techStackAdoptionMode ?? null,
+        customDimensionIds: Array.isArray(ctx.customDimensionIds) ? ctx.customDimensionIds : [],
+        stageTechSource: ctx.stageTechSource && typeof ctx.stageTechSource === 'object' ? ctx.stageTechSource : {},
+        companyStandardFieldDimensionMap: ctx.companyStandardFieldDimensionMap,
+        standardExceptionNotes: ctx.standardExceptionNotes && typeof ctx.standardExceptionNotes === 'object' ? ctx.standardExceptionNotes : undefined,
+      };
+      return applyValidationState(normalized);
+    }
     default:
       return state;
   }

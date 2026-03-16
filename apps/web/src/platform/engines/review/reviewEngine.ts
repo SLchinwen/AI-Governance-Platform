@@ -93,6 +93,8 @@ export function computeReviewState(context: ProjectContext): ReviewState {
 
 export function buildApprovedReviewPacket(context: ProjectContext) {
   const review = computeReviewState(context);
+  const summary = context.validation.governance_adoption_summary;
+
   return {
     project_id: context.project_id,
     from_stage: 'S5',
@@ -121,6 +123,15 @@ export function buildApprovedReviewPacket(context: ProjectContext) {
       blocker_count: context.validation.blockers.length,
       warning_count: context.validation.warnings.length,
     },
+    tech_stack_summary: summary
+      ? {
+          adoption_mode: summary.mode,
+          dimensions_from_standard: summary.dimensions_from_standard,
+          custom_dimensions: summary.custom_dimensions,
+          exception_notes_present: summary.has_exception_notes,
+          maturity_label: summary.maturity_label,
+        }
+      : undefined,
     unresolved_blockers: context.validation.blockers,
     unresolved_warnings: context.validation.warnings,
     checklist: review.checklist,

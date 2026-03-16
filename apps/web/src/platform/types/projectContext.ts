@@ -52,6 +52,15 @@ export interface ValidationIssueRecord {
   owner?: string;
 }
 
+/** 技術棧採用與客製/例外之成熟度摘要（供 S4 顯示與 S5 產出引用） */
+export interface GovernanceAdoptionSummary {
+  mode: TechStackAdoptionMode;
+  dimensions_from_standard: string[];
+  custom_dimensions: string[];
+  has_exception_notes: boolean;
+  maturity_label: string;
+}
+
 export interface ValidationState {
   readiness_score: number;
   risk_score: number;
@@ -64,6 +73,8 @@ export interface ValidationState {
     due: string;
     stage: StageKey;
   }>;
+  /** 技術棧採用方式與成熟度（有採用模式時才存在） */
+  governance_adoption_summary?: GovernanceAdoptionSummary;
 }
 
 export interface ReviewChecklistItem {
@@ -115,12 +126,41 @@ export interface PublishState {
   publish_ready: boolean;
 }
 
+/** 技術棧採用方式：全程公司標準 vs 部分客製 */
+export type TechStackAdoptionMode = 'full_standard' | 'partial_custom' | null;
+
+/** 公司標準維度 ID，與 company-tech-stack-standard.json dimensions 一致 */
+export type TechStackDimensionId =
+  | 'backend'
+  | 'frontend'
+  | 'user_auth'
+  | 'api_security'
+  | 'api_design'
+  | 'testing'
+  | 'cicd';
+
+/** S2/S3 階段技術棧來源標記 */
+export type StageTechSource = 'company_standard' | 'custom';
+
+/** 欄位 ID 對應維度 ID，供部分客製時篩選顯示用 */
+export type FieldDimensionMap = { s2: Record<string, string>; s3: Record<string, string> };
+
 export interface ProjectContext {
   project_id: string;
   project_name: string;
   current_phase: PhaseId;
   current_stage: StageKey;
   meta: ContextMeta;
+  /** 技術棧採用方式；null 表示尚未選擇 */
+  techStackAdoptionMode: TechStackAdoptionMode;
+  /** 部分客製時，哪些維度為客製（其餘維度依公司標準） */
+  customDimensionIds: TechStackDimensionId[];
+  /** S2/S3 是否已套用公司標準預填 */
+  stageTechSource: Partial<Record<'s2' | 's3', StageTechSource>>;
+  /** 公司標準欄位→維度對照（套用標準時寫入，部分客製時用於篩選欄位） */
+  companyStandardFieldDimensionMap?: FieldDimensionMap;
+  /** 全程採用公司標準時，S2/S3 的確認與例外聲明（供審核與產出引用） */
+  standardExceptionNotes?: Partial<Record<'s2' | 's3', string>>;
   fact_base: FactBaseItem[];
   prefill: Record<string, FieldValue>;
   stages: Record<StageKey, StageAnswerSet>;

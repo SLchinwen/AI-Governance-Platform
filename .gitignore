@@ -23,6 +23,7 @@ obj/
 # Build
 dist/
 build/
+site/
 
 # Environment
 .env

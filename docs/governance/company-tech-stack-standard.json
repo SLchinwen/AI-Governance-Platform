@@ -1,0 +1,80 @@
+{
+  "version": "1.0",
+  "updated": "2026-03",
+  "source_docs": [
+    "AI-Driven Full Stack Development Technical Specification v2.0",
+    "AI Agent Development Checklist v2"
+  ],
+  "dimensions": [
+    {
+      "id": "backend",
+      "name": "後端技術",
+      "spec_ref": "Section IV",
+      "checklist_ref": "Phase 2 Backend .NET 8"
+    },
+    {
+      "id": "frontend",
+      "name": "前端技術",
+      "spec_ref": "Section V",
+      "checklist_ref": "Phase 2 Frontend React+TypeScript"
+    },
+    {
+      "id": "user_auth",
+      "name": "使用者驗證",
+      "spec_ref": "Section VII.2",
+      "checklist_ref": "Phase 0/2/4"
+    },
+    {
+      "id": "api_security",
+      "name": "服務間驗證 (API Security)",
+      "spec_ref": "Section VII.3-7.5",
+      "checklist_ref": "Phase 0/2/4"
+    },
+    {
+      "id": "api_design",
+      "name": "API 設計",
+      "spec_ref": "Section VI",
+      "checklist_ref": "Phase 2 API Design"
+    },
+    {
+      "id": "testing",
+      "name": "測試與品質",
+      "spec_ref": "Section XII, XI",
+      "checklist_ref": "Phase 1-4"
+    },
+    {
+      "id": "cicd",
+      "name": "CI/CD 與流程",
+      "spec_ref": "Section XIII, XIV",
+      "checklist_ref": "Phase 4-6"
+    }
+  ],
+  "standard_values": {
+    "s2": {
+      "architecture.pattern.style": "modular_monolith",
+      "backend.runtime.platform": "dotnet",
+      "frontend.framework.choice": "react",
+      "database.primary.engine": "azure_sql",
+      "api.style.type": "restful",
+      "security.authentication.pattern": "jwt_bearer",
+      "deployment.model": "containerized",
+      "architecture.hosting.platform": "azure",
+      "integration.strategy": "sync_api",
+      "observability.baseline": ["logs", "metrics", "traces", "health_checks"],
+      "ai_collaboration.boundary_summary": "analysis_and_code_with_review"
+    },
+    "s3": {
+      "repo_structure": "monorepo",
+      "code_structure": "feature_first",
+      "module_boundary_definition": "依公司標準 (Spec VIII)：Controller → Service → Repository 分層；Feature-based 目錄結構，模組以介面溝通，不跨模組直接修改 state/entity。",
+      "ci_cd.workflow": "github_actions",
+      "logging.strategy": "structured_json",
+      "monitoring.strategy": "apm_dashboard_alerts",
+      "test_coverage_target": 80
+    }
+  },
+  "notes": {
+    "security.authentication.pattern": "公司標準同時採用 JWT（對外）與 API Key（內部 /internal/）。問卷目前單一欄位以 jwt_bearer 代表「使用者驗證」；若專案僅需 API Key 可選 api_key_internal。未來可拆為 user_auth 與 api_security 兩題。",
+    "module_boundary_definition": "全程採用時以標準描述預填；專案若有特殊邊界可於確認頁補充。"
+  }
+}

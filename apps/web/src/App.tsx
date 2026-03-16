@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import './App.css';
 import { QuestionnaireForm } from './components/stage-form/QuestionnaireForm';
 import { buildArchitectureRecommendations, buildArchitectureSummary } from './features/architecture/architectureInsights';
@@ -11,9 +11,11 @@ import { buildValidationRecommendations, buildValidationSummary } from './featur
 import { getRequiredCompletion, getVisibleFields } from './platform/engines/questionnaire/questionnaireEngine';
 import { governanceRules } from './platform/rules/governanceRules';
 import { phaseLabels, stageSchemas } from './platform/schemas/stageSchemas';
+import { DIMENSION_LABELS, getStandardValuesForStages, loadCompanyTechStackStandard } from './platform/specs/companyStandardLoader';
 import { createInitialProjectContext, getStageProgress, useProjectContextStore } from './platform/store/projectContextStore';
 import { artifactTemplates } from './platform/templates/artifactTemplates';
-import type { FieldValue, PhaseId, ProjectContext, StageKey, ValidationIssueRecord } from './platform/types/projectContext';
+import type { FieldValue, PhaseId, ProjectContext, StageKey, TechStackDimensionId, ValidationIssueRecord } from './platform/types/projectContext';
+import type { StageSchema } from './platform/schemas/stageSchemas';
 
 function isValidProjectContext(value: unknown): value is ProjectContext {
   if (!value || typeof value !== 'object') return false;
@@ -50,6 +52,42 @@ function App() {
     [context.current_stage],
   );
 
+  const effectiveSchema = useMemo((): StageSchema => {
+    const stage = context.current_stage;
+    if ((stage !== 's2' && stage !== 's3') || context.techStackAdoptionMode !== 'partial_custom') return activeSchema;
+    const map = context.companyStandardFieldDimensionMap;
+    const customIds = context.customDimensionIds as TechStackDimensionId[];
+    if (!map || customIds.length === 0) return activeSchema;
+    const stageMap = map[stage];
+    const allowed = new Set(customIds);
+    const fields = activeSchema.fields.filter((f) => stageMap[f.id] && allowed.has(stageMap[f.id] as TechStackDimensionId));
+    return { ...activeSchema, fields };
+  }, [activeSchema, context.current_stage, context.techStackAdoptionMode, context.customDimensionIds, context.companyStandardFieldDimensionMap]);
+
+  useEffect(() => {
+    const mode = context.techStackAdoptionMode;
+    const applied = context.stageTechSource?.s2 === 'company_standard' && context.stageTechSource?.s3 === 'company_standard';
+    if ((mode !== 'full_standard' && mode !== 'partial_custom') || applied) return;
+    let cancelled = false;
+    loadCompanyTechStackStandard()
+      .then((standard) => {
+        if (cancelled) return;
+        const { s2, s3 } = getStandardValuesForStages(standard);
+        dispatch({
+          type: 'apply_company_standard',
+          payload: {
+            s2,
+            s3,
+            fieldDimensionMap: standard.field_dimension_map,
+          },
+        });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [context.techStackAdoptionMode, context.stageTechSource?.s2, context.stageTechSource?.s3, dispatch]);
+
   const progress = useMemo(() => getStageProgress(context), [context]);
   const issues = useMemo(
     () =>
@@ -76,13 +114,21 @@ function App() {
     [activeSchema.key, context.stages],
   );
   const stageCompletion = useMemo(
-    () => getRequiredCompletion(activeSchema, stageAnswers),
-    [activeSchema, stageAnswers],
+    () => getRequiredCompletion(effectiveSchema, stageAnswers),
+    [effectiveSchema, stageAnswers],
   );
   const visibleFields = useMemo(
-    () => getVisibleFields(activeSchema, stageAnswers),
-    [activeSchema, stageAnswers],
+    () => getVisibleFields(effectiveSchema, stageAnswers),
+    [effectiveSchema, stageAnswers],
   );
+
+  const isS2OrS3 = context.current_stage === 's2' || context.current_stage === 's3';
+  const showStandardReferenceSummary = isS2OrS3 && context.techStackAdoptionMode === 'full_standard';
+  const standardApplied =
+    showStandardReferenceSummary &&
+    (context.current_stage === 's2'
+      ? context.stageTechSource?.s2 === 'company_standard'
+      : context.stageTechSource?.s3 === 'company_standard');
   const discoverySummary = useMemo(
     () => (activeSchema.key === 's1' ? buildDiscoverySummary(stageAnswers) : null),
     [activeSchema.key, stageAnswers],
@@ -162,6 +208,10 @@ function App() {
 
   const updateField = (stage: StageKey, fieldId: string, value: FieldValue) => {
     dispatch({ type: 'update_stage_field', stage, fieldId, value });
+  };
+
+  const updateStandardExceptionNote = (stage: 's2' | 's3', note: string) => {
+    dispatch({ type: 'update_standard_exception_note', stage, note });
   };
 
   const handleExportContext = () => {
@@ -292,6 +342,9 @@ function App() {
             <div className="panel-meta">
               <span>Current Phase: {phaseLabels[activeSchema.phase]}</span>
               <span>Schema Fields: {activeSchema.fields.length}</span>
+              {['s1', 's2', 's3', 's4', 's5'].includes(activeSchema.key) && (
+                <span>必填 {stageCompletion.completedFields.length}/{stageCompletion.requiredFields.length} 題・完成率 {stageCompletion.percent}%</span>
+              )}
               <span>Outputs: {activeSchema.outputs.join(', ')}</span>
             </div>
           </div>
@@ -299,28 +352,130 @@ function App() {
           <section className="workbench">
             <div className="workbench-header">
               <h3>Questionnaire Engine</h3>
-              <p>目前已改成外部化 schema 驅動，支援欄位分段、條件題顯示與完成度追蹤，這是後續搬移 S2-S7 的共用表單引擎。</p>
+              <p>
+                {showStandardReferenceSummary
+                  ? '本階段已依「全程採用公司共通標準」自動帶入，以下為引用摘要。若有例外請於審核階段註明。'
+                  : activeSchema.key === 's1' && context.techStackAdoptionMode == null
+                    ? '新專案可於下方「技術棧採用方式」選擇「全程採用公司共通標準」，S2/S3 將自動帶入公司技術棧，無需逐項填寫。支援欄位分段、條件題顯示與完成度追蹤。'
+                    : '目前已改成外部化 schema 驅動，支援欄位分段、條件題顯示與完成度追蹤，這是後續搬移 S2-S7 的共用表單引擎。'}
+              </p>
             </div>
-            <div className="completion-banner">
-              <div>
-                <strong>目前完成度</strong>
-                <p>
-                  必填 {stageCompletion.completedFields.length}/{stageCompletion.requiredFields.length}
-                  ，完成率 {stageCompletion.percent}%
-                </p>
+            {showStandardReferenceSummary ? (
+              <div className="standard-reference-summary">
+                <h4>共通標準引用摘要（依公司技術棧標準 v1）</h4>
+                {standardApplied ? (
+                  <>
+                    <p className="hint">S2/S3 已由公司標準預填，對應 Spec v2.0 與 Checklist v2。如需修改請改選「部分客製」並於 S1 勾選要客製的維度。</p>
+                    <div className="summary-table-wrap">
+                      <table className="summary-table">
+                        <thead>
+                          <tr>
+                            <th>項目</th>
+                            <th>值</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {context.current_stage === 's2' &&
+                            Object.entries(context.stages.s2.answers).map(([key, val]) => (
+                              <tr key={key}>
+                                <td>{key}</td>
+                                <td>{Array.isArray(val) ? val.join(', ') : String(val ?? '')}</td>
+                              </tr>
+                            ))}
+                          {context.current_stage === 's3' &&
+                            Object.entries(context.stages.s3.answers).map(([key, val]) => (
+                              <tr key={key}>
+                                <td>{key}</td>
+                                <td>{Array.isArray(val) ? val.join(', ') : String(val ?? '')}</td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="standard-confirmation-block">
+                      <h4>確認與例外聲明</h4>
+                      <p className="hint">上述皆依公司共通標準帶入。若有例外或需審議事項請填寫於下方，將供 S5 審核與產出引用。</p>
+                      <textarea
+                        className="standard-exception-note"
+                        placeholder="選填。例如：本專案部署改採 AWS，其餘依標準。"
+                        value={context.current_stage === 's2' ? (context.standardExceptionNotes?.s2 ?? '') : (context.standardExceptionNotes?.s3 ?? '')}
+                        onChange={(e) => updateStandardExceptionNote(context.current_stage === 's2' ? 's2' : 's3', e.target.value)}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <p className="hint">正在套用公司標準…</p>
+                )}
               </div>
-              <div className="completion-stats">
-                <span>可見欄位：{visibleFields.length}</span>
-                <span>必填欄位：{stageCompletion.requiredFields.length}</span>
-              </div>
-            </div>
-
-            <QuestionnaireForm
-              stage={activeSchema.key}
-              stageSchema={activeSchema}
-              answers={stageAnswers}
-              onChange={updateField}
-            />
+            ) : (
+              <>
+                {context.techStackAdoptionMode === 'partial_custom' && (context.current_stage === 's2' || context.current_stage === 's3') && context.companyStandardFieldDimensionMap && (
+                  <div className="partial-custom-banner">
+                    <p>
+                      <strong>依公司標準的維度：</strong>
+                      {['backend', 'frontend', 'user_auth', 'api_security', 'api_design', 'testing', 'cicd']
+                        .filter((dim) => !context.customDimensionIds.includes(dim as TechStackDimensionId))
+                        .map((dim) => DIMENSION_LABELS[dim] ?? dim)
+                        .join('、')}
+                      {'。'}
+                    </p>
+                    <p>
+                      <strong>以下僅顯示客製維度：</strong>
+                      {context.customDimensionIds.map((dim) => DIMENSION_LABELS[dim] ?? dim).join('、')}
+                    </p>
+                    <details className="standard-readonly-summary">
+                      <summary>依公司標準的維度（目前帶入值，唯讀）</summary>
+                      <div className="summary-table-wrap">
+                        <table className="summary-table">
+                          <thead>
+                            <tr>
+                              <th>項目</th>
+                              <th>值</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {Object.entries(context.current_stage === 's2' ? context.stages.s2.answers : context.stages.s3.answers)
+                              .filter(([fieldId]) => {
+                                const map = context.current_stage === 's2' ? context.companyStandardFieldDimensionMap!.s2 : context.companyStandardFieldDimensionMap!.s3;
+                                const dimId = map?.[fieldId];
+                                return dimId && !context.customDimensionIds.includes(dimId as TechStackDimensionId);
+                              })
+                              .map(([key, val]) => (
+                                <tr key={key}>
+                                  <td>{key}</td>
+                                  <td>{Array.isArray(val) ? val.join(', ') : String(val ?? '')}</td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </details>
+                  </div>
+                )}
+                <div className="completion-banner">
+                  <div>
+                    <strong>目前完成度</strong>
+                    <p>
+                      必填 {stageCompletion.completedFields.length}/{stageCompletion.requiredFields.length}
+                      ，完成率 {stageCompletion.percent}%
+                    </p>
+                  </div>
+                  <div className="completion-stats">
+                    <span>可見欄位：{visibleFields.length}</span>
+                    <span>必填欄位：{stageCompletion.requiredFields.length}</span>
+                    {context.techStackAdoptionMode === 'partial_custom' && (context.current_stage === 's2' || context.current_stage === 's3') && (
+                      <span className="hint">（僅顯示客製維度）</span>
+                    )}
+                  </div>
+                </div>
+                <QuestionnaireForm
+                  stage={activeSchema.key}
+                  stageSchema={effectiveSchema}
+                  answers={stageAnswers}
+                  onChange={updateField}
+                />
+              </>
+            )}
           </section>
 
           <section className="stage-strip">
@@ -492,6 +647,9 @@ function App() {
 
           <div className="validation-box">
             <strong>治理規則檢查</strong>
+            {issues.length > 0 && (
+              <p className="validation-box-intro">本階段觸發的規則與衍生議題如下，請依 owner 收斂後再進入下一階段。</p>
+            )}
             <ul>
               {activeSchema.key === 's4' && context.validation.blockers.length + context.validation.warnings.length > 0 ? (
                 <>
@@ -542,6 +700,32 @@ function App() {
             </ul>
           </div>
 
+          {activeSchema.key === 's4' && context.validation.governance_adoption_summary ? (
+            <div className="artifact-preview governance-adoption-summary">
+              <strong>技術棧採用與成熟度</strong>
+              <p className="maturity-label">{context.validation.governance_adoption_summary.maturity_label}</p>
+              <ul className="question-list">
+                <li>
+                  <strong>依公司標準的維度：</strong>
+                  {context.validation.governance_adoption_summary.dimensions_from_standard
+                    .map((id) => DIMENSION_LABELS[id] ?? id)
+                    .join('、') || '—'}
+                </li>
+                {context.validation.governance_adoption_summary.custom_dimensions.length > 0 && (
+                  <li>
+                    <strong>客製維度：</strong>
+                    {context.validation.governance_adoption_summary.custom_dimensions
+                      .map((id) => DIMENSION_LABELS[id] ?? id)
+                      .join('、')}
+                  </li>
+                )}
+                {context.validation.governance_adoption_summary.has_exception_notes && (
+                  <li className="hint">已填寫 S2/S3 例外聲明，建議審核時確認。</li>
+                )}
+              </ul>
+            </div>
+          ) : null}
+
           {activeSchema.key === 's4' && context.validation.owner_due_matrix.length > 0 ? (
             <div className="artifact-preview">
               <strong>Owner / Due Matrix</strong>
@@ -553,6 +737,15 @@ function App() {
                   </li>
                 ))}
               </ul>
+            </div>
+          ) : null}
+
+          {activeSchema.key === 's5' && context.validation.governance_adoption_summary ? (
+            <div className="artifact-preview review-hint-block">
+              <strong>審核備註建議</strong>
+              <p className="hint">
+                依公司標準通過時可註明 Spec/Checklist 章節（如 Spec VII）；有客製或例外聲明時請於架構師/PM 意見欄註明接受理由。
+              </p>
             </div>
           ) : null}
 

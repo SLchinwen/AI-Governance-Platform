@@ -9,13 +9,23 @@ export function buildTechStackArtifact(context: ProjectContext) {
   const s1 = context.stages.s1.answers;
   const s2 = context.stages.s2.answers;
   const s3 = context.stages.s3.answers;
+  const adoption = context.validation.governance_adoption_summary;
 
-  return {
+  const base: Record<string, unknown> = {
     project_id: context.project_id,
     project_name: context.project_name,
     generated_from_version: context.review.review_version,
     review_status: context.review.version_status,
     readiness_score: context.validation.readiness_score,
+    ...(adoption && {
+      company_standard: {
+        adoption_mode: adoption.mode,
+        dimensions_from_standard: adoption.dimensions_from_standard,
+        custom_dimensions: adoption.custom_dimensions,
+        exception_notes_present: adoption.has_exception_notes,
+        maturity_label: adoption.maturity_label,
+      },
+    }),
     stack: {
       project_type: s1['project_basic.profile.type'] ?? '',
       system_category: s1['project_basic.system_category'] ?? '',
@@ -34,6 +44,7 @@ export function buildTechStackArtifact(context: ProjectContext) {
       test_coverage_target: s3['test_coverage_target'] ?? '',
     },
   };
+  return base;
 }
 
 export function buildAiContextArtifact(context: ProjectContext) {
@@ -79,6 +90,13 @@ export function buildAiContextArtifact(context: ProjectContext) {
 - Risk Score: ${context.validation.risk_score}
 - Confidence Score: ${context.validation.confidence_score}
 - Unresolved Warnings: ${context.validation.warnings.length}
+${context.validation.governance_adoption_summary ? `
+## Tech Stack Adoption (Company Standard)
+- Maturity: ${context.validation.governance_adoption_summary.maturity_label}
+- Dimensions from standard: ${context.validation.governance_adoption_summary.dimensions_from_standard.join(', ')}
+- Custom dimensions: ${context.validation.governance_adoption_summary.custom_dimensions.length > 0 ? context.validation.governance_adoption_summary.custom_dimensions.join(', ') : 'None'}
+- Exception notes present: ${context.validation.governance_adoption_summary.has_exception_notes ? 'Yes' : 'No'}
+` : ''}
 
 ## Review Notes
 ${context.review.notes.length > 0 ? context.review.notes.map((note) => `- ${note}`).join('\n') : '- None'}
@@ -104,6 +122,13 @@ ${context.validation.warnings.length > 0 ? context.validation.warnings.map((item
 
 ## Owner / Due Matrix
 ${context.validation.owner_due_matrix.length > 0 ? context.validation.owner_due_matrix.map((item) => `- ${item.owner} | ${item.stage} | ${item.due} | ${item.item}`).join('\n') : '- None'}
+${context.validation.governance_adoption_summary ? `
+## Tech Stack Adoption
+- ${context.validation.governance_adoption_summary.maturity_label}
+- 依公司標準維度: ${context.validation.governance_adoption_summary.dimensions_from_standard.join(', ')}
+- 客製維度: ${context.validation.governance_adoption_summary.custom_dimensions.length > 0 ? context.validation.governance_adoption_summary.custom_dimensions.join(', ') : '無'}
+- 有例外聲明: ${context.validation.governance_adoption_summary.has_exception_notes ? '是' : '否'}
+` : ''}
 
 ## Review Focus
 ${context.review.notes.length > 0 ? context.review.notes.map((note) => `- ${note}`).join('\n') : '- None'}
@@ -169,6 +194,12 @@ Accepted for ${context.review.review_version}
 export function buildCursorRulesArtifact(context: ProjectContext) {
   const s2 = context.stages.s2.answers;
   const s3 = context.stages.s3.answers;
+  const adoption = context.validation.governance_adoption_summary;
+
+  const companyStandardLine =
+    adoption && adoption.mode
+      ? `- Company standard adoption: ${adoption.maturity_label} (from standard: ${adoption.dimensions_from_standard.join(', ')}; custom: ${adoption.custom_dimensions.length > 0 ? adoption.custom_dimensions.join(', ') : 'none'})\n`
+      : '';
 
   return `---
 description: Project-specific AI coding rules for ${context.project_id}
@@ -178,7 +209,7 @@ alwaysApply: false
 
 # ${context.project_name} AI Collaboration Rules
 
-- Respect approved architecture: ${String(s2['architecture.pattern.style'] ?? '')}
+${companyStandardLine}- Respect approved architecture: ${String(s2['architecture.pattern.style'] ?? '')}
 - Do not override authentication pattern: ${String(s2['security.authentication.pattern'] ?? '')}
 - Follow integration strategy: ${String(s2['integration.strategy'] ?? '')}
 - Follow repo structure: ${String(s3['repo_structure'] ?? '')}

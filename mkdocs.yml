@@ -1,0 +1,54 @@
+site_name: AI Development Governance Platform
+site_description: AI Development Governance Platform external documentation site
+site_url: https://slchinwen.github.io/AI-Governance-Platform/
+theme:
+  name: material
+
+docs_dir: docs
+
+plugins:
+  - search
+
+nav:
+  - 首頁: index.md
+  - 操作手冊:
+      - 平台操作手冊: governance/platform-operation-manual.md
+      - 公司技術棧共通標準: governance/company-tech-stack-standard.md
+      - 治理文件總索引: governance/index.md
+      - 問卷階段流程: questionnaires/stage-flow.md
+      - 問卷填寫流程與治理: governance/questionnaire-flow.md
+      - 審核政策: governance/review-policy.md
+      - AI 使用政策: governance/ai-usage-policy.md
+      - 貢獻政策: governance/contribution-policy.md
+      - 治理版本政策: governance/governance-versioning-policy.md
+      - SSOT 邊界: governance/ssot-boundary.md
+      - 提示詞驅動規劃政策: governance/prompt-driven-planning-policy.md
+      - 工程導入計畫: governance/engineering-rollout-plan.md
+      - 治理變更紀錄: governance/CHANGELOG.md
+  - 問卷設計:
+      - 問卷設計原則: questionnaires/question-design-principles.md
+      - 角色矩陣: questionnaires/role-matrix.md
+      - S1 探索階段簡易指引: questionnaires/s1-discovery-plain-guide.md
+      - S1 進階選項提案: questionnaires/s1-advanced-options-proposal.md
+      - S1 PRJ-001 審查就緒: questionnaires/s1-prj001-review-ready.md
+      - S1 範例 GEM110 筆記: questionnaires/s1-sample-gem110-notes.md
+  - 專案章程:
+      - 專案章程: charter/project-charter.md
+      - 專案受理檢查表: charter/project-intake-checklist.md
+      - 公司開發基準: charter/company-development-baseline.md
+      - 實作計畫: charter/implementation-plan.md
+  - 專案文件:
+      - 專案索引: projects/index.md
+      - 問卷系統需求 PRJ-001: projects/01-questionnaire-system-requirements.md
+      - 角色技能矩陣與培訓: projects/01a-role-skill-matrix-and-training.md
+      - AI 技能階段領域手冊: projects/01b-ai-skill-stage-domain-playbook.md
+      - AI 預填與架構推薦: projects/01c-ai-prefill-and-architecture-recommender.md
+  - 架構與情境:
+      - 情境程式檢查表: architecture/scenario-program-checklist-v1.md
+  - 提示詞:
+      - 提示詞校準 v2: prompts/prompt-calibration-v2.md
+      - 提示詞 QC: prompts/prompt-qc.md
+  - 需求規格:
+      - RFP 問卷平台 v1: rfp/rfp-ai-governance-questionnaire-platform-v1.md
+  - 文件維護:
+      - MkDocs 本地預覽與建置: mkdocs-local-setup.md

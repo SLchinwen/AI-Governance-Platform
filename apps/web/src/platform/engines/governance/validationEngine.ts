@@ -2,6 +2,38 @@ import { getRequiredCompletion } from '../questionnaire/questionnaireEngine';
 import { governanceRules } from '../../rules/governanceRules';
 import { stageSchemas } from '../../schemas/stageSchemas';
 import type { ProjectContext, ValidationIssueRecord, ValidationState } from '../../types/projectContext';
+import type { TechStackDimensionId } from '../../types/projectContext';
+
+const ALL_DIMENSION_IDS: TechStackDimensionId[] = ['backend', 'frontend', 'user_auth', 'api_security', 'api_design', 'testing', 'cicd'];
+
+function buildGovernanceAdoptionSummary(context: ProjectContext): ValidationState['governance_adoption_summary'] {
+  const mode = context.techStackAdoptionMode;
+  if (mode !== 'full_standard' && mode !== 'partial_custom') return undefined;
+
+  const customDimensions = [...context.customDimensionIds];
+  const dimensionsFromStandard =
+    mode === 'full_standard'
+      ? [...ALL_DIMENSION_IDS]
+      : ALL_DIMENSION_IDS.filter((id) => !context.customDimensionIds.includes(id));
+
+  const hasExceptionNotes =
+    Boolean(context.standardExceptionNotes?.s2?.trim()) || Boolean(context.standardExceptionNotes?.s3?.trim());
+
+  let maturityLabel: string;
+  if (mode === 'full_standard') {
+    maturityLabel = hasExceptionNotes ? '全程依公司標準（有例外聲明，建議審議時確認）' : '全程依公司標準';
+  } else {
+    maturityLabel = customDimensions.length > 0 ? '部分客製（客製維度已填寫，其餘依公司標準）' : '部分客製';
+  }
+
+  return {
+    mode,
+    dimensions_from_standard: dimensionsFromStandard,
+    custom_dimensions: customDimensions,
+    has_exception_notes: hasExceptionNotes,
+    maturity_label: maturityLabel,
+  };
+}
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
@@ -167,6 +199,8 @@ export function computeValidationState(context: ProjectContext): ValidationState
     stage: issue.stage,
   }));
 
+  const governance_adoption_summary = buildGovernanceAdoptionSummary(context);
+
   return {
     readiness_score: readinessScore,
     risk_score: riskScore,
@@ -174,5 +208,6 @@ export function computeValidationState(context: ProjectContext): ValidationState
     blockers,
     warnings,
     owner_due_matrix,
+    governance_adoption_summary,
   };
 }
